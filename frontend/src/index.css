@@ -11,3 +11,45 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'KoreanTITGD1';
+  src: url('./fonts/KoreanTITGD/KoreanTITGD1.ttf');
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: 'KoreanTITGD2';
+  src: url('./fonts/KoreanTITGD/KoreanTITGD2.ttf');
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: 'KoreanTITGD3';
+  src: url('./fonts/KoreanTITGD/KoreanTITGD3.ttf');
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: 'KoreanTITGD4';
+  src: url('./fonts/KoreanTITGD/KoreanTITGD4.ttf');
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: 'KoreanTITGD5';
+  src: url('./fonts/KoreanTITGD/KoreanTITGD5.ttf');
+  unicode-range: U+AC00-D7A3;
+}
+
+@font-face {
+  font-family: 'Manrope-Medium';
+  src: url('./fonts/Manrope/Manrope-Medium.ttf');
+  unicode-range: U+0041-005A, U+0061-007A;
+}
+
+@font-face {
+  font-family: 'Manrope-SemiBold';
+  src: url('./fonts/Manrope/Manrope-SemiBold.ttf');
+  unicode-range: U+0041-005A, U+0061-007A;
+}
