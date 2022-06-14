@@ -1,0 +1,38 @@
+.main_top {
+  width: 100vw;
+  height: 5.7rem;
+}
+
+.header1 {
+  width: 100vw;
+  height: 1.5rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+}
+
+.header-title {
+  font-family: KoreanTITGD3, Manrope-SemiBold;
+  cursor: pointer;
+}
+
+.header2 {
+  width: 100vw;
+  height: 1.2rem;
+  padding: 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.header2 ul {
+  height: 1.2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.header2 ul li {
+  list-style:none;
+  float: left;
+  width: 25vw;
+  text-align: center;
+  font-family: KoreanTITGD2, Manrope-Medium;
+  cursor: pointer;
+}
