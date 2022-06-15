@@ -1,0 +1,125 @@
+### react ###
+frontend/.DS_*
+frontend/logs
+frontend/**/*.backup.*
+frontend/**/*.back.*
+
+frontend/node_modules
+frontend/bower_components
+
+frontend/psd
+frontend/thumb
+frontend/sketch
+
+
+### venv ###
+venv/
+
+### Django ###
+backend/*.log
+backend/*.pot
+backend/*.pyc
+backend/backend/__pycache__
+backend/local_settings.py
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media
+
+### Django ###
+backend/*.log
+backend/*.pot
+backend/*.pyc
+backend/__pycache__/
+backend/local_settings.py
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media
+
+
+### Django.Python Stack ###
+# Byte-compiled / optimized / DLL files
+backend/*.py[cod]
+backend/*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Translations
+*.mo
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
