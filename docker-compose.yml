@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  front:
+    build: ./frontend
+    container_name: front
+    ports:
+      - "3000:3000"
+    command: ["serve", "-s", "build"]
+    
+  back:
+    build: ./backend
+    container_name: back
+    ports:
+      - "4000:4000"
+    command: ["python3", "./manage.py", "runserver"]
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
