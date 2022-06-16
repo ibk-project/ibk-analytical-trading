@@ -1,6 +1,7 @@
 import './App.css';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './components/Home';
 import EDA from './components/EDA';
 import Portfolio from './components/Portfolio';
@@ -17,6 +18,7 @@ function App() {
           <Route path="/portfolio" element={<Portfolio />}></Route>
           <Route path="/backtesting" element={<BackTesting />}></Route>
         </Routes>
+        <Footer />
       </div>
     </BrowserRouter>
   );
