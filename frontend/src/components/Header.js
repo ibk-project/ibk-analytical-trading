@@ -5,7 +5,7 @@ function Header() {
   return(
     <header className="main_top">
       <div className="header1">
-        <a className="header-title">SKKU-IBK Portfolio Recommendation System</a>
+        <Link to="/" className="header-title">SKKU-IBK Portfolio Recommendation System</Link>
       </div>
       <div className="header2">
         <ul>
