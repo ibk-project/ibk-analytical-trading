@@ -1,7 +1,11 @@
+import './css/Home.css';
+
 function Home() {
   return(
     <div>
-      Home
+      <div className="home-summary">
+        Home
+      </div>
     </div>
   );
 }
