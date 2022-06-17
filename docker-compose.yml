@@ -4,20 +4,29 @@ services:
   front:
     build: ./frontend
     container_name: front
-    ports:
-      - "3000:3000"
     volumes:
       - ./frontend:/frontend
     #command: ["serve", "-s", "build"]
-    
+  
+  mongo:
+    image: mongo
+    container_name: mongo
+    expose:
+      - "27019"
+    volumes:
+      - ./mongo/data:/mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "IBK"
+      MONGO_INITDB_ROOT_PASSWORD: "1234"
+
   back:
     build: ./backend
     container_name: back
-    ports:
-      - "4000:4000"
     volumes:
       - ./backend:/backend
     command: ["python3", "./manage.py", "runserver"]
+    depends_on:
+      - mongo
 
   nginx:
     build: ./nginx
@@ -30,3 +39,4 @@ services:
     depends_on:
       - front
       - back
+      - mongo
