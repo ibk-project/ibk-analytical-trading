@@ -15,12 +15,12 @@ import FinanceDataReader as fdr
 @api_view(['GET'])
 def get_index(request):
     if request.method == 'GET':
-        
-        #code = request.data.get("code")
-        #date = request.data.get("date")
-        #chart_type = request.data.get("type")
+        print(request.data)
+        code = request.data.get("code")
+        date = request.data.get("date")
+        chart_type = request.data.get("type")
 
-        df = fdr.DataReader('005930')
+        df = fdr.DataReader(code)
         indexs = Index.objects.all()
         indexs_serializer = IndexSerializer(indexs, many=True)
 
