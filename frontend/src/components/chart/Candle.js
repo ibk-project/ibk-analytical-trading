@@ -3,7 +3,7 @@ import { VictoryChart, VictoryCandlestick } from 'victory';
 function Candle(props) {
   return(
     <div
-      style={{"minWidth":"200px", "minHeight":"30vh"}}
+      style={{"minWidth":"400px", "minHeight":"30vh"}}
     >
       <VictoryChart
         height= {250}

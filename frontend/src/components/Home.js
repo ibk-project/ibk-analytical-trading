@@ -1,6 +1,7 @@
 import './css/Home.css';
-import Line from './chart/Line.js';
+import Line from './chart/Line';
 import Candle from './chart/Candle';
+import Bar from './chart/Bar';
 
 function Home() {
   const data = [
@@ -21,6 +22,7 @@ function Home() {
   return(
     <div>
       <div className="home-summary">
+        <Bar data={data}/>
         <Line data={data} category={category}/>
         <Line data={data} category={category}/>
         <Line data={data} category={category}/>
