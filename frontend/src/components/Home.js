@@ -22,6 +22,15 @@ function Home() {
     <div>
       <div className="home-summary">
         <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+        <Line data={data} category={category}/>
+
         <Candle data = {DATA} />
         <Candle data = {DATA} />
         <Candle data = {DATA} />
