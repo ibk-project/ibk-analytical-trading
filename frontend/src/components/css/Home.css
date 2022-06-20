@@ -1,8 +1,22 @@
 .home-summary {
-    display: flex;
-    flex-direction: row;
-    width: 100vw;
-    height:60vh;
-    background-color: bisque;
-    overflow-x: scroll;
+  display: inline-flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 30vh;
+  background-color: bisque;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.home-summary::-webkit-scrollbar {
+  width: 8px;
+}
+
+.home-summary::-webkit-scrollbar-thumb {
+  height: 30%;
+  background: #000000;
+}
+
+.home-summary::-webkit-scrollbar-track {
+  background: rgba(33, 122, 244, .1);
 }
