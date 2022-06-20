@@ -3,13 +3,12 @@
   flex-direction: row;
   width: 100vw;
   height: 30vh;
-  background-color: bisque;
   overflow-x: scroll;
   overflow-y: hidden;
 }
 
 .home-summary::-webkit-scrollbar {
-  width: 8px;
+  height: 2px; 
 }
 
 .home-summary::-webkit-scrollbar-thumb {
