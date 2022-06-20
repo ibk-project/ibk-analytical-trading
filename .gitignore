@@ -1,3 +1,6 @@
+node_modules/
+package-lock.*
+ 
 ### react ###
 frontend/.DS_*
 frontend/logs
@@ -126,3 +129,4 @@ cython_debug/
 
 #mongo
 mongo/data
+package-lock.json
