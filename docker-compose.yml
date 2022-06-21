@@ -4,11 +4,9 @@ services:
   front:
     build: ./frontend
     container_name: front
-    expose:
-      - "3000"
     volumes:
       - ./frontend:/frontend
-    command: ["npm", "start"]
+    command: ["yarn", "start"]
   
   mongo:
     image: mongo
@@ -24,8 +22,6 @@ services:
   back:
     build: ./backend
     container_name: back
-    expose:
-      - "4000"
     volumes:
       - ./backend:/backend
     command: ["python3", "./manage.py", "runserver", "0.0.0.0:4000"]
