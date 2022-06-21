@@ -1,4 +1,5 @@
 node_modules/
+backend/**/__pycache__/
  
 ### react ###
 frontend/.DS_*
