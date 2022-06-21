@@ -2,15 +2,12 @@ import { VictoryChart, VictoryLine, VictoryTheme } from 'victory';
 
 function Line(props) {
   return(
-    <div>
+    <div
+      style={{"minWidth":"400px", "minHeight":"30vh"}}
+    >
       <VictoryChart
-        theme={VictoryTheme.material}
+        theme= {VictoryTheme.material}
         style={{
-          parent: {
-            height: 500,
-            width: 500,
-            border: "1px solid",
-          },
           background: {
             fill: "white"
           }

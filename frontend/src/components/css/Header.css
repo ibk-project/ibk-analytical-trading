@@ -1,6 +1,7 @@
 .main_top {
   width: 100vw;
   height: 6rem;
+  border-bottom: thin solid;
 }
 
 .header1 {
