@@ -16,7 +16,7 @@ function Candle(props) {
           candleRatio={0.5}
           candleColors={{ positive: "#5f5c5b", negative: "#c43a31" }}
           data={props.data}
-        />  
+        />
       </VictoryChart>
     </div>
   );

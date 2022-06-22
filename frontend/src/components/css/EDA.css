@@ -1,0 +1,37 @@
+.eda-container {
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 7rem);
+}
+
+.eda-sidebar {
+  width: 20rem;
+  background-color: rgb(0, 0, 0, 0.2);
+  overflow-y: scroll;
+}
+
+.eda-sidebar div {
+  padding: 1rem 4rem;
+  width: 12rem;
+  font-weight: bold;
+}
+
+.eda-sidebar ul {
+  margin: 0;
+  padding: 0;
+}
+
+.eda-sidebar ul li {
+  list-style: none;
+}
+
+.eda-sidebar ul li a {
+  display: block;
+  padding: 1rem 4rem;
+  width: 12rem;
+  color: black;
+  text-decoration: none;
+}
+.eda-sidebar ul li a:hover {
+  background-color: gray;
+}

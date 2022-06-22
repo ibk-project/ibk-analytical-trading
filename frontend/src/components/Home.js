@@ -33,13 +33,14 @@ function Home() {
         <Line data={data} category={category}/>
         <Line data={data} category={category}/>
 
-        <Candle data = {DATA} />
-        <Candle data = {DATA} />
-        <Candle data = {DATA} />
-        <Candle data = {DATA} />
-        <Candle data = {DATA} />
-        <Candle data = {DATA} />
-        <Candle data = {DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
+        <Candle data={DATA} />
       </div>
     </div>
   );

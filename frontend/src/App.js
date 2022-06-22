@@ -13,7 +13,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" exact={true} element={<Home />}></Route>
-          <Route path="/eda" element={<EDA />}></Route>
+          <Route path="/eda/*" element={<EDA />}></Route>
           <Route path="/portfolio" element={<Portfolio />}></Route>
           <Route path="/backtesting" element={<BackTesting />}></Route>
         </Routes>
