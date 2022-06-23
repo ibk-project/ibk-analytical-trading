@@ -2,7 +2,6 @@ import './css/EDA.css';
 import {Link} from 'react-router-dom';
 
 function EDA() {
-
   const makeList = (data) => {
     let retList = [];
       for(let i = 0; i < data.length; i++) {

@@ -1,13 +1,10 @@
-import { VictoryChart, VictoryBar, VictoryTheme } from 'victory';
+import { VictoryChart, VictoryBar} from 'victory';
 
 function Bar(props) {
   return(
-    <div
-      style={{"minWidth":"200px", "minHeight":"30vh"}}
-    >
+    <div style={{"minWidth":"200px", "minHeight":"30vh"}}>
       <VictoryChart
-      theme={VictoryTheme.material}
-      domainPadding={{ x: 30 }}
+        domainPadding={{ x: 30 }}
       >
         <VictoryBar
           barRatio={0.8}
