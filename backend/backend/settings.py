@@ -80,8 +80,26 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'ENFORCE_SCHEMA': True,
+        'LOGGING': {
+            'version': 1,
+            'loggers': {
+                'djongo': {
+                    'level': 'DEBUG',
+                    'propogate': False,                        
+                }
+            },
+         },
+        'NAME': 'newDB',
+        'CLIENT': {
+            'host': 'mongo',
+            'port': 27017,
+            'username': 'IBK',
+            'password': '1234',
+            'authSource': 'admin',
+            'authMechanism': 'SCRAM-SHA-1'
+        }
     }
 }
 
@@ -110,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
