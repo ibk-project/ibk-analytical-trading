@@ -11,8 +11,9 @@ services:
   mongo:
     image: mongo
     container_name: mongo
+    hostname: mongo
     expose:
-      - "27019"
+      - "27017"
     volumes:
       - ./mongo/data:/mongo
     environment:
