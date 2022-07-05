@@ -21,13 +21,13 @@ function Header() {
             <Link style={linkStyle("/")} onClick={() => {handleCurrentTab("/")}} to="/">Home</Link>
           </li>
           <li>
+            <Link style={linkStyle("/market")} onClick={() => {handleCurrentTab("/market")}} to="/market">Market</Link>
+          </li>
+          <li>
             <Link style={linkStyle("/eda")} onClick={() => {handleCurrentTab("/eda")}} to="/eda">EDA</Link>
           </li>
           <li>
             <Link style={linkStyle("/portfolio")} onClick={() => {handleCurrentTab("/portfolio")}} to="/portfolio">Portfolio</Link>
-          </li>
-          <li>
-            <Link style={linkStyle("/backtesting")} onClick={() => {handleCurrentTab("/backtesting")}} to="/backtesting">BackTesting</Link>
           </li>
         </ul>
       </div>

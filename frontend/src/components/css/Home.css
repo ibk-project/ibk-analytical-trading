@@ -1,21 +1,13 @@
-.home-summary {
-  display: inline-flex;
-  flex-direction: row;
-  width: 100vw;
-  height: 30vh;
-  overflow-x: scroll;
-  overflow-y: hidden;
+.home-container {
+  width: 70rem;
+  padding: 5rem calc((100vw - 70rem) / 2);
 }
 
-.home-summary::-webkit-scrollbar {
-  height: 2px; 
+.home-title {
+  font-family: KoreanTITGD3, Manrope-Bold;
+  font-size: 1.2rem;
 }
 
-.home-summary::-webkit-scrollbar-thumb {
-  height: 30%;
-  background: #000000;
-}
-
-.home-summary::-webkit-scrollbar-track {
-  background: rgba(33, 122, 244, .1);
+.home-description {
+  font-family: KoreanTITGD2, Manrope-Medium;
 }

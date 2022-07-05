@@ -1,6 +1,6 @@
 .main_top {
   width: 100vw;
-  height: 6rem;
+  height: 7rem;
   border-bottom: thin solid;
 }
 
@@ -21,7 +21,7 @@
 .header2 {
   width: 100vw;
   height: 1.5rem;
-  padding: 0.5rem 0;
+  padding: 1rem 0;
   font-size: 1.2rem;
 }
 
@@ -32,17 +32,17 @@
 }
 
 .header2 ul li {
-  list-style:none;
+  list-style: none;
   float: left;
   width: 25vw;
   text-align: center;
   font-family: KoreanTITGD2, Manrope-Medium;
-  cursor: pointer;
 }
 
 .header2 ul li a {
   color: black;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .header2 ul li a:hover {
