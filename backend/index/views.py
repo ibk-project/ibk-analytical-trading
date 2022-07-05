@@ -33,29 +33,6 @@ def get_index(request):
         js = {"data": df.to_dict('records')}
         
         return JsonResponse(js, safe=False)
-<<<<<<< HEAD
-        # if null? error msg
-        # return JsonResponse(indexs_serializer.data, safe=False)
-        # return JsonResponse(js, safe=False)
-
-
-# def get_index(request):
-#     if request.method == 'GET':
-#         print(request.data)
-#         code = request.data.get("code")
-#         date = request.data.get("date")
-#         chart_type = request.data.get("type")
-
-#         # indexs = Index.objects.all()
-#         # indexs_serializer = IndexSerializer(indexs, many=True)
-
-#         df = fdr.DataReader(code)
-#         df.index = df.index.strftime('%Y-%m-%d')
-#         df['date'] = df.index
-#         js = {"data": df.to_dict('records')}
-#         return js
-# # Create your views here.
-=======
 
 # Create your views here.
 @api_view(['GET'])
@@ -166,4 +143,3 @@ def get_comm_data(name, code):
 
 
 
->>>>>>> ae786478113041a9c2238c47cf93df43c920fcfb
