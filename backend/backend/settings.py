@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'index.apps.IndexConfig',
+    'data.apps.DataConfig'
 ]
 
 MIDDLEWARE = [
@@ -92,6 +93,8 @@ DATABASES = {
             },
          },
         'NAME': 'newDB',
+        'HOST' : 'mongo',
+        'PORT' : 27017,
         'CLIENT': {
             'host': 'mongo',
             'port': 27017,
