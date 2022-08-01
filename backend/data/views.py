@@ -31,20 +31,48 @@ def get_index_front(request):
     if request.method == 'GET':
         print(request.data)
         code = request.data.get("code")
-        date = request.data.get("date")
+        start_date = request.data.get("date")
+        end_date = ""
         chart_type = request.data.get("type")
-
+        db = client.newDB
+        commodity_collection = db.data_commodity
+        index_collection = db.data_index
         # indexs = Index.objects.all()
         # indexs_serializer = IndexSerializer(indexs, many=True)
         # if chart_type == 'line' :
         #     df = df[["date", "Close"]]
-
-        df = fdr.DataReader(code)
-        df.index = df.index.strftime('%Y-%m-%d')
-        df['date'] = df.index
-        js = {"data": df.to_dict('records')}
         
-        return JsonResponse(js, safe=False)
+        if start_date == "":
+            start_date = "2000-01-01"
+            
+        if end_date == "":
+            end_date = str(datetime.today())
+
+        if chart_type == 'line':
+            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
+            result = list(id)
+            if result == []:
+                return JsonResponse({ "Result" : "None"})
+            else:
+                return JsonResponse({"data":result})
+            
+        elif chart_type == "line_volume":
+            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1})
+            print(id)
+            result = list(id)
+            if result == []:
+                return JsonResponse({ "Result" : "None"})
+            else:
+                return JsonResponse({"data":result})
+        
+        elif chart_type == "candle":
+            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Open" : 1, "High" : 1, "Low" : 1,  "Close" : 1, "Date": 1})
+            result = list(id)
+            if result == []:
+                return JsonResponse({ "Result" : "None"})
+            else:
+                return JsonResponse({"data":result})
+            
     
     if request.method == 'POST':
         js = {"data" : "1212"}
