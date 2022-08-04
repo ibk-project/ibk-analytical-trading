@@ -1,0 +1,13 @@
+.home-container {
+  width: 70rem;
+  padding: 5rem calc((100vw - 70rem) / 2);
+}
+
+.home-title {
+  font-family: KoreanTITGD3, Manrope-Bold;
+  font-size: 1.2rem;
+}
+
+.home-description {
+  font-family: KoreanTITGD2, Manrope-Medium;
+}
