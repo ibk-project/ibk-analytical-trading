@@ -125,5 +125,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-#mongo
+# mongo
 mongo/data
+
+
+# packages
+package-lock.json
+frontend/yarn.lock
