@@ -34,8 +34,9 @@ backend/local_settings.py
 backend/db.sqlite3
 backend/db.sqlite3-journal
 backend/media
+backend/index/__pycache__/
 
-
+node_modules/
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
 backend/*.py[cod]

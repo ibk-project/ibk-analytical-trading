@@ -11,6 +11,7 @@ services:
   mongo:
     image: mongo
     container_name: mongo
+    hostname: mongo
     expose:
       - "27017"
     volumes:
