@@ -1,0 +1,13 @@
+.eda-info {
+    position: absolute;
+    visibility:visible;
+    left: 0;
+}
+
+.eda-info.open {
+    left: 20rem;
+}
+
+.eda-info-container {
+    visibility:visible;
+}
