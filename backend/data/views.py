@@ -154,6 +154,16 @@ def get_stock(request):
         
         return JsonResponse({"success" : "true", "empty_stock" : empty_stock})
     
+@api_view(['GET'])
+def get_index_name(request):
+    if request.method == 'GET':
+        INDEXS_NAME = ['KS11', 'KQ11', 'DJI', 'JP225', 'HK50', 'CSI300', 'DAX']
+        EMPTY_INDEX = ['IXIC']
+        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "AUD/USD", "EUR/JPY", "USD/RUB"]
+        
+        return JsonResponse({"Index Name" : INDEXS_NAME + EX_RATE_LIST})
+    
+    
 @api_view(['GET','POST'])
 def get_index(request):
     if request.method == 'GET':

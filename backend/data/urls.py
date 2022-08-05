@@ -6,6 +6,7 @@ urlpatterns = [
         path('all-data',views.get_index),#Get시 모든 index 재추출 및 저장, Post시 특정 값들만 추출 후 제공
         path('one-data',views.get_one_index),
         path('get',views.get_index_front),
+        path('name-list',views.get_index_name),
         ])),
     path('commodity/',include([
         path('all-data',views.get_commodity),
