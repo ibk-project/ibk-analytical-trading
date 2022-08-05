@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import './css/EDA.css';
 import {Link} from 'react-router-dom';
+import './css/EDA.css';
+import EdaInfo from "./eda/EdaInfo";
+
 
 function EDA() {
   const indexData = [
@@ -31,10 +33,25 @@ function EDA() {
     {"name": "석유", "code": "875654"},
     {"name": "석탄", "code": "890352"}
   ];
+  const [edaType, setEdaType] = useState("none"); // none, market, sector, stock, material
+  const [edaName, setEdaName] = useState("none"); // none, (name)
+  const [edaCode, setEdaCode] = useState("none"); // none, (code)
+  const onEdaClick = (e) => {
+    let code = e.target.href.split("/")[4];
+    setEdaName(e.target.innerHTML)
+    setEdaCode(code)
+    if (indexData.find(o => o.code === code)) {
+        setEdaType("market");
+    } else if (stockData.find(o => o.code === code)) {
+        setEdaType("stock");;
+    } else if (materialData.find(o => o.code === code)) {
+        setEdaType("material");
+    }
+  }
   const makeList = (data) => {
     let retList = [];
       for(let i = 0; i < data.length; i++) {
-        retList.push(<li key={i}><Link to={"/eda/" + data[i].code}>{data[i].name}</Link></li>);
+        retList.push(<li key={i}><Link to={"/eda/" + data[i].code} onClick={onEdaClick}>{data[i].name}</Link></li>);
       }
     return retList;
   };
@@ -46,6 +63,7 @@ function EDA() {
   const handleViewSidebar = () => {
     setSideBarOpen(!sidebarOpen);
   };
+  
   const SideBar = (data) => {
     const sidebarClass = data.isOpen ? "eda-sidebar open" : "eda-sidebar";
     const toggleClass = data.isOpen ? "eda-sidebar-toggle open" : "eda-sidebar-toggle";
@@ -105,6 +123,13 @@ function EDA() {
   return(
     <div className="eda-container">
       <SideBar isOpen={sidebarOpen} toggleSidebar={handleViewSidebar} indexList={indexList} stockList={stockList} materialList={materialList} />
+      <EdaInfo
+        isOpen={sidebarOpen}
+        edaName = {edaName}
+        edaType = {edaType}
+        edaCode = {edaCode}
+      />
+
     </div>
   );
 }

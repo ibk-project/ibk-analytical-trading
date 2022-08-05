@@ -29,11 +29,11 @@ client = MongoClient(
 @api_view(['GET', 'POST'])
 def get_index_front(request):
     if request.method == 'GET':
-        print(request.data)
-        code = request.data.get("code")
-        start_date = request.data.get("date")
+        print(request.GET)
+        code = request.GET['code']
+        start_date = request.GET['date']
         end_date = ""
-        chart_type = request.data.get("type")
+        chart_type = request.GET['type']
         db = client.newDB
         commodity_collection = db.data_commodity
         index_collection = db.data_index
