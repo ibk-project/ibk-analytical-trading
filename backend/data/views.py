@@ -149,9 +149,7 @@ def get_stock(request):
             file = open('empty_stock.txt', 'w')
             file.write(empty_stock)
             file.close
-        
-        
-        
+            
         return JsonResponse({"success" : "true", "empty_stock" : empty_stock})
     
 @api_view(['GET'])
@@ -210,9 +208,9 @@ def get_index(request):
         
         return JsonResponse({"success" : "true"})
     
-@api_view(['POST'])
+@api_view(['GET'])
 def get_one_index(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         db = client.newDB
         index_collection = db.data_index
         
@@ -231,9 +229,9 @@ def get_one_index(request):
         result = list(id)
         return JsonResponse({"Result" : result})
     
-@api_view(['POST'])
+@api_view(['GET'])
 def get_one_stock(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         db = client.newDB
         stock_collection = db.data_stock
         
@@ -243,18 +241,117 @@ def get_one_stock(request):
         end_date = request.data.get('End')
         
         if start_date == "":
-            start_date = "2022-01-01"
+            start_date = "2012-01-01"
         
         if end_date == "":
             end_date = str(datetime.today())
 
-        id = stock_collection.find({"Name" : name, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0})
+        id = stock_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
+        
         result = list(id)
         if result == []:
             return JsonResponse({ "Result" : "None"})
         else:
-            return JsonResponse({"Result" : result})
+            return JsonResponse({"data" : result})
         
+        
+@api_view(['GET'])
+def get_sector_list(request):
+    if request.method == 'GET':
+        db = client.newDB
+        stock_collection = db.data_stock
+        
+        sector_data = {'반도체와반도체장비': ['삼성전자',
+  'SK하이닉스',
+  '삼성전자우',
+  'SK스퀘어',
+  '리노공업',
+  'DB하이텍',
+  '동진쎄미켐',
+  '솔브레인',
+  '원익IPS',
+  '티씨케이',
+  '한미반도체'],
+ '철강': ['POSCO홀딩스', '현대제철'],
+ '은행': ['KB금융',
+  '신한지주',
+  '카카오뱅크',
+  '하나금융지주',
+  '우리금융지주',
+  '기업은행',
+  'BNK금융지주',
+  'JB금융지주',
+  'DGB금융지주'],
+ '석유와가스': ['SK이노베이션', 'S-Oil', 'HD현대', 'GS'],
+ '화학': ['LG화학',
+  '포스코케미칼',
+  '한화솔루션',
+  '롯데케미칼',
+  'SKC',
+  '금호석유',
+  'OCI',
+  '한솔케미칼',
+  'LG화학우',
+  '에코프로',
+  'SK케미칼',
+  '효성첨단소재',
+  '후성',
+  '롯데정밀화학',
+  '코스모신소재',
+  '코오롱인더',
+  'DL'],
+ '양방향미디어와서비스': ['NAVER', '카카오'],
+ '복합기업': ['삼성물산', 'SK', 'LG', 'CJ', '효성'],
+ '자동차': ['현대차',
+  '기아',
+  '현대차2우B',
+  '현대차우',
+  '현대모비스',
+  '한온시스템',
+  '한국타이어앤테크놀로지',
+  '만도',
+  '현대위아',
+  '에스엘'],
+ '제약': ['삼성바이오로직스',
+  '셀트리온',
+  '셀트리온헬스케어',
+  'SK바이오사이언스',
+  'SK바이오팜',
+  'HLB',
+  '유한양행',
+  '한미약품',
+  '셀트리온제약',
+  '한미사이언스',
+  '대웅제약',
+  '녹십자',
+  '에스티팜',
+  '대웅',
+  '신풍제약'],
+ '전자전기제품': ['LG전자',
+  'LG에너지솔루션',
+  '삼성SDI',
+  '에코프로비엠',
+  '엘앤에프',
+  'SK아이이테크놀로지',
+  '천보',
+  '두산퓨얼셀']}
+
+        keys = sector_data.keys()
+        result = []
+        
+        for key in keys:
+            tmp = {}
+            tmp["sector_name"] = key
+            tmp["sector_stocks"] = sector_data[key]
+            
+            result.append(tmp)
+            
+        if result == []:
+            return JsonResponse({ "Data" : "Wrong"})
+        else:
+            return JsonResponse({"Data" : result})
+
+
 @api_view(['POST'])
 def get_one_commodity(request):
     if request.method == 'POST':

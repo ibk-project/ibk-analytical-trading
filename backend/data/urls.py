@@ -15,5 +15,6 @@ urlpatterns = [
     path('stock/',include([
         path('all-data',views.get_stock),
         path('one-data',views.get_one_stock),
+        path('sector-list', views.get_sector_list)
         ])),
 ]
