@@ -30,11 +30,11 @@ client = MongoClient(
 @api_view(['GET', 'POST'])
 def get_index_front(request):
     if request.method == 'GET':
-        code = request.GET('code')
+        code = request.GET['code']
         print(request)
-        start_date = request.GET.get('date')
+        start_date = request.GET['date']
         end_date = ""
-        chart_type = request.GET.get('type')
+        chart_type = request.GET['type']
         db = client.newDB
         index_collection = db.data_index
         
@@ -242,7 +242,7 @@ def get_one_stock(request):
         if end_date == "":
             end_date = str(datetime.today())
 
-        id = stock_collection.find({"Name" : name, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
+        id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
         
         result = list(id)
         if result == []:
@@ -257,80 +257,89 @@ def get_sector_list(request):
         db = client.newDB
         stock_collection = db.data_stock
         
-        sector_data = {'반도체와반도체장비': ['삼성전자',
-                    'SK하이닉스',
-                    '삼성전자우',
-                    'SK스퀘어',
-                    '리노공업',
-                    'DB하이텍',
-                    '동진쎄미켐',
-                    '솔브레인',
-                    '원익IPS',
-                    '티씨케이',
-                    '한미반도체'],
-                    '철강': ['POSCO홀딩스', '현대제철'],
-                    '은행': ['KB금융',
-                    '신한지주',
-                    '카카오뱅크',
-                    '하나금융지주',
-                    '우리금융지주',
-                    '기업은행',
-                    'BNK금융지주',
-                    'JB금융지주',
-                    'DGB금융지주'],
-                    '석유와가스': ['SK이노베이션', 'S-Oil', 'HD현대', 'GS'],
-                    '화학': ['LG화학',
-                    '포스코케미칼',
-                    '한화솔루션',
-                    '롯데케미칼',
-                    'SKC',
-                    '금호석유',
-                    'OCI',
-                    '한솔케미칼',
-                    'LG화학우',
-                    '에코프로',
-                    'SK케미칼',
-                    '효성첨단소재',
-                    '후성',
-                    '롯데정밀화학',
-                    '코스모신소재',
-                    '코오롱인더',
-                    'DL'],
-                    '양방향미디어와서비스': ['NAVER', '카카오'],
-                    '복합기업': ['삼성물산', 'SK', 'LG', 'CJ', '효성'],
-                    '자동차': ['현대차',
-                    '기아',
-                    '현대차2우B',
-                    '현대차우',
-                    '현대모비스',
-                    '한온시스템',
-                    '한국타이어앤테크놀로지',
-                    '만도',
-                    '현대위아',
-                    '에스엘'],
-                    '제약': ['삼성바이오로직스',
-                    '셀트리온',
-                    '셀트리온헬스케어',
-                    'SK바이오사이언스',
-                    'SK바이오팜',
-                    'HLB',
-                    '유한양행',
-                    '한미약품',
-                    '셀트리온제약',
-                    '한미사이언스',
-                    '대웅제약',
-                    '녹십자',
-                    '에스티팜',
-                    '대웅',
-                    '신풍제약'],
-                    '전자전기제품': ['LG전자',
-                    'LG에너지솔루션',
-                    '삼성SDI',
-                    '에코프로비엠',
-                    '엘앤에프',
-                    'SK아이이테크놀로지',
-                    '천보',
-                    '두산퓨얼셀']}
+        sector_data = {'반도체와반도체장비': [{'code': '005930', 'name': '삼성전자'},
+  {'code': '000660', 'name': 'SK하이닉스'},
+  {'code': '005935', 'name': '삼성전자우'},
+  {'code': '402340', 'name': 'SK스퀘어'},
+  {'code': '058470', 'name': '리노공업'},
+  {'code': '000990', 'name': 'DB하이텍'},
+  {'code': '005290', 'name': '동진쎄미켐'},
+  {'code': '357780', 'name': '솔브레인'},
+  {'code': '240810', 'name': '원익IPS'},
+  {'code': '064760', 'name': '티씨케이'},
+  {'code': '042700', 'name': '한미반도체'}],
+ '철강': [{'code': '005490', 'name': 'POSCO홀딩스'},
+  {'code': '004020', 'name': '현대제철'}],
+ '은행': [{'code': '105560', 'name': 'KB금융'},
+  {'code': '055550', 'name': '신한지주'},
+  {'code': '323410', 'name': '카카오뱅크'},
+  {'code': '086790', 'name': '하나금융지주'},
+  {'code': '316140', 'name': '우리금융지주'},
+  {'code': '024110', 'name': '기업은행'},
+  {'code': '138930', 'name': 'BNK금융지주'},
+  {'code': '175330', 'name': 'JB금융지주'},
+  {'code': '139130', 'name': 'DGB금융지주'}],
+ '석유와가스': [{'code': '096770', 'name': 'SK이노베이션'},
+  {'code': '010950', 'name': 'S-Oil'},
+  {'code': '267250', 'name': 'HD현대'},
+  {'code': '078930', 'name': 'GS'}],
+ '화학': [{'code': '051910', 'name': 'LG화학'},
+  {'code': '003670', 'name': '포스코케미칼'},
+  {'code': '009830', 'name': '한화솔루션'},
+  {'code': '011170', 'name': '롯데케미칼'},
+  {'code': '011790', 'name': 'SKC'},
+  {'code': '011780', 'name': '금호석유'},
+  {'code': '010060', 'name': 'OCI'},
+  {'code': '014680', 'name': '한솔케미칼'},
+  {'code': '051915', 'name': 'LG화학우'},
+  {'code': '086520', 'name': '에코프로'},
+  {'code': '285130', 'name': 'SK케미칼'},
+  {'code': '298050', 'name': '효성첨단소재'},
+  {'code': '093370', 'name': '후성'},
+  {'code': '004000', 'name': '롯데정밀화학'},
+  {'code': '005070', 'name': '코스모신소재'},
+  {'code': '120110', 'name': '코오롱인더'},
+  {'code': '000210', 'name': 'DL'}],
+ '양방향미디어와서비스': [{'code': '035420', 'name': 'NAVER'},
+  {'code': '035720', 'name': '카카오'}],
+ '복합기업': [{'code': '028260', 'name': '삼성물산'},
+  {'code': '034730', 'name': 'SK'},
+  {'code': '003550', 'name': 'LG'},
+  {'code': '001040', 'name': 'CJ'},
+  {'code': '004800', 'name': '효성'}],
+ '자동차': [{'code': '005380', 'name': '현대차'},
+  {'code': '000270', 'name': '기아'},
+  {'code': '005387', 'name': '현대차2우B'},
+  {'code': '005385', 'name': '현대차우'},
+  {'code': '012330', 'name': '현대모비스'},
+  {'code': '018880', 'name': '한온시스템'},
+  {'code': '161390', 'name': '한국타이어앤테크놀로지'},
+  {'code': '204320', 'name': '만도'},
+  {'code': '011210', 'name': '현대위아'},
+  {'code': '005850', 'name': '에스엘'}],
+ '제약': [{'code': '207940', 'name': '삼성바이오로직스'},
+  {'code': '068270', 'name': '셀트리온'},
+  {'code': '091990', 'name': '셀트리온헬스케어'},
+  {'code': '302440', 'name': 'SK바이오사이언스'},
+  {'code': '326030', 'name': 'SK바이오팜'},
+  {'code': '028300', 'name': 'HLB'},
+  {'code': '000100', 'name': '유한양행'},
+  {'code': '128940', 'name': '한미약품'},
+  {'code': '068760', 'name': '셀트리온제약'},
+  {'code': '008930', 'name': '한미사이언스'},
+  {'code': '069620', 'name': '대웅제약'},
+  {'code': '006280', 'name': '녹십자'},
+  {'code': '237690', 'name': '에스티팜'},
+  {'code': '003090', 'name': '대웅'},
+  {'code': '019170', 'name': '신풍제약'}],
+ '전자전기제품': [{'code': '066570', 'name': 'LG전자'},
+  {'code': '373220', 'name': 'LG에너지솔루션'},
+  {'code': '006400', 'name': '삼성SDI'},
+  {'code': '247540', 'name': '에코프로비엠'},
+  {'code': '066970', 'name': '엘앤에프'},
+  {'code': '361610', 'name': 'SK아이이테크놀로지'},
+  {'code': '278280', 'name': '천보'},
+  {'code': '336260', 'name': '두산퓨얼셀'}]}
 
         keys = sector_data.keys()
         result = []
@@ -343,9 +352,9 @@ def get_sector_list(request):
             result.append(tmp)
             
         if result == []:
-            return JsonResponse({ "Data" : "Wrong"})
+            return JsonResponse({ "data" : "Wrong"})
         else:
-            return JsonResponse({"Data" : result})
+            return JsonResponse({"data" : result})
 
 
 @api_view(['POST'])
