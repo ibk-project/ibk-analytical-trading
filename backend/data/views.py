@@ -66,7 +66,7 @@ def get_index_front(request):
                 return JsonResponse({"data":result})
         
         elif chart_type == "candle":
-            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Open" : 1, "High" : 1, "Low" : 1,  "Close" : 1, "Date": 1})
+            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Open" : 1, "High" : 1, "Low" : 1, "Volume" : 1,  "Close" : 1, "Date": 1})
             result = list(id)
             if result == []:
                 return JsonResponse({ "Result" : "None"})
