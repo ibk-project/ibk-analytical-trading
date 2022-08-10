@@ -70,6 +70,9 @@ function CandleVolume(props) {
       ]);
     }
     setOptions({
+      chart: {
+        height: '50%'
+      },
       title: {
         text: props.title
       },
