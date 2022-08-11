@@ -1,37 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import './css/MarketSector.css';
 import SingleLine from './chart/SingleLine';
 import CandleVolume from './chart/CandleVolume';
+import IndexCompare from "./chart/IndexCompare";
+import DatePicker from 'react-date-picker';
 
 import axios from 'axios';
 
 function MarketSector(props) {
-  const [sectorNameList, setSectorNameList] = useState(undefined);
+  const [sectorNameData, setSectorNameData] = useState(undefined);
   const [sectorList, setSectorList] = useState([]);
-  const [currSector, setCurrSector] = useState([0, '반도체와반도체장비']);
+  const [currSector, setCurrSector] = useState([0, '']);
   const [currSectorStockList, setCurrSectorStockList] = useState([]);
   const [sectorStockData, setSectorStockData] = useState(undefined);
   const [sectorIndex, setSectorIndex] = useState([]);
-  const [currStock, setCurrStock] = useState(undefined);
-  const [stockCandleData, setStockCandleData] = useState([]);
+  const [currStock, setCurrStock] = useState(['', '']);
+  const [stockCandleData, setStockCandleData] = useState(undefined);
+  const [analysisStartPoint, setAnalysisStartPoint] = useState(new Date('2020-01-01'));
+  const [analysisData, setAnalysisData] = useState(undefined);
+  const [analysisIndex, setAnalysisIndex] = useState([]);
+  const [analysisBenchmark, setAnalysisBenchmark] = useState([]);
 
-  const makeSectorList = (data) => {
-    if(data == undefined) return;
-    let _sectorList = [];
-    for(let i = 0; i < data.length; i++){
-      _sectorList.push(
-        <li
-          key={i}
-          className="market-sector-item"
-          onClick={() => {setCurrSector([i, data[i].sector_name]); setCurrStock(undefined);}}
-          style={currSector[1] === data[i].sector_name ? {background: 'rgba(0,0,0,0.2)'} : {}}
-        >
-          {data[i].sector_name}
-        </li>
-      )
-    }
-    setSectorList(_sectorList);
-  }
+  const isMounted = useRef(false);
     
   const makeCurrSectorStockList = (data) => {
     if(data === undefined || currStock === undefined) return;
@@ -51,42 +41,62 @@ function MarketSector(props) {
     setCurrSectorStockList(_currSectorStockList);
   }
 
+  const makeIndex = (data) => {
+    let dict = {};
+    for(let i = 0; i < data.length; i++){
+      const stock_data = data[i].stock_data;
+      for(let j = 0; j < stock_data.length; j++){
+        if(!(stock_data[j].Date in dict)){
+          dict[stock_data[j].Date] = {
+            "sum": 0,
+            "cnt": 0
+          };
+        }
+        dict[stock_data[j].Date].sum += (stock_data[j].Close / stock_data[0].Close) * 100;
+        dict[stock_data[j].Date].cnt += 1;
+      }
+    }
+    let newIndex = [];
+    for(let [key, value] of Object.entries(dict)){
+      newIndex.push({
+        Date: key, 
+        Close: value.sum / value.cnt
+      });
+    }
+    return newIndex;
+  }
+
   useEffect(() => {
     const getSectorList = async() => {
       await axios.get('/api/data-management/stock/sector-list')
       .then(res => {
-        setSectorNameList(res.data.data);
-        makeSectorList(res.data.data);
-        makeCurrSectorStockList(res.data.data);
+        setSectorNameData(res.data.data);
+        setCurrSector([0, res.data.data[0].sector_name]);
       })
     }
     getSectorList();
+    setTimeout(() => {
+      isMounted.current = true;
+    });
   }, [])
 
   useEffect(() => {
-    const makeSectorIndex = (data) => {
-      let dict = {};
+    if(!isMounted.current) return;
+    const makeSectorList = (data) => {
+      let _sectorList = [];
       for(let i = 0; i < data.length; i++){
-        const stock_data = data[i].stock_data;
-        for(let j = 0; j < stock_data.length; j++){
-          if(!(stock_data[j].Date in dict)){
-            dict[stock_data[j].Date] = {
-              "sum": 0,
-              "cnt": 0
-            };
-          }
-          dict[stock_data[j].Date].sum += (stock_data[j].Close / stock_data[0].Close) * 100;
-          dict[stock_data[j].Date].cnt += 1;
-        }
+        _sectorList.push(
+          <li
+            key={i}
+            className="market-sector-item"
+            onClick={() => {setCurrSector([i, data[i].sector_name]);}}
+            style={currSector[1] === data[i].sector_name ? {background: 'rgba(0,0,0,0.2)'} : {}}
+          >
+            {data[i].sector_name}
+          </li>
+        )
       }
-      let _sectorIndex = [];
-      for(let [key, value] of Object.entries(dict)){
-        _sectorIndex.push({
-          Date: key, 
-          Close: value.sum / value.cnt
-        });
-      }
-      setSectorIndex(_sectorIndex);
+      setSectorList(_sectorList);
     }
     const getSector = async() => {
       await axios.get('/api/data-management/stock/sector-stock', {
@@ -95,29 +105,58 @@ function MarketSector(props) {
           "start_date": "2020-01-01",
           "end_date": "2022-08-09"
         }
-      }).then(res => {setSectorStockData(res.data.data); makeSectorIndex(res.data.data);})
+      }).then(res => {
+        setSectorStockData(res.data.data);
+        setSectorIndex(makeIndex(res.data.data));
+      })
     }
     getSector();
-    makeSectorList(sectorNameList);
-    makeCurrSectorStockList(sectorNameList);
-    if(sectorNameList !== undefined){
-      setCurrStock([0, sectorNameList[currSector[0]].sector_stocks[0].name]);
-    }
+    makeSectorList(sectorNameData);
+    makeCurrSectorStockList(sectorNameData);
+    setCurrStock([0, sectorNameData[currSector[0]].sector_stocks[0].name]);
   }, [currSector])
 
   useEffect(() => {
-    if(sectorNameList === undefined || currSector === undefined) return;
-    setCurrStock([0, sectorNameList[currSector[0]].sector_stocks[0].name]);
-  }, [sectorNameList])
+    if(!isMounted.current) return;
+    setCurrStock([0, sectorNameData[currSector[0]].sector_stocks[0].name]);
+  }, [sectorNameData])
 
   useEffect(() => {
-    makeCurrSectorStockList(sectorNameList);
+    if(!isMounted.current) return;
+    makeCurrSectorStockList(sectorNameData);
   }, [currStock])
 
   useEffect(() => {
-    if(sectorStockData == undefined || currStock === undefined) return;
+    if(!isMounted.current || !sectorStockData || !currStock) return;
     setStockCandleData(sectorStockData[currStock[0]].stock_data);
   }, [sectorStockData, currStock])
+
+  useEffect(() => {
+    if(!isMounted.current) return;
+    const getAnalysis = async() => {
+      await axios.get('/api/data-management/stock/sector-stock', {
+        params: {
+          "sector_name": currSector[1],
+          "start_date": analysisStartPoint,
+          "end_date": "2022-08-09"
+        }
+      }).then(res => {
+        setAnalysisData(res.data.data);
+        setAnalysisIndex(makeIndex(res.data.data));
+      })
+      await axios.get('/api/data-management/index/get', {
+        params: {
+          "code": 'KS11',
+          "date": analysisStartPoint,
+          "end_date": "2022-08-09",
+          "type": "candle"
+        }
+      }).then(res => {
+        setAnalysisBenchmark(res.data.data)
+      })
+    }
+    getAnalysis();
+  }, [currSector, analysisStartPoint])
 
   return(
     <div className="market-sector-container">
@@ -126,15 +165,18 @@ function MarketSector(props) {
         {sectorList}
       </ul>
       <div className="market-title2">{currSector[1]}</div>
-      <SingleLine title={currSector[1] + "지수"} data={sectorIndex}></SingleLine>
+      {currSector ? <SingleLine title={currSector[1] + "지수"} data={sectorIndex} /> : ''}
       <div className="market-stock-chart">
         <div style={{width: '100%', height: '100%'}}>
-          {currStock !== undefined ? <CandleVolume title={currStock[1]} data={stockCandleData} /> : ''}
+          {currStock && stockCandleData ? <CandleVolume title={currStock[1]} data={stockCandleData} /> : ''}
         </div>
         <ul>
           {currSectorStockList}
         </ul>
       </div>
+      <div className="market-title2">Analysis</div>
+      <DatePicker onChange={setAnalysisStartPoint} value={analysisStartPoint} />
+      <IndexCompare title={currSector[1] + " vs KOSPI"} name={[currSector[1], 'KOSPI']} data={[analysisIndex, analysisBenchmark]} />
     </div>
   );
 }
