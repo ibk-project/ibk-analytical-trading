@@ -7,12 +7,13 @@
 }
 .title {
   text-align: center;
+  font-size: x-large;
   padding: 10px;
 }
 .option { 
   border: 1px solid;
   border-radius: 25px;
-  padding: 5px 25px 10px 25px;
+  padding: 5px 25px 0px 25px;
 }
 .options {
   margin-bottom: 5px;
@@ -27,7 +28,6 @@
 .backtest {
   grid-column: 2;
   grid-row: 2/4;
-  vertical-align: middle;
   border: 1px solid;
   border-radius: 25px;
   padding: 5px 25px 10px 25px;
