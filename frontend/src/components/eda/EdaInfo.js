@@ -3,7 +3,7 @@ import "../css/EdaInfo.css"
 
 function EdaInfo(props) {
     const sidebarClass = props.isOpen ? "eda-info open" : "eda-info";
-    const [edaType, setEdaType] = useState("none"); // none, market, sector, stock, material
+    const [edaType, setEdaType] = useState("none"); // none, market, sector, stock
     const [edaName, setEdaName] = useState("none"); // none, (name)
     const [edaCode, setEdaCode] = useState("none"); // none, (code)
     const [edaFlag, setEdaFlag] = useState(false);
