@@ -1,0 +1,40 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  grid-gap: 10px;
+  width: 90vw;
+  margin: auto;
+}
+.title {
+  text-align: center;
+  padding: 10px;
+}
+.option { 
+  border: 1px solid;
+  border-radius: 25px;
+  padding: 5px 25px 10px 25px;
+}
+.options {
+  margin-bottom: 5px;
+}
+.portfolio {
+  grid-column: 1;
+  grid-row: 3;
+  border: 1px solid;
+  border-radius: 25px;
+  padding: 5px 25px 10px 25px;
+}
+.backtest {
+  grid-column: 2;
+  grid-row: 2/4;
+  vertical-align: middle;
+  border: 1px solid;
+  border-radius: 25px;
+  padding: 5px 25px 10px 25px;
+}
+button {
+  float: right;
+}
+input { 
+  float: right;
+}
