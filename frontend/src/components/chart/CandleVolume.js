@@ -2,9 +2,11 @@ import React, { Fragment, useState, useEffect } from "react";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import Accessibility from "highcharts/modules/accessibility";
+import Exporting from "highcharts/modules/exporting";
 
 function CandleVolume(props) {
   Accessibility(Highcharts);
+  Exporting(Highcharts);
   const [options, setOptions] = useState({
   rangeSelector: {
     selected: 1
@@ -70,6 +72,9 @@ function CandleVolume(props) {
       ]);
     }
     setOptions({
+      chart: {
+        height: '50%'
+      },
       title: {
         text: props.title
       },
