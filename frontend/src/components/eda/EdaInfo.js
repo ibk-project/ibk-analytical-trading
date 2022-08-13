@@ -11,10 +11,22 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+import Tooltip from '@mui/material/Tooltip';
+import styled from 'styled-components'
 import "../css/EdaInfo.css"
 import { Container } from "@mui/material";
 
+const NewsButton = styled.button`
+  background-color: midnightblue;
+  color: white;
+  border: 0;
+  width: 100%;
+  height: 32px;
+  border-radius: 12px;
+`;
+
 function EdaInfo(props) {
+    const mainColor = "#5b5b69"
     const sidebarClass = props.isOpen ? "eda-info open" : "eda-info";
     const [edaType, setEdaType] = useState("none"); // none, market, sector, stock
     const [edaName, setEdaName] = useState("none"); // none, (name)
@@ -22,12 +34,40 @@ function EdaInfo(props) {
     const [edaFlag, setEdaFlag] = useState(false);
 
     const [currentSimilarDate, setCurrentSimilarDate] = useState("none");
+    const [currentSelectedFeature, setCurrentSelectedFeature] = useState("KOSPI");
+    const [similarSelectedFeature, setSimilarSelectedFeature] = useState("KOSPI");
 
     const [marketData, setmarketData] = useState({
       currentDate: '2022-06-08~2022-07-08',
       similarDates: ['2021-05-21~2020-06-19','2021-05-28~2021-06-26','2020-10-08~2020-11-06','2019-03-02~2019-03-31','2019-01-21~2019-02-19','2019-01-13~2019-02-11','2017-06-08~2017-07-07'],
-      newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"]]
+      newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"], ["바이던 음주", "2022-07-06"], ["옥수수 수염차", "2022-07-05"], ["일석 이조", "2022-07-04"]],
+      kospi: [],
+      brent: [],
+      krwusd: [],
+      copper: [],
     });
+
+    const [similarDateData, setSimilarDateData] = useState({
+      newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"], ["바이던 음주", "2022-07-06"], ["옥수수 수염차", "2022-07-05"], ["일석 이조", "2022-07-04"]],
+      kospi: [],
+      brent: [],
+      krwusd: [],
+      copper: [],
+    });
+
+
+    useEffect(() => {
+      // getMarketData
+      // 백엔드에서 현재 시점 기본 marketData를 setMarketData에 저장 (similarDates, newsKeywords)
+    }, [])
+
+    useEffect(() => {
+      // getSimilarDateData
+      // 백엔드에서 currentSimilarDate 날짜의 (뉴스 키워드 5개)와 주요 지수(kospi, brent유, KRW/USD, copper선물) 정보 가져와서 setSimilarDateData 에 저장
+    }, [currentSimilarDate])
+
+
+    const featureSelection = ["KOSPI", "BRENT", "KRW/USD", "COPPER"];
 
     const buttonSX = {
       "&:hover": {
@@ -39,6 +79,12 @@ function EdaInfo(props) {
       setCurrentSimilarDate(e.target.outerText);
       // ex. '2021-05-21~2020-06-19'
     };
+    const featureClick = (e) => {
+      setCurrentSelectedFeature(e.target.outerText);
+    }
+    const featureClick2 = (e) => {
+      setSimilarSelectedFeature(e.target.outerText);
+    }
 
     useEffect(() => {
         if (props.edaType === "none") {
@@ -56,33 +102,62 @@ function EdaInfo(props) {
     });
 
     return (
-        <div class={sidebarClass}>
+        <div className={sidebarClass}>
             <div id="eda-info-container">
                 {edaFlag ?
                 <>
                 {/* 기준 시점 파트 */}
-                <Box sx={{ width: '100%', bgcolor: 'red' }}>
+                <Box sx={{ width: '100%' }}>
                   <Grid container style={{textAlign: "center"}}>
                     <Grid item xs={6}> {/* 왼쪽 파트 */}
-                      <Chip label={"기준 시점 : "+marketData.currentDate}  sx={{ fontSize: 15, width: 500, mt: 2, mb: 1, bgcolor: 'darkslategrey', color:'white' }}/>
-                      <Typography gutterBottom variant="h4" component="div">
+                      <Chip label={"기준 시점 : "+marketData.currentDate}  sx={{ fontSize: 15, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
+                      <Typography gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
                       </Typography>
                     </Grid>
-                    <Grid item xs={6}> {/* 오른쪽 파트 */}
-                      <Typography gutterBottom variant="h6" component="div">
-                        $4.50
+                    <Grid item xs={6} sx={{textAlign: 'center', paddingTop:'16px'}}> {/* 오른쪽 파트 */}
+                      <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                        {featureSelection.map((value) => (
+                          <>
+                          {(currentSelectedFeature===value)?
+                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
+                              {value}
+                            </Button></Grid>
+                          :
+                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
+                              {value}
+                            </Button></Grid>
+                          }
+                          </>
+                        ))}
+                      </Grid>
+                      <Typography gutterBottom variant="h5" component="div" sx={{my:4}}>
+                        {currentSelectedFeature} Chart {marketData.currentDate}
                       </Typography>
+                      <Box sx={{my:3}}>
+                        <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                          <Grid item sm={4.5} sx={{ px:1, pt:1 }}><NewsButton style={{backgroundColor:'black', color:'white'}}>
+                            최근 주요 뉴스 키워드
+                          </NewsButton></Grid>
+                          {marketData.newsKeywords.map((value) => (
+                            <>
+                              <Grid item key={value[0]} sm={3} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
+                                {value[0]}
+                              </NewsButton></Tooltip></Grid>
+                            </>
+                          ))}
+                        </Grid>
+                      </Box>
                     </Grid>
                   </Grid>
                 </Box>
                 {/* 중간 분리선 */}
-                <Divider variant="middle"> 분리 </Divider>
+                <Divider variant="middle"> 유사 시점 </Divider>
                 {/* 유사 시점 파트 */}
-                <Box sx={{ width: '100%', bgcolor: 'yellow' }}>
+                <Box sx={{ width: '100%' }}>
                   <Grid container style={{textAlign: "center"}}>
                     <Grid item xs={6}> {/* 왼쪽 파트 */}
-                      <Chip color="default" label={"유사 시점 탐색 결과"}  sx={{ fontSize: 15, width: 500, mt: 2, bgcolor: 'darkslategrey', color:'white', borderRadius:1 }}/>
+                      <Chip color="default" label={"유사 시점 탐색 결과"}  sx={{ fontSize: 15, width: 500, mt: 2, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
                       <Paper style={{minHeight: 100, maxHeight: 250, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
 
                         <List>
@@ -105,13 +180,52 @@ function EdaInfo(props) {
                       </Paper>
                     </Grid>
                     <Grid item xs={6}> {/* 오른쪽 파트 */}
-                      <Typography gutterBottom variant="h6" component="div">
-                        {currentSimilarDate}
+                    {currentSimilarDate==="none"?(
+                      <>
+                      <Typography gutterBottom variant="h6" component="div" sx={{my:15}}>
+                        유사시점을 선택해주세요
                       </Typography>
+                      </>
+                    ):(
+                      <>
+                      <Chip label={currentSimilarDate}  sx={{ borderRadius: 3, fontSize: 15, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
+                      <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                        {featureSelection.map((value) => (
+                          <>
+                          {(similarSelectedFeature===value)?
+                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
+                              {value}
+                            </Button></Grid>
+                          :
+                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
+                              {value}
+                            </Button></Grid>
+                          }
+                          </>
+                        ))}
+                      </Grid>
+                      <Typography gutterBottom variant="h5" component="div" sx={{my:4}}>
+                        {similarSelectedFeature} Chart {currentSimilarDate}
+                      </Typography>
+                      <Box sx={{my:3}}>
+                        <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                          <Grid item sm={4.5} sx={{ px:1, pt:1 }}><NewsButton style={{backgroundColor:'black', color:'white'}}>
+                            최근 주요 뉴스 키워드
+                          </NewsButton></Grid>
+                          {similarDateData.newsKeywords.map((value) => (
+                            <>
+                              <Grid item key={value[0]} sm={3} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
+                                {value[0]}
+                              </NewsButton></Tooltip></Grid>
+                            </>
+                          ))}
+                        </Grid>
+                      </Box>
+                      </>
+                    )}
                     </Grid>
                   </Grid>
                 </Box>
-
 
                 <div>
                     code is {edaCode}
@@ -123,41 +237,6 @@ function EdaInfo(props) {
                     type is {edaType}
                 </div>
 
-                <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                  <Box sx={{ my: 3, mx: 2 }}>
-                    <Grid container alignItems="center">
-                      <Grid item xs>
-                        <Typography gutterBottom variant="h6" component="div">
-                          Hello
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Typography gutterBottom variant="h6" component="div">
-                          $4.50
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                    <Typography color="text.secondary" variant="body2">
-                      Pinstriped cornflower blue cotton blouse takes you on a walk to the park or
-                      just down the hall.
-                    </Typography>
-                  </Box>
-                  <Divider variant="middle" />
-                  <Box sx={{ m: 2 }}>
-                    <Typography gutterBottom variant="body1">
-                      Select type
-                    </Typography>
-                    <Stack direction="row" spacing={1}>
-                      <Chip label="Extra Soft" />
-                      <Chip color="primary" label="Soft" />
-                      <Chip label="Medium" />
-                      <Chip label="Hard" />
-                    </Stack>
-                  </Box>
-                  <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
-                    <Button>Add to cart</Button>
-                  </Box>
-                </Box>
                 </>
                 :
                 null}
