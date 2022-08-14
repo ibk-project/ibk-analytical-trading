@@ -20,8 +20,9 @@ const NewsButton = styled.button`
   background-color: midnightblue;
   color: white;
   border: 0;
-  width: 100%;
-  height: 32px;
+  /* width: 100%; */
+  width: max-content;
+  height: 25px;
   border-radius: 12px;
 `;
 
@@ -141,7 +142,7 @@ function EdaInfo(props) {
                           </NewsButton></Grid>
                           {marketData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sm={3} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
@@ -214,7 +215,7 @@ function EdaInfo(props) {
                           </NewsButton></Grid>
                           {similarDateData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sm={3} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
