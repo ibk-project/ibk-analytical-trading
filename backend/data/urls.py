@@ -10,7 +10,8 @@ urlpatterns = [
         ])),
     path('commodity/',include([
         path('all-data',views.get_commodity),
-        path('one-data',views.get_one_commodity),
+        path('one-data',views.get_commodity_front),
+        #path('one-data',views.get_one_commodity),
         ])),
     path('stock/',include([
         path('all-data',views.get_stock),
