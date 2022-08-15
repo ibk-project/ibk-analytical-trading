@@ -27,7 +27,7 @@ const NewsButton = styled.button`
 `;
 
 function EdaInfo(props) {
-    const mainColor = "#5b5b69"
+    const mainColor = "#3d3d3d"
     const sidebarClass = props.isOpen ? "eda-info open" : "eda-info";
     const [edaType, setEdaType] = useState("none"); // none, market, sector, stock
     const [edaName, setEdaName] = useState("none"); // none, (name)
@@ -108,41 +108,42 @@ function EdaInfo(props) {
                 {edaFlag ?
                 <>
                 {/* 기준 시점 파트 */}
-                <Box sx={{ width: '100%' }}>
-                  <Grid container style={{textAlign: "center"}}>
-                    <Grid item xs={6}> {/* 왼쪽 파트 */}
-                      <Chip label={"기준 시점 : "+marketData.currentDate}  sx={{ fontSize: 15, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
-                      <Typography gutterBottom variant="h4" component="div" sx={{my:4}}>
+                <Box key={"556554"} sx={{ width: '100%' }}>
+                  <Grid container key={"0020534"} style={{textAlign: "center"}}>
+                    <Grid item key={"grid100"} xs={6}> {/* 왼쪽 파트 */}
+                      <Chip key={"1234"} label={(edaName==="전체 시장"?("KOSPI"):(edaName)) + "  " + marketData.currentDate}  sx={{ fontSize: 15, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
+                      <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
                       </Typography>
                     </Grid>
-                    <Grid item xs={6} sx={{textAlign: 'center', paddingTop:'16px'}}> {/* 오른쪽 파트 */}
-                      <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                    <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', paddingTop:'16px'}}> {/* 오른쪽 파트 */}
+                      <Chip key={"1236"} label={marketData.currentDate} sx={{ borderRadius: 3, fontSize: 15, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
+                      <Grid key={"1237"} container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
                         {featureSelection.map((value) => (
                           <>
                           {(currentSelectedFeature===value)?
-                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
+                            <Grid item key={value} sm={2}><Button key={"1238"+{value}} onClick={(e) => featureClick(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
                               {value}
                             </Button></Grid>
                           :
-                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
+                            <Grid item key={value} sm={2}><Button key={"1234"+{value}} onClick={(e) => featureClick(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
                               {value}
                             </Button></Grid>
                           }
                           </>
                         ))}
                       </Grid>
-                      <Typography gutterBottom variant="h5" component="div" sx={{my:4}}>
+                      <Typography gutterBottom key={"1238"} variant="h5" component="div" sx={{my:4}}>
                         {currentSelectedFeature} Chart {marketData.currentDate}
                       </Typography>
-                      <Box sx={{my:3}}>
-                        <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item sm={4.5} sx={{ px:1, pt:1 }}><NewsButton style={{backgroundColor:'black', color:'white'}}>
+                      <Box key={"1239"} sx={{my:3}}>
+                        <Grid container key={"1240"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                          <Grid item key={"1241"} sm={4.5} sx={{ px:1, pt:1 }}><NewsButton key={"1242"} style={{backgroundColor:'black', color:'white'}}>
                             최근 주요 뉴스 키워드
                           </NewsButton></Grid>
                           {marketData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1234123"+value[0]} title={value[1]} arrow><NewsButton key={"1234532"+value[0]}>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
@@ -153,24 +154,24 @@ function EdaInfo(props) {
                   </Grid>
                 </Box>
                 {/* 중간 분리선 */}
-                <Divider variant="middle"> 유사 시점 </Divider>
+                <Divider key={"22224"} variant="middle"> 유사 시점 </Divider>
                 {/* 유사 시점 파트 */}
-                <Box sx={{ width: '100%' }}>
-                  <Grid container style={{textAlign: "center"}}>
-                    <Grid item xs={6}> {/* 왼쪽 파트 */}
-                      <Chip color="default" label={"유사 시점 탐색 결과"}  sx={{ fontSize: 15, width: 500, mt: 2, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
-                      <Paper style={{minHeight: 100, maxHeight: 250, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
+                <Box key={"002020"} sx={{ width: '100%' }}>
+                  <Grid container key={"1234754"} style={{textAlign: "center"}}>
+                    <Grid item key={"341234"} xs={6}> {/* 왼쪽 파트 */}
+                      <Chip key={"512342"} color="default" label={"유사 시점 탐색 결과"} sx={{ fontSize: 15, width: 500, mt: 2, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
+                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 250, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
 
-                        <List>
+                        <List key="929294">
                           {marketData.similarDates.map((value) => (
                             <ListItem key={value} sx={{py:0.5}} >
                               {(currentSimilarDate===value)?
-                                <ListItemButton onClick={(e) => similarDateClick(e)} sx={{bgcolor:'midnightblue', borderRadius: 3, color:'white', buttonSX}}>
-                                  <ListItemText primary={`${value}`} />
+                                <ListItemButton key={"button1"+{value}} onClick={(e) => similarDateClick(e)} sx={{bgcolor:'midnightblue', borderRadius: 3, color:'white', buttonSX}}>
+                                  <ListItemText key={"text1"+value} primary={`${value}`} />
                                 </ListItemButton>
                                 :
-                                <ListItemButton onClick={(e) => similarDateClick(e)} sx={{bgcolor: 'lightgrey', borderRadius: 3, color:'black'}}>
-                                  <ListItemText primary={`${value}`} />
+                                <ListItemButton key={"button1"+value} onClick={(e) => similarDateClick(e)} sx={{bgcolor: 'lightgrey', borderRadius: 3, color:'black'}}>
+                                  <ListItemText key={"text1"+value} primary={`${value}`} />
                                 </ListItemButton>
                               }
                               
@@ -180,42 +181,42 @@ function EdaInfo(props) {
 
                       </Paper>
                     </Grid>
-                    <Grid item xs={6}> {/* 오른쪽 파트 */}
+                    <Grid item key={"6112344"} xs={6}> {/* 오른쪽 파트 */}
                     {currentSimilarDate==="none"?(
                       <>
-                      <Typography gutterBottom variant="h6" component="div" sx={{my:15}}>
+                      <Typography gutterBottom key={"777777"} variant="h6" component="div" sx={{my:15}}>
                         유사시점을 선택해주세요
                       </Typography>
                       </>
                     ):(
                       <>
-                      <Chip label={currentSimilarDate}  sx={{ borderRadius: 3, fontSize: 15, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
-                      <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                      <Chip label={currentSimilarDate} key={"8765864"} sx={{ borderRadius: 3, fontSize: 15, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
+                      <Grid container key={"3214294"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
                         {featureSelection.map((value) => (
                           <>
                           {(similarSelectedFeature===value)?
-                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
+                            <Grid item key={value} sm={2}><Button key={"button2"+{value}} onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
                               {value}
                             </Button></Grid>
                           :
-                            <Grid item key={value} sm={2}><Button onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
+                            <Grid item key={value} sm={2}><Button key={"button2"+{value}} onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
                               {value}
                             </Button></Grid>
                           }
                           </>
                         ))}
                       </Grid>
-                      <Typography gutterBottom variant="h5" component="div" sx={{my:4}}>
+                      <Typography gutterBottom key={"71714"} variant="h5" component="div" sx={{my:4}}>
                         {similarSelectedFeature} Chart {currentSimilarDate}
                       </Typography>
-                      <Box sx={{my:3}}>
-                        <Grid container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item sm={4.5} sx={{ px:1, pt:1 }}><NewsButton style={{backgroundColor:'black', color:'white'}}>
+                      <Box key={"6134444"} sx={{my:3}}>
+                        <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                          <Grid item key={"grid000"} sm={4.5} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
                             최근 주요 뉴스 키워드
                           </NewsButton></Grid>
                           {similarDateData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip title={value[1]} arrow><NewsButton>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]} arrow><NewsButton>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
