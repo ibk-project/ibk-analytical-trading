@@ -162,19 +162,22 @@ function MarketSector(props) {
 
   return(
     <div className="market-sector-container">
-      <div className="market-title">Sector</div>
+      <h2>Sector</h2>
       <ul className="market-sector-list">
         {sectorList}
       </ul>
-      <div className="market-title2">{currSector[1]}</div>
-      {currSector[1] && sectorIndex && analysisBenchmark && analysisStocks[0] && analysisStocks[1] ?
-        <IndexCompare
-          name={[currSector[1], 'KOSPI'].concat(analysisStocks[0])}
-          data={[sectorIndex, analysisBenchmark].concat(analysisStocks[1])}
-        />
-        : ''
-      }
-      <div className="market-stock-chart">
+      <span className="market-title2">{currSector[1]}</span>
+      <div className="market-stock-comparechart">
+        {currSector[1] && sectorIndex && analysisBenchmark && analysisStocks[0] && analysisStocks[1] ?
+          <IndexCompare
+            name={[currSector[1], 'KOSPI'].concat(analysisStocks[0])}
+            data={[sectorIndex, analysisBenchmark].concat(analysisStocks[1])}
+          />
+          : ''
+        }
+      </div>
+      
+      <div className="market-stock-candlechart">
         <div style={{width: '100%', height: '100%'}}>
           {currStock && stockCandleData ? <CandleVolume title={currStock[1]} data={stockCandleData} /> : ''}
         </div>
