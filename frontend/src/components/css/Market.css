@@ -1,6 +1,6 @@
 .market-container {
   width: 70rem;
-  padding: 2rem calc((100% - 70rem) / 2);
+  padding: 5rem calc((100% - 70rem) / 2);
 }
 
 .market-title {
@@ -14,9 +14,9 @@
 }
 
 .market-index-container {
-  padding: 50px 0;
+  padding: 0 0 50px 0;
 }
 
 .market-sector-container {
-  padding: 50px 0;
+  padding: 0 0 50px 0;
 }

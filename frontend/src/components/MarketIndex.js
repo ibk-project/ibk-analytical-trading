@@ -15,7 +15,7 @@ function MarketIndex(props) {
   }
 
   const makeIndexList = (data) => {
-    if(data == undefined) return;
+    if(data === undefined) return;
     const indexCode = data.Index_Code;
     const indexName = data.Index_Name;
     let _indexList = [];
@@ -24,7 +24,7 @@ function MarketIndex(props) {
         <li
           key= {i}
           onClick={() => {handleIndexClick(indexCode[i], indexName[i])}}
-          style={currIndex[1] == indexName[i] ? {background: 'rgba(0,0,0,0.2)'} : {}}
+          style={currIndex[1] === indexName[i] ? {background: 'rgba(0,0,0,0.2)'} : {}}
         >
           {indexName[i]}
         </li>
@@ -95,7 +95,7 @@ function MarketIndex(props) {
   
   return(
     <div className="market-index-container">
-      <div className="market-title">Index</div>
+      <h2>Index</h2>
       <div className="market-index-chart">
         <div style={{width: '100%'}}>
           <SingleLine title={currIndex[1]} data={indexData} />

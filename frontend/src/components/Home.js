@@ -97,9 +97,14 @@ function Home() {
       <h4>Description</h4>
       <img alt="MarketClusteringModel" style={{"width": "900px", "height":"300px"}} src="/MarketClusteringModel.png"></img>
       <p>
-        앞에서 구한 feature를 사용하여 KOSPI, KOSDAQ 등의 주요 지수를 예측하는 모델을 사용하였습니다.<br />
+        앞에서 구한 feature를 사용하여 KOSPI, KOSDAQ 등의 주요 지수를 예측하는 모델을 사용합니다.<br />
         그 과정에서 압축된 10차원의 시점 벡터를 사용하여 유사시점을 구할 수 있습니다.<br />
+      </p>
+      <img alt="SimilarPoint" style={{"width": "350px", "height":"300px"}} src="/SimilarPoint.png"></img>
+      <p>
         현재 시점 벡터과 과거의 시점 벡터의 거리를 구하여 가까운 K개의 시점 벡터를 유사시점이라 정의합니다.<br />
+        과거의 유사시점에서의 지수 변화값을 사용하여 미래를 예측할 수 있습니다.<br />
+        여기서 구한 유사시점과 모델의 예측 데이터는 EDA와 포트폴리오 결정에 사용됩니다.<br />
       </p>
       <h3>Sector Clustering</h3>
       <p>
@@ -132,20 +137,8 @@ function Home() {
 
       </p>
       <h3>Portfolio</h3>
-      <pl>
-        
-      </pl>
-      <h1 className="home-title">Market</h1>
-      <p className="home-description">
-        Market은 증시에 대한 간단한 요약을 시각화하여 보여줍니다.
-      </p>
-      <h1 className="home-title">EDA</h1>  
-      <p className="home-description">
-        
-      </p>
-      <h1 className="home-title">Portfolio</h1>
-      <p className="home-description">
-        
+      <p>
+
       </p>
     </div>
   );
