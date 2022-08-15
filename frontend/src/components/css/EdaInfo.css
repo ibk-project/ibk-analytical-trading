@@ -2,12 +2,16 @@
     position: absolute;
     visibility:visible;
     left: 0;
+    width: 100%;
 }
 
 .eda-info.open {
-    left: 20rem;
+    left: 15rem;
+    width: calc(100% - 15rem)
 }
 
 .eda-info-container {
     visibility:visible;
+    width: 100%;
+
 }

@@ -1,33 +1,25 @@
 import './css/Header.css';
-import {useState} from 'react';
-import {Link, useLocation} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 function Header() {
-  const [currentTab, setCurrentTab] = useState(useLocation().pathname);
-  const linkStyle = (linkTab) => {
-    if(currentTab === linkTab) return {"fontWeight": "bold"};
-  }
-  const handleCurrentTab = (linkTab) => {
-    setCurrentTab(linkTab);
-  }
   return(
     <header className="main_top">
       <div className="header1">
-        <Link to="/" className="header-title">IBKAT | IBK Analytical Trading System</Link>
+        <NavLink to="/" className="header-title" activeclassname="active-title">IBKAT | IBK Analytical Trading System</NavLink>
       </div>
       <div className="header2">
         <ul>
           <li>
-            <Link style={linkStyle("/")} onClick={() => {handleCurrentTab("/")}} to="/">Home</Link>
+            <NavLink to="/" activeclassname="active">Home</NavLink>
           </li>
           <li>
-            <Link style={linkStyle("/market")} onClick={() => {handleCurrentTab("/market")}} to="/market">Market</Link>
+            <NavLink to="/market" activeclassname="active">Market</NavLink>
           </li>
           <li>
-            <Link style={linkStyle("/eda")} onClick={() => {handleCurrentTab("/eda")}} to="/eda">EDA</Link>
+            <NavLink to="/eda" activeclassname="active">EDA</NavLink>
           </li>
           <li>
-            <Link style={linkStyle("/portfolio")} onClick={() => {handleCurrentTab("/portfolio")}} to="/portfolio">Portfolio</Link>
+            <NavLink to="/portfolio" activeclassname="active">Portfolio</NavLink>
           </li>
         </ul>
       </div>

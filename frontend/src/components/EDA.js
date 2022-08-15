@@ -5,48 +5,36 @@ import EdaInfo from "./eda/EdaInfo";
 
 
 function EDA() {
-  const indexData = [
-    {"name": "KOSPI", "code": "012345"},
-    {"name": "KODAQ", "code": "012346"},
-    {"name": "NASDAQ", "code": "412451"},
-    {"name": "S&P", "code": "573442"}
+  const marketData = [
+    {"name": "전체 시장", "code": "000001"},
+  ];
+  const sectorData = [
+    {"name": "비철금속", "code": "322"},
+    {"name": "은행", "code": "301"},
+    {"name": "석유와가스", "code": "313"},
+    {"name": "화장품", "code": "266"},
+    {"name": "부동산", "code": "280"},
+    {"name": "우주항공과국방", "code": "284"},
   ];
   const stockData = [
-    {"name": "NAVER", "code": "126834"},
-    {"name": "삼성전자", "code": "825343"},
-    {"name": "SK하이닉스", "code": "121097"},
-    {"name": "현대차", "code": "126834"},
-    {"name": "삼성 SDI", "code": "635434"},
-    {"name": "기아", "code": "297587"},
-    {"name": "카카오", "code": "017254"},
-    {"name": "LG화학", "code": "234886"},
-    {"name": "셀트리온", "code": "723593"},
-    {"name": "카카오뱅크", "code": "901245"},
-    {"name": "크래프톤", "code": "091792"}
+    {"name": "시가총액 상위 100개", "code": "000100"},
+    {"name": "시가총액 상위 200개", "code": "000200"},
+    {"name": "시가총액 상위 300개", "code": "000300"}
   ];
-  const materialData = [
-    {"name": "금", "code": "124215"},
-    {"name": "은", "code": "458657"},
-    {"name": "철", "code": "924251"},
-    {"name": "옥수수", "code": "128578"},
-    {"name": "구리", "code": "973542"},
-    {"name": "석유", "code": "875654"},
-    {"name": "석탄", "code": "890352"}
-  ];
-  const [edaType, setEdaType] = useState("none"); // none, market, sector, stock, material
-  const [edaName, setEdaName] = useState("none"); // none, (name)
-  const [edaCode, setEdaCode] = useState("none"); // none, (code)
+  const [edaType, setEdaType] = useState("market"); // none, market, sector, stock
+  const [edaName, setEdaName] = useState("전체 시장"); // none, (name)
+  const [edaCode, setEdaCode] = useState("000001"); // none, (code)
   const onEdaClick = (e) => {
     let code = e.target.href.split("/")[4];
     setEdaName(e.target.innerHTML)
     setEdaCode(code)
-    if (indexData.find(o => o.code === code)) {
+    if (marketData.find(o => o.code === code)) {
         setEdaType("market");
+    } else if (sectorData.find(o => o.code === code)) {
+      setEdaType("sector");
     } else if (stockData.find(o => o.code === code)) {
-        setEdaType("stock");;
-    } else if (materialData.find(o => o.code === code)) {
-        setEdaType("material");
-    }
+        setEdaType("stock");
+    } 
   }
   const makeList = (data) => {
     let retList = [];
@@ -55,10 +43,10 @@ function EDA() {
       }
     return retList;
   };
-  const indexList = makeList(indexData);
+  const marketList = makeList(marketData);
+  const sectorList = makeList(sectorData);
   const stockList = makeList(stockData);
-  const materialList = makeList(materialData);
-
+  
   const [sidebarOpen, setSideBarOpen] = useState(false);
   const handleViewSidebar = () => {
     setSideBarOpen(!sidebarOpen);
@@ -95,17 +83,17 @@ function EDA() {
     return (
       <span>
         <div className={sidebarClass}>
-          <div onClick={click1}>종합지수</div>
+          <div onClick={click1}>시장</div>
           <ul style={{display: showList1}}>
-            {data.indexList}
+            {data.marketList}
           </ul>
-          <div onClick={click2}>주식</div>
+          <div onClick={click2}>섹터</div>
           <ul style={{display: showList2}}>
-            {data.stockList}
+            {data.sectorList}
           </ul>
-          <div onClick={click3}>원자재</div>
+          <div onClick={click3}>주요 주식</div>
           <ul style={{display: showList3}}>
-            {data.materialList}
+            {data.stockList}
           </ul> 
         </div>
         <button onClick={data.toggleSidebar} className={toggleClass}>
@@ -122,7 +110,7 @@ function EDA() {
 
   return(
     <div className="eda-container">
-      <SideBar isOpen={sidebarOpen} toggleSidebar={handleViewSidebar} indexList={indexList} stockList={stockList} materialList={materialList} />
+      <SideBar isOpen={sidebarOpen} toggleSidebar={handleViewSidebar} marketList={marketList} stockList={stockList} sectorList={sectorList} />
       <EdaInfo
         isOpen={sidebarOpen}
         edaName = {edaName}
