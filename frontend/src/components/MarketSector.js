@@ -16,10 +16,8 @@ function MarketSector(props) {
   const [sectorIndex, setSectorIndex] = useState([]);
   const [currStock, setCurrStock] = useState(['', '']);
   const [stockCandleData, setStockCandleData] = useState(undefined);
-  const [analysisStartPoint, setAnalysisStartPoint] = useState(new Date('2020-01-01'));
-  const [analysisData, setAnalysisData] = useState(undefined);
-  const [analysisIndex, setAnalysisIndex] = useState([]);
   const [analysisBenchmark, setAnalysisBenchmark] = useState([]);
+  const [analysisStocks, setAnalysisStocks] = useState([]);
 
   const isMounted = useRef(false);
     
@@ -127,27 +125,31 @@ function MarketSector(props) {
   }, [currStock])
 
   useEffect(() => {
+    if(!isMounted.current || !sectorStockData) return;
+    const makeStockData = () => {
+      let stockName = [];
+      let stockData = [];
+      for(let i = 0; i < sectorStockData.length; i++){
+        stockName.push(sectorStockData[i].name);
+        stockData.push(sectorStockData[i].stock_data);
+      }
+      setAnalysisStocks([stockName, stockData]);
+    }
+    makeStockData();
+  }, [sectorStockData])
+
+  useEffect(() => {
     if(!isMounted.current || !sectorStockData || !currStock) return;
     setStockCandleData(sectorStockData[currStock[0]].stock_data);
   }, [sectorStockData, currStock])
 
   useEffect(() => {
     if(!isMounted.current) return;
-    const getAnalysis = async() => {
-      await axios.get('/api/data-management/stock/sector-stock', {
-        params: {
-          "sector_name": currSector[1],
-          "start_date": analysisStartPoint,
-          "end_date": "2022-08-09"
-        }
-      }).then(res => {
-        setAnalysisData(res.data.data);
-        setAnalysisIndex(makeIndex(res.data.data));
-      })
+    const getBenchmark = async() => {
       await axios.get('/api/data-management/index/get', {
         params: {
           "code": 'KS11',
-          "date": analysisStartPoint,
+          "date": "2020-01-01",
           "end_date": "2022-08-09",
           "type": "candle"
         }
@@ -155,8 +157,8 @@ function MarketSector(props) {
         setAnalysisBenchmark(res.data.data)
       })
     }
-    getAnalysis();
-  }, [currSector, analysisStartPoint])
+    getBenchmark();
+  }, [currSector])
 
   return(
     <div className="market-sector-container">
@@ -165,7 +167,13 @@ function MarketSector(props) {
         {sectorList}
       </ul>
       <div className="market-title2">{currSector[1]}</div>
-      {currSector ? <SingleLine title={currSector[1] + "지수"} data={sectorIndex} /> : ''}
+      {currSector[1] && sectorIndex && analysisBenchmark && analysisStocks[0] && analysisStocks[1] ?
+        <IndexCompare
+          name={[currSector[1], 'KOSPI'].concat(analysisStocks[0])}
+          data={[sectorIndex, analysisBenchmark].concat(analysisStocks[1])}
+        />
+        : ''
+      }
       <div className="market-stock-chart">
         <div style={{width: '100%', height: '100%'}}>
           {currStock && stockCandleData ? <CandleVolume title={currStock[1]} data={stockCandleData} /> : ''}
@@ -174,9 +182,6 @@ function MarketSector(props) {
           {currSectorStockList}
         </ul>
       </div>
-      <div className="market-title2">Analysis</div>
-      <DatePicker onChange={setAnalysisStartPoint} value={analysisStartPoint} />
-      <IndexCompare title={currSector[1] + " vs KOSPI"} name={[currSector[1], 'KOSPI']} data={[analysisIndex, analysisBenchmark]} />
     </div>
   );
 }

@@ -5,18 +5,17 @@ import Accessibility from "highcharts/modules/accessibility";
 import Exporting from "highcharts/modules/exporting";
 
 function IndexCompare(props) {
-  
   Accessibility(Highcharts);
   Exporting(Highcharts);
   const [options, setOptions] = useState({
+    chart: {
+      height: 600,
+  },
     rangeSelector: {
       selected: 1,
     },
     legend: {
       enabled: true,
-    },
-    navigator : {
-      enabled : false
     },
     plotOptions: {
       series: {
@@ -25,7 +24,6 @@ function IndexCompare(props) {
       }
     },
     series: [{
-      
       data: [],
       tooltip: {
         valueDecimals: 2
@@ -41,18 +39,18 @@ function IndexCompare(props) {
       }
       data.push(_data);
     }
+    const _options = [];
+    for(let i = 0; i < data.length; i++) {
+      _options.push({
+        data: data[i],
+        name: props.name[i]
+      });
+    }
     setOptions({
       title: {
         text: props.title
       },
-      series: [{
-        data: data[0],
-        name: props.name[0],
-      }, {
-        data: data[1],
-        name: props.name[1],
-      }
-      ]
+      series: _options
     });
   }, [props.title, props.data])
   

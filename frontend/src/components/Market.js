@@ -4,8 +4,6 @@ import MarketIndex from './MarketIndex';
 import MarketSector from "./MarketSector";
 
 function Market() {
-  
-  
   return (
     <div>
       <div className="market-container">    

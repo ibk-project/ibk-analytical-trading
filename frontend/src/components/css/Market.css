@@ -1,6 +1,6 @@
 .market-container {
   width: 70rem;
-  padding: 5rem calc((100% - 70rem) / 2);
+  padding: 2rem calc((100% - 70rem) / 2);
 }
 
 .market-title {
@@ -11,4 +11,12 @@
 .market-title2 {
   font-family: KoreanTITGD3, Manrope-SemiBold;
   font-size: 1.2rem;
+}
+
+.market-index-container {
+  padding: 50px 0;
+}
+
+.market-sector-container {
+  padding: 50px 0;
 }

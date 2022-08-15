@@ -40,6 +40,12 @@ function CandleVolume(props) {
   tooltip: {
     split: true
   },
+  plotOptions: {
+    candlestick: {
+        color: '#0088FF',
+        upColor: '#FF0000'
+    }
+  },
   series: [{
     type: 'candlestick',
   }, {
@@ -60,23 +66,20 @@ function CandleVolume(props) {
     ]];
     for (let i = 0; i < props.data.length; i += 1) {
       ohlc.push([
-      Date.parse(props.data[i]['Date']), // the date
-      props.data[i]['Open'], // open
-      props.data[i]['High'], // high
-      props.data[i]['Low'], // low
-      props.data[i]['Close'] // close
+        Date.parse(props.data[i]['Date']), // the date
+        props.data[i]['Open'], // open
+        props.data[i]['High'], // high
+        props.data[i]['Low'], // low
+        props.data[i]['Close'] // close
       ]);
       volume.push([
-      Date.parse(props.data[i]['Date']), // the date
-      props.data[i]['Volume'] // the volume
+        Date.parse(props.data[i]['Date']), // the date
+        props.data[i]['Volume'] // the volume
       ]);
     }
     setOptions({
       chart: {
         height: '50%'
-      },
-      title: {
-        text: props.title
       },
       series: [{
         name: props.title,
