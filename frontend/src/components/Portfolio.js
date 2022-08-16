@@ -314,14 +314,17 @@ function Portfolio() {
             <span style={{marginLeft: '20px'}}>예상 수익: 12%</span>
           </AccordionSummary>
           <AccordionDetails>
-            <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
+              <div className="title1">Stocks Weight</div>
+              <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            </div>
             <div className="backtest">
-              <div className="title">Backtest</div>
-              <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
-                <span style={{width: '600px', display:'inline-block'}}>
+              <div className="title1">Backtest</div>
+              <div className="chart" style={{width: '900px', margin: '0 auto'}}>
+                <span style={{width: '450px', display:'inline-block'}}>
                   <MultiLine props={chartData.line}/>
                 </span>
-                <span style={{width: '600px', display:'inline-block'}}>
+                <span style={{width: '450px', display:'inline-block'}}>
                   <MultiLine props={chartData.mdd}/>
                 </span>
               </div>
@@ -334,9 +337,12 @@ function Portfolio() {
             <span style={{marginLeft: '20px'}}>예상 수익: 10%</span>
           </AccordionSummary>
           <AccordionDetails>
-            <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
+              <div className="title1">Stocks Weight</div>
+              <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            </div>
             <div className="backtest">
-              <div className="title">Backtest</div>
+              <div className="title1">Backtest</div>
               <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
                 <span style={{width: '600px', display:'inline-block'}}>
                   <MultiLine props={chartData.line}/>
@@ -354,9 +360,12 @@ function Portfolio() {
             <span style={{marginLeft: '20px'}}>예상 수익: 8%</span>
           </AccordionSummary>
           <AccordionDetails>
-            <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
+              <div className="title1">Stocks Weight</div>
+              <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            </div>
             <div className="backtest">
-              <div className="title">Backtest</div>
+              <div className="title1">Backtest</div>
               <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
                 <span style={{width: '600px', display:'inline-block'}}>
                   <MultiLine props={chartData.line}/>
@@ -374,9 +383,12 @@ function Portfolio() {
             <span style={{marginLeft: '20px'}}>예상 수익: 4%</span>
           </AccordionSummary>
           <AccordionDetails>
-            <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
+              <div className="title1">Stocks Weight</div>
+              <Pie title={chartData.pie.title} data={chartData.pie.data} />
+            </div>
             <div className="backtest">
-              <div className="title">Backtest</div>
+              <div className="title1">Backtest</div>
               <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
                 <span style={{width: '600px', display:'inline-block'}}>
                   <MultiLine props={chartData.line}/>

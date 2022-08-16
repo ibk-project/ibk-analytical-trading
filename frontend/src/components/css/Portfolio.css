@@ -12,6 +12,12 @@
   padding: 10px;
   margin-bottom: 15px;
 }
+.title1 {
+  font-size: large;
+  border-left: thick solid;
+  padding: 10px;
+  margin-bottom: 15px;
+}
 .option {
   grid-row: 1;
   padding: 15px 25px 15px 20px;
@@ -27,6 +33,7 @@
 .backtest {
   grid-row: 3;
   padding: 15px 25px 10px 20px;
+  display: inline-block;
 }
 button {
   font-family: KoreanTITGD3, Manrope-SemiBold;
