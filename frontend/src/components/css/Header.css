@@ -3,13 +3,13 @@
 }
 
 .main_top {
-  width: 100vw;
+  width: 100%;
   height: 7rem;
   border-bottom: thin solid;
 }
 
 .header1 {
-  width: calc(100vw - 2rem);
+  width: calc(100% - 2rem);
   height: 1.5rem;
   padding: 1rem;
   font-size: 1.5rem;
@@ -24,7 +24,7 @@
 }
 
 .header2 {
-  width: 100vw;
+  width: 100%;
   height: 1.5rem;
   padding: 1rem 0;
   font-size: 1.2rem;
@@ -39,7 +39,7 @@
 .header2 ul li {
   list-style: none;
   float: left;
-  width: 25vw;
+  width: 25%;
   text-align: center;
   font-family: KoreanTITGD2, Manrope-Medium;
 }
