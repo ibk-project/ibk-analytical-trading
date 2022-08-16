@@ -328,7 +328,7 @@ def get_portfolio_output(request):
         result = {}
         market = request.GET['market']
         sector = request.GET['sector']
-        ratio = request.GET['r_ratio']
+        ratio = request.GET['s_ratio']
         sector = sector.replace('[','').replace(']','').split(',')
         s_result =''
         if market == 'KOSPI200':
