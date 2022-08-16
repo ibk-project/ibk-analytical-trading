@@ -316,9 +316,9 @@ def similar_date_start(x):
 
 csv_filename1 = os.path.join(os.path.dirname(__file__), 'top_200.csv')
 csv_filename2 = os.path.join(os.path.dirname(__file__), 'top_200_clustering.csv')
-k2_result = os.path.join(os.path.dirname(__file__), 'KS200_result.csv')
-#k1_result = os.path.join(os.path.dirname(__file__), 'KS200_result.csv')
-#kq_result = os.path.join(os.path.dirname(__file__), 'KS200_result.csv')
+k2_result = os.path.join(os.path.dirname(__file__), 'K200_result.csv')
+k1_result = os.path.join(os.path.dirname(__file__), 'K100_result.csv')
+# kq_result = os.path.join(os.path.dirname(__file__), 'KQ_result.csv')
 
 
 
@@ -328,12 +328,13 @@ def get_portfolio_output(request):
         result = {}
         market = request.GET['market']
         sector = request.GET['sector']
+        ratio = request.GET['r_ratio']
         sector = sector.replace('[','').replace(']','').split(',')
         s_result =''
         if market == 'KOSPI200':
             s_result = pd.read_csv(k2_result, header=0, dtype=object)
-        # elif market == 'KOSPI100':
-        #     s_result = pd.read_csv(k1_result, header=0, dtype=object)
+        elif market == 'KOSPI100':
+            s_result = pd.read_csv(k1_result, header=0, dtype=object)
         # elif market == 'KOSDAQ':
         #     s_result = pd.read_csv(kq_result, header=0, dtype=object) 
         s12_result = s_result[[(x in sector) for x in s_result['Sector'] ]]
@@ -355,8 +356,7 @@ def get_portfolio_output(request):
         t_port = {}
         t_port['similar_date'] = silmilar
         t_port['stocks'] = r_sector
-        t_port['port1_w'] = list(s12_port.MVP().x)
-        t_port['port2_w'] = list(s12_port.MVP_sharp().x)
+        t_port['weights'] = [list(s12_port.MVP().x),list(s12_port.MVP_sharp().x) ]
         result['result'] = t_port
         
         return JsonResponse(result)
