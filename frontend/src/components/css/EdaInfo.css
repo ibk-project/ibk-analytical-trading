@@ -1,5 +1,4 @@
 .eda-info {
-    position: absolute;
     visibility:visible;
     left: 0;
     width: 100%;
@@ -13,5 +12,4 @@
 .eda-info-container {
     visibility:visible;
     width: 100%;
-
 }

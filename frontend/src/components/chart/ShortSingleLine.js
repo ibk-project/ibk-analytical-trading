@@ -11,51 +11,9 @@ function ShortSingleLine(props) {
     rangeSelector: {
       selected: 1,
       buttons: [{
-        type: 'month',
-        count: 1,
-        text: '1m',
-        events: {
-            click: function () {
-            }
-        }
-      }, {
-          type: 'month',
-          count: 3,
-          text: '3m'
-      }, {
-          type: 'month',
-          count: 6,
-          text: '6m'
-      }, {
-          type: 'ytd',
-          text: 'YTD'
-      }, {
-          type: 'year',
-          count: 1,
-          text: '1y'
-      }, {
           type: 'all',
           text: 'All'
       }]
-      // [{
-      //   type: 'day',
-      //   count: 7,
-      //   text: '1w',
-      //   events: {
-      //       click: function () {}
-      //   }
-      // }, {
-      //     type: 'day',
-      //     count: 14,
-      //     text: '2w'
-      // }, {
-      //     type: 'month',
-      //     count: 1,
-      //     text: '1m'
-      // }, {
-      //     type: 'all',
-      //     text: 'All'
-      // }]
     },
     navigator : {
       enabled : false
@@ -71,14 +29,12 @@ function ShortSingleLine(props) {
     }
   });
   useEffect(() => {
+    console.log("props is ", props);
     let data = [];
     for(let i = 0; i < props.data.length; i++) {
         data.push([Date.parse(props.data[i]['Date']), props.data[i]['Close']]);
     }
     setOptions({
-      title: {
-        text: props.title
-      },
       series: [{
         name: props.title,
         data: data
