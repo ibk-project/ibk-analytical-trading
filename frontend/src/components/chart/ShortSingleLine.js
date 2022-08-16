@@ -9,26 +9,53 @@ function ShortSingleLine(props) {
   Exporting(Highcharts);
   const [options, setOptions] = useState({
     rangeSelector: {
-      selected: 3,
+      selected: 1,
       buttons: [{
-        type: 'day',
-        count: 7,
-        text: '1w',
+        type: 'month',
+        count: 1,
+        text: '1m',
         events: {
-            click: function () {}
+            click: function () {
+            }
         }
       }, {
-          type: 'day',
-          count: 14,
-          text: '2w'
+          type: 'month',
+          count: 3,
+          text: '3m'
       }, {
           type: 'month',
+          count: 6,
+          text: '6m'
+      }, {
+          type: 'ytd',
+          text: 'YTD'
+      }, {
+          type: 'year',
           count: 1,
-          text: '1m'
+          text: '1y'
       }, {
           type: 'all',
           text: 'All'
       }]
+      // [{
+      //   type: 'day',
+      //   count: 7,
+      //   text: '1w',
+      //   events: {
+      //       click: function () {}
+      //   }
+      // }, {
+      //     type: 'day',
+      //     count: 14,
+      //     text: '2w'
+      // }, {
+      //     type: 'month',
+      //     count: 1,
+      //     text: '1m'
+      // }, {
+      //     type: 'all',
+      //     text: 'All'
+      // }]
     },
     navigator : {
       enabled : false

@@ -128,8 +128,31 @@ function EdaInfo(props) {
     }, [])
 
     useEffect(() => {
+      // 한 달 이전으로 빼기
+      let split_dates = currentSimilarDate.split("-"); // 기존 형식 yyyy-mm-dd
+      console.log("split is ", split_dates);
+      let month_dates = parseInt(split_dates[1]);
+      if(month_dates === 1){
+        split_dates[0] -= 1;
+        split_dates[1] = "12";
+      } else {
+        split_dates[1] -= 1;
+      }
+      let currentSimilarDate_start = split_dates.join('-');
+      console.log("new startpoint is ", currentSimilarDate_start);
+
       // getSimilarDateData
       // 백엔드에서 currentSimilarDate 날짜의 (뉴스 키워드 5개)와 주요 지수(kospi, brent유, KRW/USD, copper선물) 정보 가져와서 setSimilarDateData 에 저장
+      
+      // kospi 가져오기
+      getIndex("KS11", currentSimilarDate_start);
+      // USD/KRW 가져오기
+      getIndex("USD/KRW", currentSimilarDate_start);
+      // 브랜트유 가져오기
+      getCommodity("CL", currentSimilarDate_start);
+      // 구리 선물 가져오기
+      getCommodity("HG", currentSimilarDate_start);
+
     }, [currentSimilarDate])
 
 
