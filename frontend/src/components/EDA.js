@@ -82,7 +82,7 @@ function EDA() {
     
     return (
       <span>
-        <div className={sidebarClass}>
+        <div className={sidebarClass} style={{zIndex:10}}>
           <div onClick={click1}>시장</div>
           <ul style={{display: showList1}}>
             {data.marketList}
