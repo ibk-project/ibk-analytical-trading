@@ -34,12 +34,29 @@ function ShortSingleLine(props) {
     for(let i = 0; i < props.data.length; i++) {
         data.push([Date.parse(props.data[i]['Date']), props.data[i]['Close']]);
     }
-    setOptions({
-      series: [{
-        name: props.title,
-        data: data
-      }]
-    });
+
+    (props.place==="left"?(
+      setOptions({
+        title: {
+          text: props.title
+        },
+        series: [{
+          name: props.title,
+          data: data
+        }]
+      })
+    ):(
+      setOptions({
+        series: [{
+          name: props.title,
+          data: data
+        }]
+      })
+    ))
+
+    
+
+
   }, [props.title, props.data])
   
   return(

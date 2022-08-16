@@ -37,7 +37,8 @@ function EdaInfo(props) {
     const [edaCode, setEdaCode] = useState("none"); // none, (code)
     const [edaFlag, setEdaFlag] = useState(false);
 
-    const [currentSimilarDate, setCurrentSimilarDate] = useState("none");
+    const [currentSimilarDateEnd, setCurrentSimilarDateEnd] = useState("none");
+    const [currentSimilarDateStart, setCurrentSimlilarDateStart] = useState("none");
     const [currentSelectedFeature, setCurrentSelectedFeature] = useState("KOSDAQ");
     const [similarSelectedFeature, setSimilarSelectedFeature] = useState("none");
     // const [similarDateEDAReady, setSimilarDateEDAReady] = useState(false);
@@ -62,12 +63,13 @@ function EdaInfo(props) {
       copper: [],
     });
 
-    const getIndex = async(tempcode, startDate, today) => {
+    const getIndex = async(tempcode, startDate, endDate, today) => {
       console.log("getindex ", tempcode, startDate);
       await axios.get('/api/data-management/index/get', {
         params: {
           "code": tempcode,
           "date": startDate,
+          "e_date": endDate,
           "type": "line"
         }
       }).then(res => {
@@ -96,11 +98,12 @@ function EdaInfo(props) {
         // makeIndexAnalysis(res.data.data);
       });
     }
-    const getCommodity = async(tempcode, startDate, today) => {
+    const getCommodity = async(tempcode, startDate, endDate, today) => {
       await axios.get('/api/data-management/commodity/one-data', {
         params: {
           "code": tempcode,
-          "date": startDate
+          "date": startDate,
+          "e_date": endDate
         }
       }).then(res => {
         console.log("axios res commodity is", res);
@@ -127,7 +130,7 @@ function EdaInfo(props) {
     }
     const getSimilarDates = async(edaCode) => {
       // 현재 시점으로 가정하고 유사 시점 가져옴
-      await axios.get('https://node01.spccluster.skku.edu:10581/market/model/'+edaCode).then(res => {
+      await axios.get('https://node02.spccluster.skku.edu:10581/market/model/'+edaCode).then(res => {
         console.log("axios res similarpoint is", res);
         let temp_marketData = marketData;
         temp_marketData.similarDates = res.points;
@@ -151,17 +154,18 @@ function EdaInfo(props) {
       }
 
       let startDate = marketData.currentDate.split("~")[0];
+      let endDate = marketData.currentDate.split("~")[1];
 
       // kospi 가져오기
-      getIndex("KS11", startDate, true);
+      getIndex("KS11", startDate, endDate, true);
       // kosdaq 가져오기
-      getIndex("KQ11", startDate, true);
+      getIndex("KQ11", startDate, endDate, true);
       // USD/KRW 가져오기
-      getIndex("USD/KRW", startDate, true);
+      getIndex("USD/KRW", startDate, endDate, true);
       // 브랜트유 가져오기
-      getCommodity("CL", startDate, true);
+      getCommodity("CL", startDate, endDate, true);
       // 구리 선물 가져오기
-      getCommodity("HG", startDate, true);
+      getCommodity("HG", startDate, endDate, true);
       // 유사 시점 목록 가져오기
       getSimilarDates(edaCode);
 
@@ -170,9 +174,10 @@ function EdaInfo(props) {
     }, [])
 
     useEffect(() => {
-      if (currentSimilarDate != "none") {
+      if (currentSimilarDateEnd != "none") {
         // 한 달 이전으로 빼기
-        let split_dates = currentSimilarDate.split("-"); // 기존 형식 yyyy-mm-dd
+        let currentSimilarDate_end = currentSimilarDateEnd;
+        let split_dates = currentSimilarDateEnd.split("-"); // 기존 형식 yyyy-mm-dd
         console.log("split is ", split_dates);
         let month_dates = parseInt(split_dates[1]);
         if(month_dates === 1){
@@ -185,27 +190,27 @@ function EdaInfo(props) {
         split_dates[1] = ('0'+split_dates[1]).slice(-2);
         // split_dates[2] = ('0'+split_dates[2]).slice(-2);
         let currentSimilarDate_start = split_dates.join('-');
+        setCurrentSimlilarDateStart(currentSimilarDate_start);
         console.log("new startpoint is ", currentSimilarDate_start);
 
         // getSimilarDateData
-        // 백엔드에서 currentSimilarDate 날짜의 (뉴스 키워드 5개)와 주요 지수(kospi, brent유, KRW/USD, copper선물) 정보 가져와서 setSimilarDateData 에 저장
+        // 백엔드에서 currentSimilarDateEnd 날짜의 (뉴스 키워드 5개)와 주요 지수(kospi, brent유, KRW/USD, copper선물) 정보 가져와서 setSimilarDateData 에 저장
         
         // kospi 가져오기
-        getIndex("KS11", currentSimilarDate_start, false);
+        getIndex("KS11", currentSimilarDate_start, currentSimilarDate_end, false);
         // USD/KRW 가져오기
-        getIndex("USD/KRW", currentSimilarDate_start, false);
+        getIndex("USD/KRW", currentSimilarDate_start, currentSimilarDate_end, false);
         // 브랜트유 가져오기
-        getCommodity("CL", currentSimilarDate_start, false);
+        getCommodity("CL", currentSimilarDate_start, currentSimilarDate_end, false);
         // 구리 선물 가져오기
-        getCommodity("HG", currentSimilarDate_start, false);
+        getCommodity("HG", currentSimilarDate_start, currentSimilarDate_end, false);
 
         console.log("2similardate data is ", similarDateData);
-        // similarDateData.kospi || setSimilarDateEDAReady(true);
 
         if(similarSelectedFeature === 'none')
           setSimilarSelectedFeature("KOSPI");
       }
-    }, [currentSimilarDate])
+    }, [currentSimilarDateEnd])
 
 
     const featureSelection1 = ["KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
@@ -218,7 +223,7 @@ function EdaInfo(props) {
     };
 
     const similarDateClick = (e) => {
-      setCurrentSimilarDate(e.target.outerText);
+      setCurrentSimilarDateEnd(e.target.outerText);
       // ex. '2021-05-21~2020-06-19'
     };
     const featureClick = (e) => {
@@ -298,7 +303,7 @@ function EdaInfo(props) {
                         <List key="929294">
                           {marketData.similarDates.map((value) => (
                             <ListItem key={value} sx={{py:0.5}} >
-                              {(currentSimilarDate===value)?
+                              {(currentSimilarDateEnd===value)?
                                 <ListItemButton key={"button1"+{value}} onClick={(e) => similarDateClick(e)} sx={{bgcolor:'midnightblue', borderRadius: 3, color:'white', buttonSX}}>
                                   <ListItemText key={"text1"+value} primary={`${value}`} />
                                 </ListItemButton>
@@ -324,7 +329,7 @@ function EdaInfo(props) {
                       </>
                     ):(
                       <>
-                      <Chip label={currentSimilarDate} key={"8765864"} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
+                      <Chip label={currentSimilarDateStart+"~"+currentSimilarDateEnd} key={"8765864"} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
                       <Grid container key={"3214294"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
                         {featureSelection2.map((value) => (
                           <>

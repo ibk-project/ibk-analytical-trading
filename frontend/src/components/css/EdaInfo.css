@@ -6,7 +6,7 @@
 
 .eda-info.open {
     left: 15rem;
-    width: calc(100% - 15rem)
+    /* width: calc(100% - 15rem) */
 }
 
 .eda-info-container {
