@@ -157,6 +157,35 @@ def get_index_front(request):
     if request.method == 'POST':
         js = {"data" : "1212"}
         return JsonResponse(js, safe=False)
+    
+
+@api_view(['GET', 'POST'])
+def get_commodity_front(request):
+    if request.method == 'GET':
+        code = request.GET['code']
+        start_date = request.GET['date']
+        end_date = ""
+        db = client.newDB
+        index_collection = db.data_commodity
+        
+        if start_date == "":
+            start_date = "2000-01-01"
+            
+        if end_date == "":
+            end_date = str(datetime.today())
+        
+        id = index_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
+        result = list(id)
+        if result == []:
+            return JsonResponse({ "Result" : "None"})
+        else:
+            return JsonResponse({"data": result})
+            
+    if request.method == 'POST':
+        js = {"data" : "1212"}
+        return JsonResponse(js, safe=False)    
+
+
 
 
 @api_view(['GET','POST'])
@@ -184,10 +213,10 @@ def get_commodity(request):
                 continue
             post_id = commodity_collection.insert_many(data)
         
-        if empty != [] :
-            file = open('empty_commodity.txt', 'w')
-            file.write(empty)
-            file.close
+        # if empty != [] :
+        #     file = open('empty_commodity.txt', 'w')
+        #     file.write(empty)
+        #     file.close
         
         return JsonResponse({"success" : "true"})
 
@@ -195,8 +224,8 @@ def get_commodity(request):
 def get_stock(request):
     if request.method == 'GET':
         db = client.newDB 
-        db.data_stock.drop()
         stock_collection = db.data_stock
+        start_date = "2022-08-10"
         
         krx = fdr.StockListing('KRX')
         stock = krx[["Symbol","Name"]].values.tolist()
@@ -205,7 +234,7 @@ def get_stock(request):
         empty_stock = []
         for symbol, name in stock:
             try:
-                data = get_stock_data(symbol, name)
+                data = get_stock_data(symbol, name, start_date)
             except:
                 data = []
                 empty_stock.append(symbol)
@@ -247,19 +276,18 @@ def get_index_name(request):
 def get_index(request):
     if request.method == 'GET':
         db = client.newDB
-        db.data_index.drop()
         index_collection = db.data_index
         
         #없는 것은 안들어감
         INDEXS_NAME = ['KS11', 'KQ11', 'DJI', 'JP225', 'HK50', 'CSI300', 'DAX']
         EMPTY_INDEX = ['IXIC']
         EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "AUD/USD", "EUR/JPY", "USD/RUB"]
-
+        start_date = "2022-07-05"
         empty = []
         
         for name in INDEXS_NAME:
             try:
-                data = get_index_data(name)
+                data = get_index_data(name, start_date)
             except:
                 data =[]
                 empty.append(name)
@@ -271,7 +299,7 @@ def get_index(request):
             
         for name in EX_RATE_LIST:
             try:
-                data = get_ex_data(name)
+                data = get_ex_data(name, start_date)
             except:
                 data =[]
                 empty.append(name)
@@ -412,8 +440,8 @@ def get_one_commodity(request):
         else:
             return JsonResponse({"Result" : result})
 
-def get_index_data(name):
-    data = fdr.DataReader(name)
+def get_index_data(name, date):
+    data = fdr.DataReader(name, date)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')
@@ -424,15 +452,12 @@ def get_index_data(name):
     data = data.fillna(method='ffill')
     data = data.fillna(method='bfill')
 
-    #data = data.to_json(orient='records')
-    # data = json.loads(data)
-    
     data = data.to_dict('records')
     
     return data
 
-def get_ex_data(name):
-    data = fdr.DataReader(name)
+def get_ex_data(name, date):
+    data = fdr.DataReader(name, date)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')
@@ -448,8 +473,8 @@ def get_ex_data(name):
     
     return data
 
-def get_stock_data(symbol, name):
-    data = fdr.DataReader(symbol)
+def get_stock_data(symbol, name, date):
+    data = fdr.DataReader(symbol, date)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')

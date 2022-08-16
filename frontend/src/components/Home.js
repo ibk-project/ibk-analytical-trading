@@ -94,6 +94,19 @@ function Home() {
           </ul>
         </div>
       </div>
+      <h4>Preprocessing</h4>
+      <p>
+        지수, 주가, 원자재 등에서 추출된 feature들은 모델에 바로 사용하기에는 적절하지 않습니다.<br />
+        주식 시장은 호황기에는 예상보다 높은 상승을 침체기에는 큰 낙폭을 보입니다.<br />
+        이러한 이상치 데이터를 사용하면 유의미한 학습이 어렵습니다.<br />
+        이 문제를 해결하기 위해 일반화와 정규화를 하여 데이터를 의미있는 형태로 변환합니다.<br />
+      </p>
+      <img alt="Preprocessing" style={{"width": "900px", "height":"190px"}} src="/Preprocessing.png"></img>
+      <p>
+        원본 데이터에서는 2020년 3월에 있었던 코로나에 VIX(변동성지수)가 크게 반응하여 최극값 외의 다른 날들사이의 비교가 어려웠습니다.<br />
+        sigmoid 정규화를 마친 뒤에는 모든 극값이 더 크게 스케일링되어 의미있는 영향력을 미칩니다.<br />
+        이 외에도 단기 금리가 장기 금리를 추월하여 두 지표가 크로스되는 지점을 부각하는 등의 전처리를 통해 feature의 의미를 부각합니다.<br />
+      </p>
       <h4>Description</h4>
       <img alt="MarketClusteringModel" style={{"width": "900px", "height":"300px"}} src="/MarketClusteringModel.png"></img>
       <p>
@@ -110,8 +123,11 @@ function Home() {
       <p>
         Market Clustering에서 구한 유사시점을 바탕으로 Sector Clustering을 진행합니다.<br />
         비슷한 거시 경제의 상황에서는 섹터의 이슈와 같은 미시 경제의 변화가 주가의 방향을 결정합니다.<br />
-        각 섹터의 주가 변화와 
+        각 섹터 그룹 별로 다른 양상을 보일 수 있기에, 섹터의 성향과 기업 정보를 반영해 각 섹터의 과거 유사 시점을 찾아내는 것이 중요하다고 생각해,<br />
+        Kensho의 머신러닝 재무분석 모델과 유사한 알고리즘으로 각 섹터 별 유사시점을 탐색할 수 있도록 제작하였습니다.
       </p>
+      <img alt="Sector Clustering Features" style={{"width": "700px", "height":"400px"}} src="/SectorClusteringFeatures.png"></img>
+      <img alt="Sector Clustering Model" style={{"width": "700px", "height":"350px"}} src="/SectorClusteringModel.png"></img>
       <h3>Portfolio</h3>
       <p>
         앞의 두 유사시점 클러스터링 결과와 사용자의 의견(고위험 고수익, 제무재표 안정성 등)을 고려하여 사용자에게 적합한 포트폴리오를 제공해줍니다.<br /> 
