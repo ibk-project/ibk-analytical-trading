@@ -3,4 +3,5 @@ from portfolio import views
 
 urlpatterns = [
     path('result',views.get_portfolio_output),
+    path('today',views.get_sector_output)
 ]

@@ -115,10 +115,14 @@ sector_data = {'반도체와반도체장비': [{'code': '005930', 'name': '삼�
 def get_index_front(request):
     if request.method == 'GET':
         code = request.GET['code']
-        print(request)
+        
         start_date = request.GET['date']
         end_date = ""
-        end_date = request.GET['e_date']
+        try:
+            end_date = request.GET['e_date']
+        except:
+            end_date =""    
+        
         chart_type = request.GET['type']
         db = client.newDB
         index_collection = db.data_index
@@ -126,7 +130,8 @@ def get_index_front(request):
         if start_date == "":
             start_date = "2000-01-01"
             
-        if end_date == "":
+        if end_date == "" or end_date == None:
+            print(end_date)
             end_date = str(datetime.today())
 
         if chart_type == 'line':
@@ -165,14 +170,18 @@ def get_commodity_front(request):
     if request.method == 'GET':
         code = request.GET['code']
         start_date = request.GET['date']
-        end_date = request.GET['e_date']
+        end_date = ""
+        try:
+            end_date = request.GET['e_date']
+        except:
+            end_date =""    
         db = client.newDB
         index_collection = db.data_commodity
         
         if start_date == "":
             start_date = "2000-01-01"
             
-        if end_date == "":
+        if end_date == "" or end_date == None:
             end_date = str(datetime.today())
         
         id = index_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
