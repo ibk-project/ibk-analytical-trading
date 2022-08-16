@@ -118,6 +118,7 @@ def get_index_front(request):
         print(request)
         start_date = request.GET['date']
         end_date = ""
+        end_date = request.GET['e_date']
         chart_type = request.GET['type']
         db = client.newDB
         index_collection = db.data_index
@@ -164,7 +165,7 @@ def get_commodity_front(request):
     if request.method == 'GET':
         code = request.GET['code']
         start_date = request.GET['date']
-        end_date = ""
+        end_date = request.GET['e_date']
         db = client.newDB
         index_collection = db.data_commodity
         
