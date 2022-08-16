@@ -94,6 +94,19 @@ function Home() {
           </ul>
         </div>
       </div>
+      <h4>Preprocessing</h4>
+      <p>
+        지수, 주가, 원자재 등에서 추출된 feature들은 모델에 바로 사용하기에는 적절하지 않습니다.<br />
+        주식 시장은 호황기에는 예상보다 높은 상승을 침체기에는 큰 낙폭을 보입니다.<br />
+        이러한 이상치 데이터를 사용하면 유의미한 학습이 어렵습니다.<br />
+        이 문제를 해결하기 위해 일반화와 정규화를 하여 데이터를 의미있는 형태로 변환합니다.<br />
+      </p>
+      <img alt="Preprocessing" style={{"width": "900px", "height":"190px"}} src="/Preprocessing.png"></img>
+      <p>
+        원본 데이터에서는 2020년 3월에 있었던 코로나에 VIX(변동성지수)가 크게 반응하여 최극값 외의 다른 날들사이의 비교가 어려웠습니다.<br />
+        sigmoid 정규화를 마친 뒤에는 모든 극값이 더 크게 스케일링되어 의미있는 영향력을 미칩니다.<br />
+        이 외에도 단기 금리가 장기 금리를 추월하여 두 지표가 크로스되는 지점을 부각하는 등의 전처리를 통해 feature의 의미를 부각합니다.<br />
+      </p>
       <h4>Description</h4>
       <img alt="MarketClusteringModel" style={{"width": "900px", "height":"300px"}} src="/MarketClusteringModel.png"></img>
       <p>

@@ -54,8 +54,19 @@ function MarketIndex(props) {
       _20MA /= 20;
       _60MA /= 60;
       _120MA /= 120;
+      const _52wAgo = new Date(data[data.length-1]['Date']).getTime() - (52*7*24*60*60*1000);
+      let _52wLow = 1e9, _52wHigh = 0;
+      for(let i = data.length - 1; i >= 0; i--) {
+        if(new Date(data[i]['Date']).getTime() < _52wAgo) break;
+        _52wLow = Math.min(_52wLow, data[i]['Low']);
+        _52wHigh = Math.max(_52wHigh, data[i]['High']);
+      }
       const currStock = data[data.length-1]['Close'];
+      console.log(data)
       setIndexAnalysis({
+        'daysChange': ((data[data.length-1]['Close'] - data[data.length-2]['Close']) / data[data.length-2]['Close'] * 100).toFixed(2),
+        'daysRange': String(data[data.length-1]['Low']) + ' - ' + String(data[data.length-1]['High']),
+        '_52weekRange': String(_52wLow) + ' - ' + String(_52wHigh),
         'stock5MADiff': (currStock - _5MA) / _5MA * 100,
         'stock20MADiff': (currStock - _20MA) / _20MA * 100,
         'stock60MADiff': (currStock - _60MA) / _60MA * 100,
@@ -104,8 +115,22 @@ function MarketIndex(props) {
           {indexList}
         </ul>
       </div>
-      <div className="market-title2">Analysis</div>
+      <div className="market-title2">Summary</div>
       <div className="market-index-analysis">
+        <div>
+          <span>Information</span>
+          <ul>
+            <li key='daysChange'>
+              day's change: <span style={{color: indexAnalysis.daysChange > 0 ? 'red' : 'blue'}}>{indexAnalysis.daysChange}%</span>
+            </li>
+            <li key='daysRange'>
+              day's range: {indexAnalysis.daysRange}
+            </li>
+            <li key='52wRange'>
+              52week range: {indexAnalysis._52weekRange}
+            </li>
+          </ul>
+        </div>
         <div>
           <span>Momentum</span>
           <ul>
