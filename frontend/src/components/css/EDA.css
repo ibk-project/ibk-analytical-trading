@@ -1,7 +1,10 @@
 .eda-container {
   display: flex;
-  width: 100vw;
-  height: calc(100vh - 7rem);
+  width: 70rem;
+  padding: 1rem calc((100% - 70rem) / 2);
+  /* width: 100vw; */
+  /* height: calc(100vh - 7rem); */
+  height: 100%;
 }
 
 .eda-sidebar {

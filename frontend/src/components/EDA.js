@@ -117,7 +117,6 @@ function EDA() {
         edaType = {edaType}
         edaCode = {edaCode}
       />
-
     </div>
   );
 }
