@@ -6,7 +6,7 @@ import EdaInfo from "./eda/EdaInfo";
 
 function EDA() {
   const marketData = [
-    {"name": "전체 시장", "code": "000001"},
+    {"name": "전체 시장", "code": "100"},
   ];
   const sectorData = [
     {"name": "비철금속", "code": "322"},
@@ -17,9 +17,9 @@ function EDA() {
     {"name": "우주항공과국방", "code": "284"},
   ];
   const stockData = [
-    {"name": "시가총액 상위 100개", "code": "000100"},
-    {"name": "시가총액 상위 200개", "code": "000200"},
-    {"name": "시가총액 상위 300개", "code": "000300"}
+    {"name": "시가총액 상위 100개", "code": "000101"},
+    {"name": "시가총액 상위 200개", "code": "000102"},
+    {"name": "시가총액 상위 300개", "code": "000103"}
   ];
   const [edaType, setEdaType] = useState("market"); // none, market, sector, stock
   const [edaName, setEdaName] = useState("전체 시장"); // none, (name)
