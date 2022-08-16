@@ -12,9 +12,12 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
-import styled from 'styled-components'
-import "../css/EdaInfo.css"
 import { Container } from "@mui/material";
+import styled from 'styled-components'
+
+import ShortSingleLine from '../chart/ShortSingleLine';
+import axios from 'axios';
+import "../css/EdaInfo.css"
 
 const NewsButton = styled.button`
   background-color: midnightblue;
@@ -38,13 +41,13 @@ function EdaInfo(props) {
     const [currentSelectedFeature, setCurrentSelectedFeature] = useState("KOSPI");
     const [similarSelectedFeature, setSimilarSelectedFeature] = useState("KOSPI");
 
-    const [marketData, setmarketData] = useState({
+    const [marketData, setMarketData] = useState({
       currentDate: '2022-06-08~2022-07-08',
       similarDates: ['2021-05-21~2020-06-19','2021-05-28~2021-06-26','2020-10-08~2020-11-06','2019-03-02~2019-03-31','2019-01-21~2019-02-19','2019-01-13~2019-02-11','2017-06-08~2017-07-07'],
       newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"], ["바이던 음주", "2022-07-06"], ["옥수수 수염차", "2022-07-05"], ["일석 이조", "2022-07-04"]],
       kospi: [],
       brent: [],
-      krwusd: [],
+      usdkrw: [],
       copper: [],
     });
 
@@ -52,12 +55,73 @@ function EdaInfo(props) {
       newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"], ["바이던 음주", "2022-07-06"], ["옥수수 수염차", "2022-07-05"], ["일석 이조", "2022-07-04"]],
       kospi: [],
       brent: [],
-      krwusd: [],
+      usdkrw: [],
       copper: [],
     });
 
+    const getIndex = async(tempcode, startDate) => {
+      await axios.get('/api/data-management/index/get', {
+        params: {
+          "code": tempcode,
+          "date": startDate,
+          "type": "line"
+        }
+      }).then(res => {
+        console.log("axios res index is", res);
+        let temp_marketData = marketData;
+        if(tempcode==="KS11")
+          temp_marketData.kospi = res.data.data;
+        else if(tempcode==="USD/KRW")
+          temp_marketData.usdkrw = res.data.data;
+
+        setMarketData(temp_marketData);
+        // setIndexData(res.data.data);
+        // makeIndexAnalysis(res.data.data);
+      });
+    }
+    const getCommodity = async(tempcode, startDate) => {
+      await axios.get('/api/data-management/commodity/one-data', {
+        params: {
+          "code": tempcode,
+          "date": startDate
+        }
+      }).then(res => {
+        console.log("axios res commodity is", res);
+        let temp_marketData = marketData;
+        if(tempcode==="CL")
+          temp_marketData.brent = res.data.data;
+        else if(tempcode==="HG")
+          temp_marketData.copper = res.data.data;
+
+        setMarketData(temp_marketData);
+      });
+    }
+    const getSimilarDates = async() => {
+      // 현재 시점으로 가정하고 유사 시점 가져옴 market clustering
+      await axios.get('https://node01.spccluster.skku.edu:10581/market/model/100').then(res => {
+        console.log("axios res similarpoint is", res);
+        let temp_marketData = marketData;
+        temp_marketData.similarDates = res.points;
+        setMarketData(temp_marketData);
+      });
+    }
 
     useEffect(() => {
+      console.log("current similar date is ", marketData.currentDate);
+      let startDate = marketData.currentDate.split("~")[0];
+      console.log("startDate is ", startDate);
+
+      // kospi 가져오기
+      getIndex("KS11", startDate);
+      // USD/KRW 가져오기
+      getIndex("USD/KRW", startDate);
+      // 브랜트유 가져오기
+      getCommodity("CL", startDate);
+      // 구리 선물 가져오기
+      getCommodity("HG", startDate);
+      // 유사 시점 목록 가져오기
+      getSimilarDates();
+
       // getMarketData
       // 백엔드에서 현재 시점 기본 marketData를 setMarketData에 저장 (similarDates, newsKeywords)
     }, [])
@@ -68,7 +132,7 @@ function EdaInfo(props) {
     }, [currentSimilarDate])
 
 
-    const featureSelection = ["KOSPI", "BRENT", "KRW/USD", "COPPER"];
+    const featureSelection = ["KOSPI", "BRENT", "USD/KRW", "COPPER"];
 
     const buttonSX = {
       "&:hover": {
@@ -112,11 +176,12 @@ function EdaInfo(props) {
                   <Grid container key={"0020534"} style={{textAlign: "center"}}>
                     <Grid item key={"grid100"} xs={6}> {/* 왼쪽 파트 */}
                       <Chip key={"1234"} label={(edaName==="전체 시장"?("KOSPI"):(edaName)) + "  " + marketData.currentDate}  sx={{ fontSize: 15, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
-                      <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
+                      {/* <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
-                      </Typography>
+                      </Typography> */}
+                      <ShortSingleLine title={"KOSPI"} data={marketData.kospi} />
                     </Grid>
-                    <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', paddingTop:'16px'}}> {/* 오른쪽 파트 */}
+                    <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', paddingTop:'5px'}}> {/* 오른쪽 파트 */}
                       <Chip key={"1236"} label={marketData.currentDate} sx={{ borderRadius: 3, fontSize: 15, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
                       <Grid key={"1237"} container align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
                         {featureSelection.map((value) => (
@@ -133,9 +198,16 @@ function EdaInfo(props) {
                           </>
                         ))}
                       </Grid>
-                      <Typography gutterBottom key={"1238"} variant="h5" component="div" sx={{my:4}}>
+                      {/* <Typography gutterBottom key={"1238"} variant="h5" component="div" sx={{my:4}}>
                         {currentSelectedFeature} Chart {marketData.currentDate}
-                      </Typography>
+                      </Typography> */}
+                      <Box sx={{width:"70%"}}>
+                        {currentSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={marketData.kospi} style={{height:"500px"}}/>}
+                        {currentSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={marketData.kospi} />}
+                        {currentSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD"} data={marketData.kospi} />}
+                        {currentSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={marketData.kospi} />}
+                      </Box>
+                      
                       <Box key={"1239"} sx={{my:3}}>
                         <Grid container key={"1240"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
                           <Grid item key={"1241"} sm={4.5} sx={{ px:1, pt:1 }}><NewsButton key={"1242"} style={{backgroundColor:'black', color:'white'}}>
@@ -154,7 +226,7 @@ function EdaInfo(props) {
                   </Grid>
                 </Box>
                 {/* 중간 분리선 */}
-                <Divider key={"22224"} variant="middle"> 유사 시점 </Divider>
+                <Divider key={"22224"} variant="middle" sx={{my:"15px"}}> 유사 시점 </Divider>
                 {/* 유사 시점 파트 */}
                 <Box key={"002020"} sx={{ width: '100%' }}>
                   <Grid container key={"1234754"} style={{textAlign: "center"}}>
@@ -181,7 +253,7 @@ function EdaInfo(props) {
 
                       </Paper>
                     </Grid>
-                    <Grid item key={"6112344"} xs={6}> {/* 오른쪽 파트 */}
+                    <Grid item key={"6112344"} xs={6} sx={{textAlign: 'center', paddingTop:'5px'}}> {/* 오른쪽 파트 */}
                     {currentSimilarDate==="none"?(
                       <>
                       <Typography gutterBottom key={"777777"} variant="h6" component="div" sx={{my:15}}>
