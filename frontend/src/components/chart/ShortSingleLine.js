@@ -9,14 +9,13 @@ function ShortSingleLine(props) {
   Exporting(Highcharts);
   const [options, setOptions] = useState({
     rangeSelector: {
-      selected: 1,
+      selected: 3,
       buttons: [{
         type: 'day',
         count: 7,
         text: '1w',
         events: {
-            click: function () {
-            }
+            click: function () {}
         }
       }, {
           type: 'day',
@@ -39,7 +38,10 @@ function ShortSingleLine(props) {
       tooltip: {
         valueDecimals: 2
       },
-    }]
+    }],
+    chart: {
+      height: (props.place==="left"?(9 / 16 * 100):(9 / 20 * 100)) + '%' // 16:9 ratio
+    }
   });
   useEffect(() => {
     let data = [];

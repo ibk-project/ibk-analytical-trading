@@ -96,14 +96,15 @@ function EdaInfo(props) {
         setMarketData(temp_marketData);
       });
     }
-    const getSimilarDates = async() => {
-      // 현재 시점으로 가정하고 유사 시점 가져옴 market clustering
-      await axios.get('https://node01.spccluster.skku.edu:10581/market/model/100').then(res => {
+    const getSimilarDates = async(edaCode) => {
+      // 현재 시점으로 가정하고 유사 시점 가져옴
+      await axios.get('https://node01.spccluster.skku.edu:10581/market/model/'+edaCode).then(res => {
         console.log("axios res similarpoint is", res);
         let temp_marketData = marketData;
         temp_marketData.similarDates = res.points;
         setMarketData(temp_marketData);
       });
+      // 100:market clustering, 322:비철금속, 301:은행, 313:석유와가스, 266:화장품, 280:부동산, 284:우주항공과국방
     }
 
     useEffect(() => {
@@ -120,7 +121,7 @@ function EdaInfo(props) {
       // 구리 선물 가져오기
       getCommodity("HG", startDate);
       // 유사 시점 목록 가져오기
-      getSimilarDates();
+      getSimilarDates(edaCode);
 
       // getMarketData
       // 백엔드에서 현재 시점 기본 marketData를 setMarketData에 저장 (similarDates, newsKeywords)
@@ -179,7 +180,7 @@ function EdaInfo(props) {
                       {/* <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
                       </Typography> */}
-                      <ShortSingleLine title={"KOSPI"} data={marketData.kospi} />
+                      <ShortSingleLine title={"KOSPI"} data={marketData.kospi} place={"left"}/>
                     </Grid>
                     <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', paddingTop:'5px'}}> {/* 오른쪽 파트 */}
                       <Chip key={"1236"} label={marketData.currentDate} sx={{ borderRadius: 3, fontSize: 15, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
@@ -201,10 +202,10 @@ function EdaInfo(props) {
                       {/* <Typography gutterBottom key={"1238"} variant="h5" component="div" sx={{my:4}}>
                         {currentSelectedFeature} Chart {marketData.currentDate}
                       </Typography> */}
-                      <Box sx={{width:"70%"}}>
+                      <Box >
                         {currentSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={marketData.kospi} style={{height:"500px"}}/>}
                         {currentSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={marketData.kospi} />}
-                        {currentSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD"} data={marketData.kospi} />}
+                        {currentSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={marketData.kospi} />}
                         {currentSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={marketData.kospi} />}
                       </Box>
                       
@@ -228,7 +229,7 @@ function EdaInfo(props) {
                 {/* 중간 분리선 */}
                 <Divider key={"22224"} variant="middle" sx={{my:"15px"}}> 유사 시점 </Divider>
                 {/* 유사 시점 파트 */}
-                <Box key={"002020"} sx={{ width: '100%' }}>
+                <Box key={"002020"} sx={{ width: '100%', mb:'80px' }}>
                   <Grid container key={"1234754"} style={{textAlign: "center"}}>
                     <Grid item key={"341234"} xs={6}> {/* 왼쪽 파트 */}
                       <Chip key={"512342"} color="default" label={"유사 시점 탐색 결과"} sx={{ fontSize: 15, width: 500, mt: 2, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
@@ -300,16 +301,6 @@ function EdaInfo(props) {
                     </Grid>
                   </Grid>
                 </Box>
-
-                <div>
-                    code is {edaCode}
-                </div>
-                <div>
-                    name is {edaName}
-                </div>
-                <div>
-                    type is {edaType}
-                </div>
 
                 </>
                 :
