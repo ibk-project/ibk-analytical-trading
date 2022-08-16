@@ -9,8 +9,6 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { Box } from '@mui/system';
 import Checkbox from '@mui/material/Checkbox';
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
-import MuiAccordionSummary from '@mui/material/AccordionSummary';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -32,27 +30,25 @@ function Portfolio() {
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
   const [selectedSector, setSector] = useState([])
+  const [currentMarket, setMarket] = useState('')
   const initIsSelected = {
     'KOSPI 100': false,
     'KOSPI 200': false,
     'KOSDAQ': false
   }
-    const KOSPI = [
-    '반도체와반도체장비',
-    '전기제품',
-    '제약',
-    '화학',
-    '양방향미디어와서비스',
-    '자동차',
-    '복합기업',
-    '철강',
-    '은행',
-    '자동차부품',
-    '석유와가스',
-    '전자제품']
+  const KOSPI = [
+  '반도체와반도체장비',
+  '제약',
+  '화학',
+  '양방향미디어와서비스',
+  '자동차',
+  '복합기업',
+  '철강',
+  '은행',
+  '자동차부품',
+  '석유와가스']
  const KOSDAQ = [
     '제약',
-    '전기제품',
     '게임엔터테인먼트',
     '생물공학',
     '화학',
@@ -61,13 +57,11 @@ function Portfolio() {
     '생명과학도구및서비스',
     '디스플레이장비및부품',
     '건강관리장비와용품',
-    '건축자재',
-    '기계']
-  const initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
+    '건축자재']
+  let initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
-  const [expand, setExpand] = useState('panel')
   const pieData = {
     title: '',
     data: [{name: 'SM', y: 0.2}, {name: 'JYP', y: 0.1}, {name: '빅히트', y: 0.3}, {name: 'YG', y: 0.4}]
@@ -90,7 +84,7 @@ function Portfolio() {
     }]
   }
   const mddData = {
-    title: 'MDD',
+    title: 'DD',
     xAxis: {
       title: 'Date',
       categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -99,7 +93,7 @@ function Portfolio() {
       title: ''
     },
     data: [{
-      name: 'MDD',
+      name: 'DD',
       data: [0.0, -3.6, -3.0, -2.5, 0, -0.1, -4.1, -3.6, -3.3, -2.8, -1.4, 0.0]
     },]
   }
@@ -151,16 +145,21 @@ function Portfolio() {
   }
   let sectors = []
   const getSectors = (market) => {
+    const mk = [market]
+    setMarket(...mk)
+    //console.log(currentMarket)
     //선택한 마켓별 섹터 불러오기
     if (market.includes('KOSPI')) {
-      sectors.push(KOSPI) 
+      sectors.push(KOSPI)
     } else {
       sectors.push(KOSDAQ)
-    }    
+    }
     setSector([...sectors])
   }
   const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
   const selectMarket = (e) => {
+    setMarket(e.target.value)
+    setSectorClick([...initSectorClicked])
     setSelect({
       ...initIsSelected,
       [e.target.value]: true
@@ -168,17 +167,50 @@ function Portfolio() {
     getSectors(e.target.value)
   }
   const selectSector = (e) => {
-    
+    const n = e.target.value
+    let sss = sectorClicked
+    sss[n] = !sss[n]
+    setSectorClick([...sss])
   }
   const check = () => {
     setCheck(!isChecked)
-    console.log(isChecked)
   }
-  const onClick = () => {
+  const onClick = async() => {
     // 저장
     initUserOption = userOption
+    let m, ms = '', mar = ''
+    if(currentMarket.includes('KOSPI')) {
+      m = KOSPI
+    } else {
+      m = KOSDAQ
+    }
+    
+    sectorClicked.forEach((s, index) => {
+      if(s === true){
+        ms += ','
+        ms += m[index]
+      }
+    })
+    ms = ms.slice(1,ms.length)
+    
+    if(currentMarket === 'KOSPI 100') { mar = 'KOSPI100'}
+    else if(currentMarket === 'KOSPI 200') { mar = 'KOSPI200'}
+    else { mar = 'KOSDAQ'}
+    let result
+    await axios.get('/api/portfolio/result', {
+      params: {
+        "market": mar,
+        "sector": ms,
+        "s_ratio": 0.6
+      }
+    }).then(res => {console.log(res); result = res.data.result});
+    setPort({
+      stocks: result.stocks,
+      similarDate: result.similar_date,
+      weight: result.weight
+    })
+    console.log(portfolio)
     setShowChart(!showChart)
-    // 백테스트 결과도 여기서
   }
   const onChange = (e) => {
     initUserOption = {
@@ -195,7 +227,7 @@ function Portfolio() {
   }
   const showPort = (e) => {
     console.log(e)
-    setExpand(e)
+    //setExpand(e)
   }
   useEffect(()=>{
     getPortfolio()
@@ -213,7 +245,8 @@ function Portfolio() {
     //   }
     // })
   },[showChart])
-
+  useEffect(()=>{
+  },[currentMarket])
   return(
     <div className="container">
       <div className="option">
@@ -238,17 +271,10 @@ function Portfolio() {
           <span style={{fontSize: 'large'}}>마켓/섹터 고르기</span>
           <Checkbox size="small" color="default" value={isChecked} onClick={check} /><span style={{fontSize: 'small'}}>추천 종목</span>
           {!isChecked && <div key={isChecked}>
-          {/* {isLoading && <CircularProgress />} 로딩창 다시 하기 */}
-          {/* {!isLoading && <input
-                type="text"
-                name="option2"
-                value={userOption.option2}
-                onChange={onChange}
-              />}   */}
             <div className="market">
               <div>Market</div>
               <span>
-                <ButtonGroup style={{height:'1.5rem'}} color='inherit' key={isSelected}>
+                <ButtonGroup style={{height:'1.5rem'}} color='inherit' key={currentMarket}>
                   {markets.map(m =>
                     <Button value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
                   )}
@@ -257,7 +283,7 @@ function Portfolio() {
             </div>
             <div className="sector">
               <div>Sector</div>
-              <span style={{marginTop: '10px', display: 'inline',width:'300px'}}>
+              {/* <span style={{marginTop: '10px', display: 'inline', width:'300px'}}> */}
               {/* <Box sx={{display:'flex', flexDirection: 'column'}}  key={selectedSector}>
                 {selectedSector.map(ss => {
                   return (
@@ -269,26 +295,21 @@ function Portfolio() {
                   )}
                 )}
               </Box> */}
-              {
-                <div>
-                  <ButtonGroup style={{height:'1.5rem'}} color='inherit'>
-                    {selectedSector.slice(0,6).map((ss, value) =>
-                      ss.map(s => <Button value={s} key={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}} key={sectorClicked[value]}>{s}</Button>)
-                    )}
-                  </ButtonGroup>
-                </div>
-              }
-              {
-                <div>
-                  <ButtonGroup style={{height:'1.5rem'}} color='inherit'>
-                    {selectedSector.slice(6,12).map((ss, value) =>
-                      ss.map(s => <Button value={s} key={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}} key={sectorClicked[value+6]}>{s}</Button>)
-                    )}
-                  </ButtonGroup>
-                </div>
-              }
+                {/* <div style={{marginTop: '10px', display: 'inline', width:'300px'}}> */}
 
-              </span> 
+                <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                    {selectedSector.slice(0,5).map(ss =>
+                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
+                    )}
+                  </ButtonGroup>
+                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                    {selectedSector.slice(5,10).map(ss =>
+                      ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
+                    )}
+                  </ButtonGroup>
+                </Box>
+              {/* </span>  */}
             </div>
 
           </div>}
@@ -301,14 +322,7 @@ function Portfolio() {
         <div className="title">Portfolio Information</div>
         <li key="1">종목:  { portfolio.stocks.map(i => { return i + ' ' }) }</li>
         <li key="2">유사 시점:  { portfolio.similarDate }</li>
-        {/* <li key="3">
-          비중:
-          <div style={{ width: '400px', margin: '0 auto'}}>
-            <Pie title={chartData.pie.title} data={chartData.pie.data} />
-          </div>
-        </li> */}
-        {/* <Accordion> expanded={expanded === 'panel3'} onChange={showPort('panel3')}> */}
-        <Accordion style={{marginTop:'15px'}}> 
+        <Accordion style={{marginTop:'15px'}}>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
             <span>Portfolio 1</span>
             <span style={{marginLeft: '20px'}}>예상 수익: 12%</span>
@@ -331,7 +345,7 @@ function Portfolio() {
             </div>
           </AccordionDetails>
         </Accordion>
-        <Accordion> 
+        <Accordion>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
             <span>Portfolio 3</span>
             <span style={{marginLeft: '20px'}}>예상 수익: 10%</span>
@@ -410,7 +424,6 @@ function Portfolio() {
 export default Portfolio;
 
 /*
-클러스터 관련 내용
-wireframe 만들기
-API랑 그런거 회의
+pie 차트 색
+
 */
