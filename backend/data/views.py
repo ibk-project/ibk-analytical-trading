@@ -276,6 +276,7 @@ def get_index_name(request):
 def get_index(request):
     if request.method == 'GET':
         db = client.newDB
+        db.data_index.drop()
         index_collection = db.data_index
         
         #없는 것은 안들어감
@@ -287,7 +288,7 @@ def get_index(request):
         
         for name in INDEXS_NAME:
             try:
-                data = get_index_data(name, start_date)
+                data = get_index_data(name)
             except:
                 data =[]
                 empty.append(name)
@@ -299,7 +300,7 @@ def get_index(request):
             
         for name in EX_RATE_LIST:
             try:
-                data = get_ex_data(name, start_date)
+                data = get_ex_data(name)
             except:
                 data =[]
                 empty.append(name)
@@ -440,8 +441,8 @@ def get_one_commodity(request):
         else:
             return JsonResponse({"Result" : result})
 
-def get_index_data(name, date):
-    data = fdr.DataReader(name, date)
+def get_index_data(name):
+    data = fdr.DataReader(name)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')
@@ -456,8 +457,8 @@ def get_index_data(name, date):
     
     return data
 
-def get_ex_data(name, date):
-    data = fdr.DataReader(name, date)
+def get_ex_data(name):
+    data = fdr.DataReader(name)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')
