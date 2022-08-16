@@ -318,7 +318,7 @@ csv_filename1 = os.path.join(os.path.dirname(__file__), 'top_200.csv')
 csv_filename2 = os.path.join(os.path.dirname(__file__), 'top_200_clustering.csv')
 k2_result = os.path.join(os.path.dirname(__file__), 'K200_result.csv')
 k1_result = os.path.join(os.path.dirname(__file__), 'K100_result.csv')
-# kq_result = os.path.join(os.path.dirname(__file__), 'KQ_result.csv')
+kq_result = os.path.join(os.path.dirname(__file__), 'KQ_result.csv')
 
 
 
@@ -335,8 +335,8 @@ def get_portfolio_output(request):
             s_result = pd.read_csv(k2_result, header=0, dtype=object)
         elif market == 'KOSPI100':
             s_result = pd.read_csv(k1_result, header=0, dtype=object)
-        # elif market == 'KOSDAQ':
-        #     s_result = pd.read_csv(kq_result, header=0, dtype=object) 
+        elif market == 'KOSDAQ':
+            s_result = pd.read_csv(kq_result, header=0, dtype=object) 
         s12_result = s_result[[(x in sector) for x in s_result['Sector'] ]]
         silmilar = s12_result['s_date'].to_list()
         r_sector = s12_result['Sector'].to_list()
@@ -352,11 +352,12 @@ def get_portfolio_output(request):
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
 
         s12_port = Portfolio(s12_pct, "","")
-        
+        w1 = list(s12_port.MVP().x)
+        w2 = list(s12_port.MVP_sharp().x)
         t_port = {}
         t_port['similar_date'] = silmilar
         t_port['stocks'] = r_sector
-        t_port['weights'] = [list(s12_port.MVP().x),list(s12_port.MVP_sharp().x) ]
+        t_port['weight'] = [w1, w2 ]
         result['result'] = t_port
         
         return JsonResponse(result)
