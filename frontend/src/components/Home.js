@@ -110,8 +110,11 @@ function Home() {
       <p>
         Market Clustering에서 구한 유사시점을 바탕으로 Sector Clustering을 진행합니다.<br />
         비슷한 거시 경제의 상황에서는 섹터의 이슈와 같은 미시 경제의 변화가 주가의 방향을 결정합니다.<br />
-        각 섹터의 주가 변화와 
+        각 섹터 그룹 별로 다른 양상을 보일 수 있기에, 섹터의 성향과 기업 정보를 반영해 각 섹터의 과거 유사 시점을 찾아내는 것이 중요하다고 생각해,<br />
+        Kensho의 머신러닝 재무분석 모델과 유사한 알고리즘으로 각 섹터 별 유사시점을 탐색할 수 있도록 제작하였습니다.
       </p>
+      <img alt="Sector Clustering Features" style={{"width": "700px", "height":"400px"}} src="/SectorClusteringFeatures.png"></img>
+      <img alt="Sector Clustering Model" style={{"width": "700px", "height":"350px"}} src="/SectorClusteringModel.png"></img>
       <h3>Portfolio</h3>
       <p>
         앞의 두 유사시점 클러스터링 결과와 사용자의 의견(고위험 고수익, 제무재표 안정성 등)을 고려하여 사용자에게 적합한 포트폴리오를 제공해줍니다.<br /> 
