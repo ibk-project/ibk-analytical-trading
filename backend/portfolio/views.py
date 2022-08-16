@@ -24,11 +24,11 @@ def get_portfolio_output(request):
         for i in range(3):
             tmp = {}
             tmp["date"] = "2016-05-0"+str(i)
-            tmp["price"] = 123.4
+            tmp["price"] = 23.4 + i
             price.append(tmp)
         result["result"] = price
         result["stocks"] = ["sk", "sma", "ppap"]
         result["similar_date"] = ['2019-05-06', '2019-05-06', '2019-05-06']
-        result["weight"] = [0.1,0,4,0.5]
+        result["weight"] = [0.1,0.4,0.5]
         
         return JsonResponse(result)
