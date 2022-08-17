@@ -124,7 +124,6 @@ function Portfolio() {
         }
         ww.push(w)
       }
-      console.log(r.port1.dd)
       setYield([r.port1.data[-1],r.port2.data[-1]])
       setChartOption({
         pie: {
@@ -192,17 +191,12 @@ function Portfolio() {
         "sector": ms,
         "s_ratio": stockBond/100
       }
-    }).then(res => {console.log(res); makeChartData(res.data.result);});
-    
-    
-    //console.log(chartData.pie.data)
+    }).then(res => {makeChartData(res.data.result);});
   }
   let sectors = []
   const getSectors = (market) => {
     const mk = [market]
     setMarket(...mk)
-    //console.log(currentMarket)
-    //선택한 마켓별 섹터 불러오기
     if (market.includes('KOSPI')) {
       sectors.push(KOSPI)
     } else {
@@ -248,13 +242,8 @@ function Portfolio() {
   const valueLabelFormat = (value) => {
     return `주식: ${value}% 채권: ${100-value}%`;
   }
-  const showPort = (e) => {
-    console.log(e)
-    //setExpand(e)
-  }
   useEffect(()=>{
     getPortfolio()
-    console.log(chartData);
     // setChartOption({
     //   pie: {
     //     ...chartData.pie,
@@ -300,7 +289,7 @@ function Portfolio() {
               <span>
                 <ButtonGroup style={{height:'1.5rem'}} color='inherit' key={currentMarket}>
                   {markets.map(m =>
-                    <Button value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
+                    <Button key={m} value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
                   )}
                 </ButtonGroup>
               </span>
@@ -393,7 +382,6 @@ function Portfolio() {
           </AccordionDetails>
         </Accordion>
       </div>
-
   	</div>
   );
 }
