@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './css/Portfolio.css';
 import Pie from './chart/Pie';
 import MultiLine from './chart/multiLine';
@@ -104,6 +104,7 @@ function Portfolio() {
     line: lineData,
     mdd: mddData
   })
+  const isMounted = useRef(false);
 
   const getPortfolio = async() => {
     const makeChartData = (r) => {
@@ -224,7 +225,6 @@ function Portfolio() {
     setCheck(!isChecked)
   }
   const onClick = () => {
-    // 저장
     initUserOption = userOption
     //getPortfolio()
     setShowChart(!showChart)
@@ -242,7 +242,14 @@ function Portfolio() {
   const valueLabelFormat = (value) => {
     return `주식: ${value}% 채권: ${100-value}%`;
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      isMounted.current = true;
+    });
+  }, [])
   useEffect(()=>{
+    if(!isMounted.current) return;
     getPortfolio()
     // setChartOption({
     //   pie: {
