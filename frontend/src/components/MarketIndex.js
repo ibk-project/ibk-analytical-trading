@@ -62,7 +62,6 @@ function MarketIndex(props) {
         _52wHigh = Math.max(_52wHigh, data[i]['High']);
       }
       const currStock = data[data.length-1]['Close'];
-      console.log(data)
       setIndexAnalysis({
         'daysChange': ((data[data.length-1]['Close'] - data[data.length-2]['Close']) / data[data.length-2]['Close'] * 100).toFixed(2),
         'daysRange': String(data[data.length-1]['Low']) + ' - ' + String(data[data.length-1]['High']),
@@ -109,7 +108,7 @@ function MarketIndex(props) {
       <h2>Index</h2>
       <div className="market-index-chart">
         <div style={{width: '100%'}}>
-          <SingleLine title={currIndex[1]} data={indexData} />
+          <SingleLine data={indexData} />
         </div>
         <ul>
           {indexList}
