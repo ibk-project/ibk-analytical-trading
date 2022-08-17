@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './css/Portfolio.css';
 import Pie from './chart/Pie';
 import MultiLine from './chart/multiLine';
@@ -23,12 +23,13 @@ function Portfolio() {
   // API 부르기
   const [showChart, setShowChart] = useState(false)
   const [portfolio, setPort] = useState({
-    stocks: ['SM','YG'],
-    similarDate: ['2019-05-06','2019-05-06'],
-    weight: [[0.2,0.8],[0.3,0.7]]    
+    stocks: [],
+    similarDate: [],
+    weight: []
   })
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
+  const [loaded, setLoaded] = useState(false);
   const [selectedSector, setSector] = useState([])
   const [currentMarket, setMarket] = useState('')
   const [yields, setYield] = useState(['-1','10'])
@@ -66,7 +67,7 @@ function Portfolio() {
   const [isChecked, setCheck] = useState(false)
   const pieData = {
     title: '',
-    data: [{name: 'SM', y: 0.2}, {name: 'JYP', y: 0.1}, {name: '빅히트', y: 0.3}, {name: 'YG', y: 0.4}]
+    data: []
   }
   const lineData = {
     title: '',
@@ -104,6 +105,7 @@ function Portfolio() {
     line: lineData,
     mdd: mddData
   })
+  const isMounted = useRef(false);
 
   const getPortfolio = async() => {
     const makeChartData = (r) => {
@@ -166,7 +168,6 @@ function Portfolio() {
         }
       })
     }
-
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -224,7 +225,6 @@ function Portfolio() {
     setCheck(!isChecked)
   }
   const onClick = () => {
-    // 저장
     initUserOption = userOption
     //getPortfolio()
     setShowChart(!showChart)
@@ -242,7 +242,14 @@ function Portfolio() {
   const valueLabelFormat = (value) => {
     return `주식: ${value}% 채권: ${100-value}%`;
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      isMounted.current = true;
+    });
+  }, [])
   useEffect(()=>{
+    if(!isMounted.current) return;
     getPortfolio()
     // setChartOption({
     //   pie: {
@@ -259,7 +266,9 @@ function Portfolio() {
     // })
   },[showChart])
   useEffect(()=>{
-  },[currentMarket])
+    if(!isMounted.current) return;
+    setLoaded(true);
+  },[chartData])
   return(
     <div className="container">
       <div className="option">
@@ -338,7 +347,7 @@ function Portfolio() {
         <Accordion style={{marginTop:'15px'}}>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
             <span>Portfolio 1</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: 12%</span>
+            <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[0].data[chartData.line.data[0].data.length-1]-100).toFixed(2) : ''}%</span>
           </AccordionSummary>
           <AccordionDetails key={chartData}>
             <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}} key={chartData}>
@@ -361,7 +370,7 @@ function Portfolio() {
         <Accordion>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
             <span>Portfolio 2</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: 10%</span>
+            <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[1].data[chartData.line.data[1].data.length-1]-100).toFixed(2) : ''}%</span>
           </AccordionSummary>
           <AccordionDetails key={chartData}>
             <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}}>
