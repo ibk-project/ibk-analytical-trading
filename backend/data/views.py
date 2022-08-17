@@ -1,7 +1,7 @@
 from codecs import CodecInfo
 from django.shortcuts import render
 
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from numpy import empty
 from pkg_resources import empty_provider
 from rest_framework.parsers import JSONParser 
@@ -13,7 +13,9 @@ from index.serializers import IndexSerializer
 from rest_framework.decorators import api_view
 
 import FinanceDataReader as fdr
+import pandas as pd
 import json
+import os
 
 from pymongo import MongoClient
 from datetime import date, datetime
@@ -518,5 +520,42 @@ def get_comm_data(name, code):
     return data
 
 
+#Market similar_dates data
+@api_view(['GET'])
+def get_market_model(request):
+    if request.method == 'GET':
+        model_data = os.path.join(os.path.dirname(__file__),'files/', '2015-01-01_2022-08-12_100.json')
+        try:
+            with open(model_data) as f:
+                json_data = json.load(f)
+            return JsonResponse({"Result" : json_data})
+        except:
+            return JsonResponse({"Data" : "None"})
 
+#Sector similar_dates data
+@api_view(['GET'])
+def get_sector_model(request, sector_code):
+    if request.method == 'GET':
+
+        sector_data = os.path.join(os.path.dirname(__file__), 'files/', str(sector_code) + '_result.csv')
+
+        try:
+            model_data = pd.read_csv(sector_data, header=0, index_col=0)
+            json_data = model_data.to_json(orient="records")
+            return HttpResponse(json_data)
+        except:
+            return JsonResponse({"Data" : "None"})
+
+#News title data
+@api_view(['GET'])
+def get_news_feature(request):
+    if request.method == 'GET':
+        news_data = os.path.join(os.path.dirname(__file__),'files/', 'news_keyword.json')
+        try:
+            with open(news_data, encoding='UTF-8-sig') as f:
+                json_data = json.load(f)
+                json_data = json.dumps(json_data, ensure_ascii = False)
+            return HttpResponse(json_data)
+        except:
+            return JsonResponse({"Data" : "None"})
 
