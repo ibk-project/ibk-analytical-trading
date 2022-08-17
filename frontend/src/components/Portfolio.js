@@ -23,9 +23,9 @@ function Portfolio() {
   // API 부르기
   const [showChart, setShowChart] = useState(false)
   const [portfolio, setPort] = useState({
-    stocks: ['SM','JYP','빅히트','YG'],
-    similarDate: '2019-05-06',
-    weight: [0.2,0.1,0.3,0.4]    
+    stocks: ['SM','YG'],
+    similarDate: ['2019-05-06','2019-05-06'],
+    weight: [[0.2,0.8],[0.3,0.7]]    
   })
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
@@ -47,7 +47,7 @@ function Portfolio() {
   '은행',
   '자동차부품',
   '석유와가스']
- const KOSDAQ = [
+  const KOSDAQ = [
     '제약',
     '게임엔터테인먼트',
     '생물공학',
@@ -58,6 +58,7 @@ function Portfolio() {
     '디스플레이장비및부품',
     '건강관리장비와용품',
     '건축자재']
+  const portName = ['port1','port2']
   let initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
@@ -104,44 +105,92 @@ function Portfolio() {
   })
 
   const getPortfolio = async() => {
-    let r
-    await axios.get('/api/portfolio/result').then(res => { r = res.data })
-    setPort({
-      stocks: r.stocks,
-      similarDate: r.similar_date[0],
-      weight: r.weight
-    })
-    let w = []
-    for(let i=0; i<r.stocks.length; i++){
-      w.push({
-        name: r.stocks[i],
-        y: r.weight[i],
-      })
+    let m, ms = '', mar = ''
+    if(currentMarket.includes('KOSPI')) {
+      m = KOSPI
+    } else {
+      m = KOSDAQ
     }
+    
+    sectorClicked.forEach((s, index) => {
+      if(s === true){
+        ms += ','
+        ms += m[index]
+      }
+    })
+    ms = ms.slice(1,ms.length)
+    
+    if(currentMarket === 'KOSPI 100') { mar = 'KOSPI100'}
+    else if(currentMarket === 'KOSPI 200') { mar = 'KOSPI200'}
+    else { mar = 'KOSDAQ'}
+    let r, w = []
+    await axios.get('/api/portfolio/result', {
+      params: {
+        "market": mar,
+        "sector": ms,
+        "s_ratio": stockBond/100
+      }
+    }).then(res => {console.log(res); r = res.data.result});
+    
+    setPort({
+      stocks: r.result.stocks,
+      similarDate: r.result.similar_date,
+      weight: r.result.weight
+    })
+    let ww = []
+    for(let j=0; j<r.result.weight.length; j++){
+      w = []
+      for(let i=0; i<r.result.stocks.length; i++){
+        w.push({
+          name: r.result.stocks[i],
+          y: r.result.weight[j][i],
+        })
+      }
+      ww.push(w)
+    }
+    console.log(ww)
     setChartOption({
+      ...chartData,
       pie: {
         title: 'stocks weight',
-        data: w
+        data: ww
       },
       line: {
         title: 'predicted yield',
         xAxis: {
           title: 'Date',
-          categories: r.result.map(s => { return s.date })
+          categories: r.result.port1.data.map(s => { return s.date })
         },
         yAxis: {
           title: 'yield'
         },
-        data: [{
-          name: 'Reggane',
-          data: r.result.map(d => { return d.price })
-        }, {
-          name: 'Tallinn',
-          data: r.result.map(d => { return d.price + 1 })
-        }]
+        data: 
+          portName.map( p => {
+            return ({
+              name: p,
+              data: r.result.p.data.map(d => { return d.price })
+            })
+          })
       },
-      mdd: mddData
+      mdd: {
+        title: 'DD',
+        xAxis: {
+          title: 'Date',
+          categories: r.result.port1.data.map(s => { return s.date })
+        },
+        yAxis: {
+          title: ''
+        },
+        data: 
+          portName.map( p => {
+            return ({
+              name: p+' DD',
+              data: r.result.p.dd
+            })
+          })
+      }
     })
+    //console.log(chartData.pie.data)
   }
   let sectors = []
   const getSectors = (market) => {
@@ -175,41 +224,10 @@ function Portfolio() {
   const check = () => {
     setCheck(!isChecked)
   }
-  const onClick = async() => {
+  const onClick = () => {
     // 저장
     initUserOption = userOption
-    let m, ms = '', mar = ''
-    if(currentMarket.includes('KOSPI')) {
-      m = KOSPI
-    } else {
-      m = KOSDAQ
-    }
-    
-    sectorClicked.forEach((s, index) => {
-      if(s === true){
-        ms += ','
-        ms += m[index]
-      }
-    })
-    ms = ms.slice(1,ms.length)
-    
-    if(currentMarket === 'KOSPI 100') { mar = 'KOSPI100'}
-    else if(currentMarket === 'KOSPI 200') { mar = 'KOSPI200'}
-    else { mar = 'KOSDAQ'}
-    let result
-    await axios.get('/api/portfolio/result', {
-      params: {
-        "market": mar,
-        "sector": ms,
-        "s_ratio": 0.6
-      }
-    }).then(res => {console.log(res); result = res.data.result});
-    setPort({
-      stocks: result.stocks,
-      similarDate: result.similar_date,
-      weight: result.weight
-    })
-    console.log(portfolio)
+    getPortfolio()
     setShowChart(!showChart)
   }
   const onChange = (e) => {
@@ -269,7 +287,7 @@ function Portfolio() {
         </span>
         <div className="options">
           <span style={{fontSize: 'large'}}>마켓/섹터 고르기</span>
-          <Checkbox size="small" color="default" value={isChecked} onClick={check} /><span style={{fontSize: 'small'}}>추천 종목</span>
+          <Checkbox size="small" color="default" value={isChecked} onClick={() => {check()}} /><span style={{fontSize: 'small'}}>추천 종목</span>
           {!isChecked && <div key={isChecked}>
             <div className="market">
               <div>Market</div>
@@ -321,25 +339,25 @@ function Portfolio() {
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
         <li key="1">종목:  { portfolio.stocks.map(i => { return i + ' ' }) }</li>
-        <li key="2">유사 시점:  { portfolio.similarDate }</li>
+        <li key="2">유사 시점:  { portfolio.similarDate.map(i => {return i + ' '}) }</li>
         <Accordion style={{marginTop:'15px'}}>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
             <span>Portfolio 1</span>
             <span style={{marginLeft: '20px'}}>예상 수익: 12%</span>
           </AccordionSummary>
-          <AccordionDetails>
-            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
+          <AccordionDetails key={chartData}>
+            <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}} key={chartData}>
               <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data} />
+              <Pie title={chartData.pie.title} data={chartData.pie.data[0]} />
             </div>
             <div className="backtest">
               <div className="title1">Backtest</div>
               <div className="chart" style={{width: '900px', margin: '0 auto'}}>
                 <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line}/>
+                  <MultiLine props={chartData.line} num='0'/>
                 </span>
                 <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd}/>
+                  <MultiLine props={chartData.mdd} num='0'/>
                 </span>
               </div>
             </div>
@@ -347,74 +365,27 @@ function Portfolio() {
         </Accordion>
         <Accordion>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <span>Portfolio 3</span>
+            <span>Portfolio 2</span>
             <span style={{marginLeft: '20px'}}>예상 수익: 10%</span>
           </AccordionSummary>
-          <AccordionDetails>
-            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
+          <AccordionDetails key={chartData}>
+            <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}}>
               <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data} />
+              <Pie title={chartData.pie.title} data={chartData.pie.data[1]} key={chartData} />
             </div>
             <div className="backtest">
               <div className="title1">Backtest</div>
-              <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
-                <span style={{width: '600px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line}/>
+              <div className="chart" style={{width: '900px', margin: '0 auto'}}>
+                <span style={{width: '450px', display:'inline-block'}}>
+                  <MultiLine props={chartData.line} num='1'/>
                 </span>
-                <span style={{width: '600px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd}/>
+                <span style={{width: '450px', display:'inline-block'}}>
+                  <MultiLine props={chartData.mdd} num='1'/>
                 </span>
               </div>
             </div>
           </AccordionDetails>
         </Accordion>
-        <Accordion> 
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <span>Portfolio 2</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: 8%</span>
-          </AccordionSummary>
-          <AccordionDetails>
-            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
-              <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data} />
-            </div>
-            <div className="backtest">
-              <div className="title1">Backtest</div>
-              <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
-                <span style={{width: '600px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line}/>
-                </span>
-                <span style={{width: '600px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd}/>
-                </span>
-              </div>
-            </div>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion> 
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <span>Portfolio 4</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: 4%</span>
-          </AccordionSummary>
-          <AccordionDetails>
-            <div style={{paddingBottom: '10px', width: '300px', display: 'inline-block'}}>
-              <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data} />
-            </div>
-            <div className="backtest">
-              <div className="title1">Backtest</div>
-              <div className="chart" style={{width: '1200px', margin: '0 auto'}}>
-                <span style={{width: '600px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line}/>
-                </span>
-                <span style={{width: '600px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd}/>
-                </span>
-              </div>
-            </div>
-          </AccordionDetails>
-        </Accordion>
-
       </div>
 
   	</div>

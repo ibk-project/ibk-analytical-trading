@@ -37,7 +37,7 @@ function MultiLine(props) {
         enableMouseTracking: false
       }
     },
-    series: prop.data
+    series: prop.data[parseInt(props.num)]
   }
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
