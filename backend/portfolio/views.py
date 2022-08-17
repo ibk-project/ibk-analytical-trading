@@ -590,13 +590,15 @@ k1_result = os.path.join(os.path.dirname(__file__), 'K100_result.csv')
 kq_result = os.path.join(os.path.dirname(__file__), 'KQ_result.csv')
 
 dd = fdr.StockListing('KRX')
+d_set = {}
+for x , y in dd[['Symbol','Name']].values:
+    d_set[x]=y
 
 @api_view(['GET'])
 def get_portfolio_output(request):
     if request.method == 'GET':
         result = {}
-        global dd
-        
+
         market = request.GET['market']
         sector = request.GET['sector']
         ratio = request.GET['s_ratio']
@@ -617,9 +619,8 @@ def get_portfolio_output(request):
         r_code = s12_result['Code'].to_list()
         r_name = []
         
-        print(r_code)
         for x in r_code:
-            d_name = dd[dd['Symbol']==x].iloc[0,2]
+            d_name = d_set[x]
             print(d_name)
             r_name.append(d_name)
         s12_pct = pd.DataFrame()
@@ -681,8 +682,6 @@ def get_portfolio_output(request):
         port2['dd'] = dd
         
         result['port2'] = port2
-        
-        print(result)
         
         return JsonResponse({'result' : result})
     
