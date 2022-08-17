@@ -43,7 +43,8 @@ function IndexCompare(props) {
     for(let i = 0; i < data.length; i++) {
       _options.push({
         data: data[i],
-        name: props.name[i]
+        name: props.name[i],
+        visible: ((i < 2) ? true : false)
       });
     }
     setOptions({
