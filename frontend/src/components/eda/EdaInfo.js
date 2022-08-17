@@ -41,6 +41,7 @@ function EdaInfo(props) {
     const [currentSimilarDateStart, setCurrentSimlilarDateStart] = useState("none");
     const [currentSelectedFeature, setCurrentSelectedFeature] = useState("KOSDAQ");
     const [similarSelectedFeature, setSimilarSelectedFeature] = useState("none");
+    const [newsData, setNewsData] = useState();
     // const [similarDateEDAReady, setSimilarDateEDAReady] = useState(false);
 
     const [marketData, setMarketData] = useState({
@@ -125,25 +126,86 @@ function EdaInfo(props) {
             temp_similarData.copper = res.data.data; 
           setSimilarDateData(temp_similarData);
         }
-
       });
     }
     const getSimilarDates = async() => {
       // 현재 시점으로 가정하고 유사 시점 가져옴
-      // let modeltype = (props.edaType==="sector"?"sector":"market")
-      // await axios.get('https://node02.spccluster.skku.edu:10638/'+modeltype+'/model/'+props.edaCode, {
-      //   withCredentials: true // 쿠키 cors 통신 설정
-      // })
-      await axios.get('https://node02.spccluster.skku.edu:10638/market/model/'+props.edaCode, {
-        withCredentials: true // 쿠키 cors 통신 설정
-      })
-      .then(res => {
-        console.log("axios res similarpoint is", res);
+      let modeltype = (props.edaType==="sector"?"sector/"+props.edaCode:"market")
+      // await axios.get('https://node02.spccluster.skku.edu:10638/market/model/'+props.edaCode)
+      // .then(res => {
+      //   console.log("axios res similarpoint is", res);
+      //   let temp_marketData = marketData;
+      //   temp_marketData.similarDates = res.points;
+      //   setMarketData(temp_marketData);
+      // });
+      await axios.get(`/api/data-management/model/${modeltype}`).then(res => {
+        console.log("model similar points res is ", res.data);
         let temp_marketData = marketData;
-        temp_marketData.similarDates = res.points;
+
+        if(modeltype==="market") {
+          temp_marketData.similarDates = res.data.Result.points;
+        }
+        else {
+          let temp_array = res.data[0]['Similar Dates'].slice(1,-1).split(', ');
+          temp_array = temp_array.map(x => x.split("~")[1]);
+          temp_marketData.similarDates = temp_array.map(x => x.splice(0,-1));
+        }
         setMarketData(temp_marketData);
       });
       // 100:market clustering, 322:비철금속, 301:은행, 313:석유와가스, 266:화장품, 280:부동산, 284:우주항공과국방
+    }
+
+    const getNews = async(date, isToday) => {
+      await axios.get('/api/data-management/model/news').then(res => {
+        console.log("news data res is ", res.data);
+        setNewsData(res.data);
+        let todaynews = [];
+        let newsLen = 0;
+        let tempday = date;
+        // if(date.length>12){
+        //   tempday = date.split("~")[1];
+        // } else {
+        //   tempday = date;
+        // }
+        
+        while (newsLen<5){
+          if(!res.data[tempday]){
+            console.error("news date error", tempday, res.data[tempday]);
+            break;
+          }
+          let tempnews = res.data[tempday];
+          if(tempnews[0]!="" && tempnews[1]!=""){
+            todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday]);
+            newsLen += 1;
+          }
+          let split_dates = tempday.split("-"); // 기존 형식 yyyy-mm-dd
+          let day_dates = parseInt(split_dates[2]);
+          let month_dates = parseInt(split_dates[1]);
+          if(day_dates === 1){
+            split_dates[2] = "28";
+            if(month_dates === 1){
+              split_dates[1] = "12";
+              split_dates[0] -= 1;
+            } else{
+              split_dates[1] -= 1;
+            }
+          } else {
+            split_dates[2] -= 1;
+          }
+          split_dates[1] = ('0'+split_dates[1]).slice(-2);
+          split_dates[2] = ('0'+split_dates[2]).slice(-2);
+          tempday = split_dates.join('-');
+        }
+        if(isToday === true){
+          let temp_marketData = marketData;
+          temp_marketData.newsKeywords = todaynews;
+          setMarketData(temp_marketData);
+        } else {
+          let temp_similarData = similarDateData;
+          temp_similarData.newsKeywords = todaynews;
+          setSimilarDateData(temp_similarData);
+        }
+      })
     }
 
     useEffect(() => {
@@ -180,7 +242,7 @@ function EdaInfo(props) {
       // 유사 시점 목록 가져오기
       getSimilarDates();
 
-      // getMarketData
+      getNews(endDate, true);
       // 백엔드에서 현재 시점 기본 marketData를 setMarketData에 저장 (similarDates, newsKeywords)
     }, [])
 
@@ -216,6 +278,7 @@ function EdaInfo(props) {
         // 구리 선물 가져오기
         getCommodity("HG", currentSimilarDate_start, currentSimilarDate_end, false);
 
+        getNews(currentSimilarDate_end, false);
         console.log("2similardate data is ", similarDateData);
 
         if(similarSelectedFeature === 'none')
