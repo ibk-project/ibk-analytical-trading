@@ -162,7 +162,7 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p+' DD',
-                data: r.port1.dd[0]
+                data: r[p].dd[0]
               })
             })
         }
