@@ -31,6 +31,7 @@ function Portfolio() {
   const [isLoading, setLoading] = useState(false)
   const [selectedSector, setSector] = useState([])
   const [currentMarket, setMarket] = useState('')
+  const [yields, setYield] = useState(['-1','10'])
   const initIsSelected = {
     'KOSPI 100': false,
     'KOSPI 200': false,
@@ -123,7 +124,8 @@ function Portfolio() {
         }
         ww.push(w)
       }
-      console.log(ww)
+      console.log(r.port1.dd)
+      setYield([r.port1.data[-1],r.port2.data[-1]])
       setChartOption({
         pie: {
           title: 'stocks weight',
@@ -142,7 +144,7 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p,
-                data: r.port1.data.map(d => { return d.price })
+                data: r[p].data.map(d => { return d.price })
               })
             })
         },
@@ -159,7 +161,7 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p+' DD',
-                data: r.port1.dd
+                data: r.port1.dd[0]
               })
             })
         }

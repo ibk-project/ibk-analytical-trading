@@ -39,6 +39,7 @@ function MultiLine(props) {
     },
     series: prop.data[parseInt(props.num)]
   }
+  console.log(prop.data[parseInt(props.num)])
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
     setOptions({
