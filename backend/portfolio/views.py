@@ -633,6 +633,8 @@ def get_portfolio_output(request):
             stock = pd.DataFrame(stock)
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
 
+        
+
         s12_port = Portfolio(s12_pct, "","")
         w1 = list(s12_port.MVP().x)
         w2 = list(s12_port.MVP_sharp().x)
