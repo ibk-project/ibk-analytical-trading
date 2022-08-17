@@ -19,4 +19,9 @@ urlpatterns = [
         path('sector-list', views.get_sector_list),
          path('sector-stock', views.get_sector_stock)
         ])),
+    path('model/', include([
+        path('market', views.get_market_model),
+        path('sector/<int:sector_code>', views.get_sector_model),
+        path('news', views.get_news_feature)
+    ])),
 ]

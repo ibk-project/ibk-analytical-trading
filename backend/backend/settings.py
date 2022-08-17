@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'index.apps.IndexConfig',
     'data.apps.DataConfig',
     'portfolio.apps.PortfolioConfig'
+    # 'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
     # CORS
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -148,3 +150,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# # CORS
+# CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000', 
+#                         'http://localhost:3000',
+#                         'http://localhost',
+#                         'http://127.0.0.1',
+#                         'https://node02.spccluster.skku.edu:10638']
+# CORS_ALLOW_CREDENTIALS = True
