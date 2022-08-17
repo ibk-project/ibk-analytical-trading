@@ -105,6 +105,67 @@ function Portfolio() {
   })
 
   const getPortfolio = async() => {
+    const makeChartData = (r) => {
+      setPort({
+        stocks: r.result.stocks,
+        similarDate: r.result.similar_date,
+        weight: r.result.weight
+      })
+      let w = [];
+      let ww = []
+      for(let j=0; j<r.result.weight.length; j++){
+        w = []
+        for(let i=0; i<r.result.stocks.length; i++){
+          w.push({
+            name: r.result.stocks[i],
+            y: r.result.weight[j][i],
+          })
+        }
+        ww.push(w)
+      }
+      console.log(ww)
+      setChartOption({
+        pie: {
+          title: 'stocks weight',
+          data: ww
+        },
+        line: {
+          title: 'predicted yield',
+          xAxis: {
+            title: 'Date',
+            categories: r.port1.data.map(s => { return s.date })
+          },
+          yAxis: {
+            title: 'yield'
+          },
+          data: 
+            portName.map( p => {
+              return ({
+                name: p,
+                data: r.port1.data.map(d => { return d.price })
+              })
+            })
+        },
+        mdd: {
+          title: 'DD',
+          xAxis: {
+            title: 'Date',
+            categories: r.port1.data.map(s => { return s.date })
+          },
+          yAxis: {
+            title: ''
+          },
+          data: 
+            portName.map( p => {
+              return ({
+                name: p+' DD',
+                data: r.port1.dd
+              })
+            })
+        }
+      })
+    }
+
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -123,73 +184,15 @@ function Portfolio() {
     if(currentMarket === 'KOSPI 100') { mar = 'KOSPI100'}
     else if(currentMarket === 'KOSPI 200') { mar = 'KOSPI200'}
     else { mar = 'KOSDAQ'}
-    let r, w = []
     await axios.get('/api/portfolio/result', {
       params: {
         "market": mar,
         "sector": ms,
         "s_ratio": stockBond/100
       }
-    }).then(res => {console.log(res); r = res.data.result});
+    }).then(res => {console.log(res); makeChartData(res.data.result);});
     
-    setPort({
-      stocks: r.result.stocks,
-      similarDate: r.result.similar_date,
-      weight: r.result.weight
-    })
-    let ww = []
-    for(let j=0; j<r.result.weight.length; j++){
-      w = []
-      for(let i=0; i<r.result.stocks.length; i++){
-        w.push({
-          name: r.result.stocks[i],
-          y: r.result.weight[j][i],
-        })
-      }
-      ww.push(w)
-    }
-    console.log(ww)
-    setChartOption({
-      ...chartData,
-      pie: {
-        title: 'stocks weight',
-        data: ww
-      },
-      line: {
-        title: 'predicted yield',
-        xAxis: {
-          title: 'Date',
-          categories: r.result.port1.data.map(s => { return s.date })
-        },
-        yAxis: {
-          title: 'yield'
-        },
-        data: 
-          portName.map( p => {
-            return ({
-              name: p,
-              data: r.result.p.data.map(d => { return d.price })
-            })
-          })
-      },
-      mdd: {
-        title: 'DD',
-        xAxis: {
-          title: 'Date',
-          categories: r.result.port1.data.map(s => { return s.date })
-        },
-        yAxis: {
-          title: ''
-        },
-        data: 
-          portName.map( p => {
-            return ({
-              name: p+' DD',
-              data: r.result.p.dd
-            })
-          })
-      }
-    })
+    
     //console.log(chartData.pie.data)
   }
   let sectors = []
@@ -227,7 +230,7 @@ function Portfolio() {
   const onClick = () => {
     // 저장
     initUserOption = userOption
-    getPortfolio()
+    //getPortfolio()
     setShowChart(!showChart)
   }
   const onChange = (e) => {
@@ -249,6 +252,7 @@ function Portfolio() {
   }
   useEffect(()=>{
     getPortfolio()
+    console.log(chartData);
     // setChartOption({
     //   pie: {
     //     ...chartData.pie,
@@ -287,7 +291,7 @@ function Portfolio() {
         </span>
         <div className="options">
           <span style={{fontSize: 'large'}}>마켓/섹터 고르기</span>
-          <Checkbox size="small" color="default" value={isChecked} onClick={() => {check()}} /><span style={{fontSize: 'small'}}>추천 종목</span>
+          <Checkbox size="small" color="default" value={isChecked} onClick={check} /><span style={{fontSize: 'small'}}>추천 종목</span>
           {!isChecked && <div key={isChecked}>
             <div className="market">
               <div>Market</div>
