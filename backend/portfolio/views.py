@@ -609,14 +609,19 @@ def get_portfolio_output(request):
             s_result = pd.read_csv(k1_result, header=0, dtype=object)
         elif market == 'KOSDAQ':
             s_result = pd.read_csv(kq_result, header=0, dtype=object) 
+        print(sector)
+        print(s_result)
         s12_result = s_result[[(x in sector) for x in s_result['Sector'] ]]
         silmilar = s12_result['s_date'].to_list()
         r_sector = s12_result['Sector'].to_list()
         r_code = s12_result['Code'].to_list()
         r_name = []
         
+        print(r_code)
         for x in r_code:
-            r_name.append(dd[dd['Symbol']==x].iloc[0,2])
+            d_name = dd[dd['Symbol']==x].iloc[0,2]
+            print(d_name)
+            r_name.append(d_name)
         s12_pct = pd.DataFrame()
         for i in range(len(s12_result)):
             code = s12_result.iloc[i,0]
@@ -669,6 +674,7 @@ def get_portfolio_output(request):
         
         result_data = result_data.rename_axis('date').reset_index()
         result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
+        
         
         port2["data"] = result_data.to_dict('records')
         port2['mdd'] = mdd
