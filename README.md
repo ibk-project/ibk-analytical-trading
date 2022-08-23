@@ -11,3 +11,13 @@ deploy: AWS
 을 프로젝트 최상단 디렉토리에서 실행
 
 localhost:80에서 접속 가능
+
+## 실행 화면
+### Home
+![Home Screenshot](./screenshots/Home.JPG)
+### Market
+![Market Screenshot](./screenshots/Market.JPG)
+### EDA
+![EDA Screenshot](./screenshots/EDA.JPG)
+### Portfolio
+![Portfolio Screenshot](./screenshots/Portfolio.JPG)
