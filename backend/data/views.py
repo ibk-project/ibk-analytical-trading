@@ -21,7 +21,7 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-        host='15.165.47.218',
+        host='3.38.141.56',
         port = 27017,
         username = 'IBK',
         password = '1234'
