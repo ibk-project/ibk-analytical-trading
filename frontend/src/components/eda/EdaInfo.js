@@ -54,6 +54,7 @@ function EdaInfo(props) {
       brent: [],
       usdkrw: [],
       copper: [],
+      currentSector: [],
     });
 
     const [similarDateData, setSimilarDateData] = useState({
@@ -62,6 +63,7 @@ function EdaInfo(props) {
       brent: [],
       usdkrw: [],
       copper: [],
+      currentSector: [],
     });
 
     const getIndex = async(tempcode, startDate, endDate, today) => {
@@ -128,6 +130,23 @@ function EdaInfo(props) {
         }
       });
     }
+
+    const getSector = async(sectorName, startDate, endDate, today) => {
+      console.log("getsector ", sectorName, startDate);
+      await axios.get('/api/data-management/stock/sector-stock', {
+        params: {
+          "sector_name": sectorName,
+          "start_date": startDate,
+          "end_date": endDate
+        }
+      }).then(res => {
+        console.log("axios res stock is", res);
+        let temp_marketData = marketData;
+        temp_marketData.currentSector = res.data.data;
+        setMarketData(temp_marketData);
+      });
+    }
+
     const getSimilarDates = async() => {
       // 현재 시점으로 가정하고 유사 시점 가져옴
       let modeltype = (props.edaType==="sector"?"sector/"+props.edaCode:"market")
@@ -209,7 +228,10 @@ function EdaInfo(props) {
     }
 
     useEffect(() => {
-      getSimilarDates()
+      getSimilarDates();
+      if(props.edaType === "sector"){
+        getSector();
+      }
     }, [props.edaCode])
 
     useEffect(() => {
@@ -322,7 +344,7 @@ function EdaInfo(props) {
                       {/* <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
                       </Typography> */}
-                      <ShortSingleLine title={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName+(props.edaType==="sector"?" 섹터":"")))} data={marketData.kospi} place={"left"}/>
+                      <ShortSingleLine title={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName+(props.edaType==="sector"?" 섹터":"")))} data={(props.edaType==="market"?(marketData.kospi):(marketData.currentSector))} place={"left"}/>
                     </Grid>
                     <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', pb:'7px'}}> {/* 오른쪽 파트 */}
                       <Chip key={"1236"} label={marketData.currentDate} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
