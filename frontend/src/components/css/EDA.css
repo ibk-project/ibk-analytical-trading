@@ -13,7 +13,7 @@
   height: 100%;
   width: 15rem;
   transition: left 0.3s ease-in-out;
-  background-color: rgb(0, 0, 0, 0.2);
+  background-color: rgb(0, 0, 0, 0.5);
   overflow-y: scroll;
 }
 .eda-sidebar div {
