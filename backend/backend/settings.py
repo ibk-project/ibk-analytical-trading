@@ -99,7 +99,7 @@ DATABASES = {
         'HOST' : 'mongo',
         'PORT' : 27017,
         'CLIENT': {
-            'host': '3.34.176.224',
+            'host': '3.36.47.174',
             'port': 27017,
             'username': 'IBK',
             'password': '1234',
