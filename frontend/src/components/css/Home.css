@@ -1,7 +1,7 @@
 .home-container {
   width: 70rem;
   font-family: Manrope-Medium;
-  padding: 5rem calc((100vw - 70rem) / 2);
+  padding: 5rem calc((100% - 70rem) / 2);
 }
 
 .home-container p {

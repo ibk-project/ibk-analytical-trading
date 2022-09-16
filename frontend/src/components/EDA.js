@@ -8,6 +8,18 @@ function EDA() {
   const marketData = [
     {"name": "전체 시장", "code": "100"},
   ];
+  // const sectorData = [
+  //   {"name": "반도체와반도체장비", "code": "11"},
+  //   {"name": "철강", "code": "12"},
+  //   {"name": "은행", "code": "13"},
+  //   {"name": "석유와가스", "code": "14"},
+  //   {"name": "화학", "code": "15"},
+  //   {"name": "양방향미디어와서비스", "code": "16"},
+  //   {"name": "복합기업", "code": "17"},
+  //   {"name": "자동차", "code": "18"},
+  //   {"name": "제약", "code": "19"},
+  //   {"name": "전자전기제품", "code": "20"}
+  // ];
   const sectorData = [
     {"name": "비철금속", "code": "322"},
     {"name": "은행", "code": "301"},
@@ -16,11 +28,11 @@ function EDA() {
     {"name": "부동산", "code": "280"},
     {"name": "우주항공과국방", "code": "284"},
   ];
-  const stockData = [
-    {"name": "시가총액 상위 100개", "code": "000101"},
-    {"name": "시가총액 상위 200개", "code": "000102"},
-    {"name": "시가총액 상위 300개", "code": "000103"}
-  ];
+  // const stockData = [
+  //   {"name": "시가총액 상위 100개", "code": "000101"},
+  //   {"name": "시가총액 상위 200개", "code": "000102"},
+  //   {"name": "시가총액 상위 300개", "code": "000103"}
+  // ];
   const [edaType, setEdaType] = useState("market"); // none, market, sector, stock
   const [edaName, setEdaName] = useState("전체 시장"); // none, (name)
   const [edaCode, setEdaCode] = useState("000001"); // none, (code)
@@ -32,9 +44,10 @@ function EDA() {
         setEdaType("market");
     } else if (sectorData.find(o => o.code === code)) {
       setEdaType("sector");
-    } else if (stockData.find(o => o.code === code)) {
-        setEdaType("stock");
     } 
+    // else if (stockData.find(o => o.code === code)) {
+    //     setEdaType("stock");
+    // } 
   }
   const makeList = (data) => {
     let retList = [];
@@ -45,7 +58,7 @@ function EDA() {
   };
   const marketList = makeList(marketData);
   const sectorList = makeList(sectorData);
-  const stockList = makeList(stockData);
+  // const stockList = makeList(stockData);
   
   const [sidebarOpen, setSideBarOpen] = useState(false);
   const handleViewSidebar = () => {
@@ -82,7 +95,7 @@ function EDA() {
     
     return (
       <span>
-        <div className={sidebarClass}>
+        <div className={sidebarClass} style={{zIndex:10}}>
           <div onClick={click1}>시장</div>
           <ul style={{display: showList1}}>
             {data.marketList}
@@ -91,10 +104,10 @@ function EDA() {
           <ul style={{display: showList2}}>
             {data.sectorList}
           </ul>
-          <div onClick={click3}>주요 주식</div>
+          {/* <div onClick={click3}>주요 주식</div>
           <ul style={{display: showList3}}>
             {data.stockList}
-          </ul> 
+          </ul>  */}
         </div>
         <button onClick={data.toggleSidebar} className={toggleClass}>
           {data.isOpen? (
@@ -110,7 +123,7 @@ function EDA() {
 
   return(
     <div className="eda-container">
-      <SideBar isOpen={sidebarOpen} toggleSidebar={handleViewSidebar} marketList={marketList} stockList={stockList} sectorList={sectorList} />
+      <SideBar isOpen={sidebarOpen} toggleSidebar={handleViewSidebar} marketList={marketList} /*stockList={stockList}*/ sectorList={sectorList} />
       <EdaInfo
         isOpen={sidebarOpen}
         edaName = {edaName}

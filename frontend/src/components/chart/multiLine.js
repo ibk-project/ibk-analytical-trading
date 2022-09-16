@@ -5,6 +5,7 @@ import Accessibility from "highcharts/modules/accessibility";
 
 function MultiLine(props) {
   Accessibility(Highcharts)
+  console.log(props)
   const prop = props.props
   const initialOptions = {
     chart: {
@@ -37,8 +38,9 @@ function MultiLine(props) {
         enableMouseTracking: false
       }
     },
-    series: prop.data
+    series: prop.data[parseInt(props.num)]
   }
+  console.log(prop.data[parseInt(props.num)])
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
     setOptions({

@@ -14,6 +14,7 @@ localhost:80에서 접속 가능
 
 ## 실행 화면
 ### Home
+<<<<<<< HEAD
 ![Home Screenshot](screenshots\Home.JPG)
 ### Market
 ![Market Screenshot](screenshots\Market.JPG)
@@ -21,3 +22,12 @@ localhost:80에서 접속 가능
 ![EDA Screenshot](screenshots\EDA.JPG)
 ### Portfolio
 ![Portfolio Screenshot](screenshots\Portfolio.JPG)
+=======
+![Home Screenshot](./screenshots/Home.JPG)
+### Market
+![Market Screenshot](./screenshots/Market.JPG)
+### EDA
+![EDA Screenshot](./screenshots/EDA.JPG)
+### Portfolio
+![Portfolio Screenshot](./screenshots/Portfolio.JPG)
+>>>>>>> 7281eef29499fb0a13d8bbf4e09512f0f03ba1a7

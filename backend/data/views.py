@@ -1,7 +1,7 @@
 from codecs import CodecInfo
 from django.shortcuts import render
 
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from numpy import empty
 from pkg_resources import empty_provider
 from rest_framework.parsers import JSONParser 
@@ -13,13 +13,15 @@ from index.serializers import IndexSerializer
 from rest_framework.decorators import api_view
 
 import FinanceDataReader as fdr
+import pandas as pd
 import json
+import os
 
 from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-        host='3.39.245.84',
+        host='3.36.47.174',
         port = 27017,
         username = 'IBK',
         password = '1234'
@@ -115,9 +117,14 @@ sector_data = {'반도체와반도체장비': [{'code': '005930', 'name': '삼�
 def get_index_front(request):
     if request.method == 'GET':
         code = request.GET['code']
-        print(request)
+        
         start_date = request.GET['date']
         end_date = ""
+        try:
+            end_date = request.GET['e_date']
+        except:
+            end_date =""    
+        
         chart_type = request.GET['type']
         db = client.newDB
         index_collection = db.data_index
@@ -125,7 +132,8 @@ def get_index_front(request):
         if start_date == "":
             start_date = "2000-01-01"
             
-        if end_date == "":
+        if end_date == "" or end_date == None:
+            print(end_date)
             end_date = str(datetime.today())
 
         if chart_type == 'line':
@@ -165,13 +173,17 @@ def get_commodity_front(request):
         code = request.GET['code']
         start_date = request.GET['date']
         end_date = ""
+        try:
+            end_date = request.GET['e_date']
+        except:
+            end_date =""    
         db = client.newDB
         index_collection = db.data_commodity
         
         if start_date == "":
             start_date = "2000-01-01"
             
-        if end_date == "":
+        if end_date == "" or end_date == None:
             end_date = str(datetime.today())
         
         id = index_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
@@ -276,6 +288,7 @@ def get_index_name(request):
 def get_index(request):
     if request.method == 'GET':
         db = client.newDB
+        db.data_index.drop()
         index_collection = db.data_index
         
         #없는 것은 안들어감
@@ -287,7 +300,7 @@ def get_index(request):
         
         for name in INDEXS_NAME:
             try:
-                data = get_index_data(name, start_date)
+                data = get_index_data(name)
             except:
                 data =[]
                 empty.append(name)
@@ -299,7 +312,7 @@ def get_index(request):
             
         for name in EX_RATE_LIST:
             try:
-                data = get_ex_data(name, start_date)
+                data = get_ex_data(name)
             except:
                 data =[]
                 empty.append(name)
@@ -440,8 +453,8 @@ def get_one_commodity(request):
         else:
             return JsonResponse({"Result" : result})
 
-def get_index_data(name, date):
-    data = fdr.DataReader(name, date)
+def get_index_data(name):
+    data = fdr.DataReader(name)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')
@@ -456,8 +469,8 @@ def get_index_data(name, date):
     
     return data
 
-def get_ex_data(name, date):
-    data = fdr.DataReader(name, date)
+def get_ex_data(name):
+    data = fdr.DataReader(name)
     if data.empty:
         return []
     data.index = data.index.strftime('%Y-%m-%d')
@@ -507,5 +520,42 @@ def get_comm_data(name, code):
     return data
 
 
+#Market similar_dates data
+@api_view(['GET'])
+def get_market_model(request):
+    if request.method == 'GET':
+        model_data = os.path.join(os.path.dirname(__file__),'files/', '2015-01-01_2022-08-12_100.json')
+        try:
+            with open(model_data) as f:
+                json_data = json.load(f)
+            return JsonResponse({"Result" : json_data})
+        except:
+            return JsonResponse({"Data" : "None"})
 
+#Sector similar_dates data
+@api_view(['GET'])
+def get_sector_model(request, sector_code):
+    if request.method == 'GET':
+
+        sector_data = os.path.join(os.path.dirname(__file__), 'files/', str(sector_code) + '_result.csv')
+
+        try:
+            model_data = pd.read_csv(sector_data, header=0, index_col=0)
+            json_data = model_data.to_json(orient="records")
+            return HttpResponse(json_data)
+        except:
+            return JsonResponse({"Data" : "None"})
+
+#News title data
+@api_view(['GET'])
+def get_news_feature(request):
+    if request.method == 'GET':
+        news_data = os.path.join(os.path.dirname(__file__),'files/', 'news_keyword.json')
+        try:
+            with open(news_data, encoding='UTF-8-sig') as f:
+                json_data = json.load(f)
+                json_data = json.dumps(json_data, ensure_ascii = False)
+            return HttpResponse(json_data)
+        except:
+            return JsonResponse({"Data" : "None"})
 

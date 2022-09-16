@@ -3,28 +3,28 @@ import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import Accessibility from "highcharts/modules/accessibility";
 
-function Pie({ title, data}) {
+function Pie(props) {
   Accessibility(Highcharts);
   const initialOptions = {
-    title : { text : title },
+    title : { text : props.title },
     chart : { type : "pie" },
     series : [{
       name: 'weight',
-      data: data
+      data: props.data
     }]
   }
-
+  console.log(props.data)
   const [ options, setOptions ] = useState(initialOptions)
 
   useEffect(()=>{
     setOptions({
       ...initialOptions,
-      title: { text : title },
+      title: { text : props.title },
       series : [{
-        data: data
+        data: props.data
       }]
     })
-  },[title, data])
+  },[props.title, props.data])
 
   return (
     <Fragment>
