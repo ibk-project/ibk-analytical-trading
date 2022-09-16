@@ -102,14 +102,14 @@ sector_data = {'반도체와반도체장비': [{'code': '005930', 'name': '삼�
   {'code': '237690', 'name': '에스티팜'},
   {'code': '003090', 'name': '대웅'},
   {'code': '019170', 'name': '신풍제약'}],
- '전자전기제품': [{'code': '066570', 'name': 'LG전자'}, 
+ '전자전기제품': [{'code': '066570', 'name': 'LG전자'},
   {'code': '373220', 'name': 'LG에너지솔루션'},
   {'code': '006400', 'name': '삼성SDI'},
   {'code': '247540', 'name': '에코프로비엠'},
   {'code': '066970', 'name': '엘앤에프'},
   {'code': '361610', 'name': 'SK아이이테크놀로지'},
   {'code': '278280', 'name': '천보'},
-  {'code': '336260', 'name': '두산퓨얼셀'}],
+ {'code': '336260', 'name': '두산퓨얼셀'}],
   '비철금속': [{'code': '018470', 'name': '조일알미늄'}, # 322
   {'code': '032560', 'name': '황금에스티'},
   {'code': '004560', 'name': '현대비앤지스틸'},
@@ -330,6 +330,7 @@ def get_sector_avg(request):
     if request.method == 'GET':
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
+        sector_name = request.GET['sector_name']
         
         db = client.newDB
         stock_collection = db.data_stock
@@ -340,22 +341,26 @@ def get_sector_avg(request):
         if end_date == "":
             end_date = str(datetime.today())
         
-        sector_tmp =['361610', '285130']
+        result = {}
+        
         df = pd.DataFrame()
         date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
-        print(type(date_list[0]))
-        
         df['Date'] = date_list
         df = df.set_index('Date')
-        for sector in sector_tmp:
-            id = stock_collection.find({"Code" : sector, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
+        for stock  in sector_data[sector_name]:
+            print(stock)
+            code = stock["code"]
+            id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
             tmp = pd.DataFrame(list(id))
-            tmp.rename(columns = {'Close' : sector + 'Close'}, inplace=True)
+            tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
             tmp = tmp.set_index('Date')
             df = df.join(tmp)
         df = df.dropna(how = 'all')
-        df['sum'] = df.sum(axis = 1) 
-        print(df)
+        df['sum'] = df.sum(axis = 1)
+        df['sum'] = df['sum'] / len(sector_data[sector_name])
+        t_tmp = pd.DataFrame(df['sum'].values.tolist()) 
+        t_tmp.index = list(df.index.values)
+        result[sector_name] = t_tmp.to_dict('index')
         
         if result == []:
             return JsonResponse({ "Result" : "None"})
