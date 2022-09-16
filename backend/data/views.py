@@ -233,6 +233,43 @@ def get_commodity(request):
         return JsonResponse({"success" : "true"})
 
 @api_view(['GET','POST'])
+def get_sector_avg(request):
+    if request.method == 'GET':
+        start_date = request.GET['start_date']
+        end_date = request.GET['end_date']
+        
+        db = client.newDB
+        stock_collection = db.data_stock
+        
+        if start_date == "":
+            start_date = "2012-01-01"
+        
+        if end_date == "":
+            end_date = str(datetime.today())
+        
+        sector_tmp =['361610', '285130']
+        df = pd.DataFrame()
+        date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
+        print(type(date_list[0]))
+        
+        df['Date'] = date_list
+        df = df.set_index('Date')
+        for sector in sector_tmp:
+            id = stock_collection.find({"Code" : sector, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
+            tmp = pd.DataFrame(list(id))
+            tmp.rename(columns = {'Close' : sector + 'Close'}, inplace=True)
+            tmp = tmp.set_index('Date')
+            df = df.join(tmp)
+        df = df.dropna(how = 'all')
+        df['sum'] = df.sum(axis = 1) 
+        print(df)
+        
+        if result == []:
+            return JsonResponse({ "Result" : "None"})
+        else:
+            return JsonResponse({"data" : result})
+        
+@api_view(['GET','POST'])
 def get_stock(request):
     if request.method == 'GET':
         db = client.newDB 

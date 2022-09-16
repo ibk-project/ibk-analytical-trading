@@ -609,12 +609,6 @@ def similar_date_start(x):
         return tmp
 
 
-
-
-
-
-
-
 csv_filename1 = os.path.join(os.path.dirname(__file__), 'top_200.csv')
 csv_filename2 = os.path.join(os.path.dirname(__file__), 'top_200_clustering.csv')
 k2_result = os.path.join(os.path.dirname(__file__), 'K200_result.csv')
@@ -625,6 +619,15 @@ dd = fdr.StockListing('KRX')
 d_set = {}
 for x , y in dd[['Symbol','Name']].values:
     d_set[x]=y
+
+
+@api_view(['GET'])
+def get_top_output(request):
+    if request.method == 'GET':
+        result = {}
+        top_output = ['삼성전자', '유한양행', '효성', '기아', 'BNK금융지주', 'Naver', '한온시스템', '금호석유', 'SK이노베이션', '동국제강']
+        result['top'] = top_output
+        return JsonResponse({'result' : result})
 
 @api_view(['GET'])
 def get_portfolio_output(request):
