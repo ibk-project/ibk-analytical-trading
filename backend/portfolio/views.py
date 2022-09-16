@@ -104,7 +104,7 @@ class Backtest:
 
         df = pd.concat([KOSPI,KOSDAQ],axis=1)
         df = df.fillna(0)
-
+        
         unemploy = pd.read_csv(unemploycsv,
                                index_col=0,
                                encoding='cp949')
@@ -139,7 +139,7 @@ class Backtest:
         bond = exchange * tlt
         bond.dropna(inplace=True)
         bond.columns = ['bond']
-
+        print(bond)
         df = pd.concat([df,bond],axis=1) # df['bond'] = bond
         df.columns = df.columns[:-1].append(pd.Index(['bond']))
 
@@ -149,7 +149,7 @@ class Backtest:
             'quarter': bt.algos.RunQuarterly(),
             'year': bt.algos.RunYearly()
         }
-
+        print("index in ")
         # 해당 종목의 데이터만 추출
         
         d = pd.DataFrame()
@@ -223,7 +223,7 @@ class Backtest:
             self.stock_bond = self.user_input_sb
 
         # 주식60 채권40
-        col_bond = ['bond'+x for x in self.stocks]
+        col_bond = ['bond'+ x for x in self.stocks]
         col_gold = ['gold'+x for x in self.stocks]
         col64 = self.stocks + col_bond
 
@@ -238,6 +238,8 @@ class Backtest:
         good = True
         up = True
 
+        print("index in ")
+        
         for i in d.index:
             i = str(i)[:10]
             for j in range(len(self.stocks)):
@@ -547,6 +549,36 @@ class Portfolio:
         
         return res    
 
+    def MRC(self):
+        def obj_variance(weights, covmat):
+            vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
+            print(vol)
+            mrc = np.dot(covmat, weights)/vol
+            print(mrc)
+            rc = mrc * weights
+            
+            print(rc)
+            rc = rc / np.sum(rc)
+            res = np.sum((rc - rc/len(rc))**2)
+            print(res) 
+            return res 
+        
+        n_assets = len(self.stock_all.columns)
+        #print("n_assets : " + str(n_assets))
+        
+        weights = np.ones([n_assets]) / n_assets
+        date_stride = 252
+        ret_daily = self.stock_all.pct_change()
+        
+        cov_daily = ret_daily.cov()
+        cov_annual = cov_daily * date_stride
+        
+        bnds = tuple( (0., 1.) for i in range(n_assets))
+        cons = ( {'type' : 'eq', 'fun': lambda w: np.sum(w)-1})
+        res = minimize(obj_variance, weights,(cov_annual), method='SLSQP', bounds=bnds, constraints=cons )
+        
+        return res
+
 def get_all_fdr_symbols(c_d):
     all_stocks = pd.DataFrame()
     for i in range(len(c_d)):
@@ -636,18 +668,28 @@ def get_portfolio_output(request):
         
 
         s12_port = Portfolio(s12_pct, "","")
+
+        print(s12_port)
         w1 = list(s12_port.MVP().x)
+        print(w1)
         w2 = list(s12_port.MVP_sharp().x)
+        print(w2)
+        w3 = list(s12_port.MRC().x)
+
+        print(w3)
+        
         t_port = {}
         t_port['similar_date'] = silmilar
         t_port['stocks'] = r_name
         t_port['sector'] = r_sector
-        t_port['weight'] = [w1, w2]
+        t_port['weight'] = [w1, w2, w3]
         result['result'] = t_port
+        
+        print(t_port)
         
         today = silmilar # 포트폴리오 유사시점
         
-        user_w = 0 # 일반:0, 샤프 지수:1
+        user_w = 0 # 일반:0, 샤프 지수:1 , 위험균형 : 2
         user_input_sb = [float(ratio), 1-float(ratio)] #[0.6,0.4] # p1 : 종목 채권
         user_input_s = [] # 종목별 비중
 
@@ -662,29 +704,36 @@ def get_portfolio_output(request):
         
         port1 = {}
         result_data, mdd, dd = Backtest(stocks=stocks,period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = w1, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
-        
+        print(mdd)
         result_data = result_data.rename_axis('date').reset_index()
-        result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-        
+        result_data.rename(columns = {'portfolio 1': 'price'}, inplace = True )
         port1["data"] = result_data.to_dict('records')
         port1['mdd'] = mdd
         port1['dd'] =dd
-        
         result['port1'] = port1
         
-        port2 = {}
-        result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period,today=today, user_input_s = w2, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+        print(port1)
         
+        port2 = {}
+        result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period, today=today, user_input_s = w2, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
         result_data = result_data.rename_axis('date').reset_index()
         result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-        
-        
         port2["data"] = result_data.to_dict('records')
         port2['mdd'] = mdd
         port2['dd'] = dd
-        
         result['port2'] = port2
         
+        print(port2)
+        
+        port3 = {}
+        result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period,today=today, user_input_s = w3, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+        result_data = result_data.rename_axis('date').reset_index()
+        result_data.rename(columns = {'portfolio 3': 'price'}, inplace = True )
+        port3["data"] = result_data.to_dict('records')
+        port3['mdd'] = mdd
+        port3['dd'] = dd
+        result['port3'] = port3
+        print (result)
         return JsonResponse({'result' : result})
     
     
