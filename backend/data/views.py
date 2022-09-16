@@ -332,8 +332,7 @@ def get_commodity_front(request):
 def get_commodity(request):
     if request.method == 'GET':
         db = client.newDB 
-        commodity_collection = db.data_commodity
-        
+        commodity_collection = db.data_commodity   
         comm = [
                 ('WTI','CL'), ('Brent','LCO'), ('NG','NG'), ##Energy
                 ('Corn','ZC'), ('Wheat', 'ZW'), ('Soybean', 'ZS'), ## 농산물
@@ -362,11 +361,13 @@ def get_commodity(request):
 
 @api_view(['GET','POST'])
 def get_sector_avg(request):
+    print("it is here")
     if request.method == 'GET':
+        print("it is here")
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
-        
+        print(sector_name)
         db = client.newDB
         stock_collection = db.data_stock
         
@@ -393,14 +394,16 @@ def get_sector_avg(request):
         df = df.dropna(how = 'all')
         df['sum'] = df.sum(axis = 1)
         df['sum'] = df['sum'] / len(sector_data[sector_name])
-        t_tmp = pd.DataFrame(df['sum'].values.tolist()) 
-        t_tmp.index = list(df.index.values)
-        result[sector_name] = t_tmp.to_dict('index')
+        t_tmp = pd.DataFrame()
+        t_tmp["Date"] = df.index.values
+        t_tmp["Close"] = df['sum'].values.tolist()
+        #t_tmp.index = list(df.index.values)
+        #result[sector_name] = t_tmp.to_dict('records')
         
         if result == []:
             return JsonResponse({ "Result" : "None"})
         else:
-            return JsonResponse({"data" : result})
+            return JsonResponse({ 'data' : t_tmp.to_dict('records')})
         
 @api_view(['GET','POST'])
 def get_stock(request):
