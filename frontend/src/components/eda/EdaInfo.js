@@ -379,11 +379,12 @@ function EdaInfo(props) {
                       {/* <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
                       </Typography> */}
-                      <ShortSingleLine title={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName+(props.edaType==="sector"?" 섹터":"")))} data={(props.edaType==="market"?(marketData.kospi):
-                      (props.edaName==="비철금속"?(marketData.bicheol):(props.edaName==="은행"?(marketData.bank):
+                      <ShortSingleLine title={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName+(props.edaType==="sector"?" 섹터":"")))} data={((props.edaType==="market")?(marketData.kospi):
+                      (props.edaName==="비철금속")?(marketData.bicheol):
+                      (props.edaName==="은행")?(marketData.bank):
                       (props.edaName==="화장품")?(marketData.cosmetics):
                       (props.edaName==="석유와가스")?(marketData.oil):
-                      (props.edaName==="부동산")?(marketData.realestate):(marketData.space))))} place={"left"}/>
+                      (props.edaName==="부동산")?(marketData.realestate):(marketData.space))} place={"left"}/>
                     </Grid>
                     <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', pb:'7px'}}> {/* 오른쪽 파트 */}
                       <Chip key={"1236"} label={marketData.currentDate} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
