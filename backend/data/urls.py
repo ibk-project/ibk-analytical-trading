@@ -17,9 +17,8 @@ urlpatterns = [
         path('all-data',views.get_stock),
         path('stocks',views.get_stocks),
         path('sector-list', views.get_sector_list),
-         path('sector-stock', views.get_sector_stock),
-         path('sector-avg', views.get_sector_avg),
-         
+        path('sector-stock', views.get_sector_stock),
+        path('sector-avg', views.get_sector_avg),
         ])),
     path('model/', include([
         path('market', views.get_market_model),
