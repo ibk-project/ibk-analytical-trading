@@ -29,7 +29,6 @@ function ShortSingleLine(props) {
     }
   });
   useEffect(() => {
-    console.log("props is ", props);
     let data = [];
     for(let i = 0; i < props.data.length; i++) {
         data.push([Date.parse(props.data[i]['Date']), props.data[i]['Close']]);

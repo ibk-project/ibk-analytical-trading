@@ -72,7 +72,6 @@ function EdaInfo(props) {
     });
 
     const getIndex = async(tempcode, startDate, endDate, today) => {
-      console.log("getindex ", tempcode, startDate);
       await axios.get('/api/data-management/index/get', {
         params: {
           "code": tempcode,
@@ -81,9 +80,7 @@ function EdaInfo(props) {
           "type": "line"
         }
       }).then(res => {
-        console.log("axios res index is", res);
         if(today===true){
-          console.log("index today");
           let temp_marketData = marketData;
           if(tempcode==="KQ11")
             temp_marketData.kosdaq = res.data.data;
@@ -93,7 +90,6 @@ function EdaInfo(props) {
             temp_marketData.usdkrw = res.data.data;
           setMarketData(temp_marketData);
         } else {
-          console.log("index similar");
           let temp_similarData = similarDateData;
           if(tempcode==="KS11")
             temp_similarData.kospi = res.data.data;
@@ -114,10 +110,8 @@ function EdaInfo(props) {
           "e_date": endDate
         }
       }).then(res => {
-        console.log("axios res commodity is", res);
 
         if(today===true){
-          console.log("commodity today");
           let temp_marketData = marketData;
           if(tempcode==="CL")
             temp_marketData.brent = res.data.data;
@@ -126,7 +120,6 @@ function EdaInfo(props) {
           setMarketData(temp_marketData);
         } else {
           let temp_similarData = similarDateData;
-          console.log("commodity similar");
           if(tempcode==="CL")
             temp_similarData.brent = res.data.data;
           else if(tempcode==="HG")
@@ -137,7 +130,6 @@ function EdaInfo(props) {
     }
 
     const getSector = async(sectorName, startDate, endDate) => {
-      console.log("getsector ", sectorName, startDate);
       await axios.get('/api/data-management/stock/sector-avg', {
         params: {
           "start_date": startDate,
@@ -147,11 +139,8 @@ function EdaInfo(props) {
       }).then(res => {
         res.data = res.data.data;
         let temp_marketData = marketData;
-        console.log("get sector for ",sectorName);
         if(sectorName === "비철금속") {
           temp_marketData.bicheol = res.data;
-          console.log("비철금속 확인");
-          console.log("res is ",res);
         } else if(sectorName === "은행") {
           temp_marketData.bank = res.data;
         } else if(sectorName === "석유와가스") {
@@ -168,6 +157,7 @@ function EdaInfo(props) {
     }
 
     const getSimilarDates = async() => {
+      console.log("new similar dates for ", props.edaName);
       // 현재 시점으로 가정하고 유사 시점 가져옴
       let modeltype = (props.edaType==="sector"?"sector/"+props.edaCode:"market")
       // await axios.get('https://node02.spccluster.skku.edu:10638/market/model/'+props.edaCode)
@@ -196,7 +186,6 @@ function EdaInfo(props) {
 
     const getNews = async(date, isToday) => {
       await axios.get('/api/data-management/model/news').then(res => {
-        console.log("news data res is ", res.data);
         setNewsData(res.data);
         let todaynews = [];
         let newsLen = 0;
@@ -248,6 +237,7 @@ function EdaInfo(props) {
     }
 
     useEffect(() => {
+      console.log("eda code changed");
       getSimilarDates();
       if(props.edaType === "sector"){
         let startDate = marketData.currentDate.split("~")[0];
@@ -304,7 +294,6 @@ function EdaInfo(props) {
         // 한 달 이전으로 빼기
         let currentSimilarDate_end = currentSimilarDateEnd;
         let split_dates = currentSimilarDateEnd.split("-"); // 기존 형식 yyyy-mm-dd
-        console.log("split is ", split_dates);
         let month_dates = parseInt(split_dates[1]);
         if(month_dates === 1){
           split_dates[0] -= 1;
@@ -317,7 +306,6 @@ function EdaInfo(props) {
         // split_dates[2] = ('0'+split_dates[2]).slice(-2);
         let currentSimilarDate_start = split_dates.join('-');
         setCurrentSimlilarDateStart(currentSimilarDate_start);
-        console.log("new startpoint is ", currentSimilarDate_start);
 
         // getSimilarDateData
         // 백엔드에서 currentSimilarDateEnd 날짜의 (뉴스 키워드 5개)와 주요 지수(kospi, brent유, KRW/USD, copper선물) 정보 가져와서 setSimilarDateData 에 저장
@@ -339,7 +327,6 @@ function EdaInfo(props) {
         getSector("우주항공과국방", currentSimilarDate_start, currentSimilarDate_end);
 
         getNews(currentSimilarDate_end, false);
-        console.log("2similardate data is ", similarDateData);
 
         if(similarSelectedFeature === 'none')
           setSimilarSelectedFeature("KOSPI");
@@ -382,9 +369,6 @@ function EdaInfo(props) {
                       {/* <Typography key={"1235"} gutterBottom variant="h4" component="div" sx={{my:4}}>
                         Chart Here
                       </Typography> */}
-                      {console.log("marketdata here is ", marketData)}
-                      {console.log("edaname is", props.edaName)}
-                      {console.log(marketData.bicheol)}
                       <ShortSingleLine 
                       title={(props.edaName==="전체 시장"?("KOSPI"):
                       (props.edaName+(props.edaType==="sector"?" 섹터":"")))} 
@@ -417,7 +401,6 @@ function EdaInfo(props) {
                         ))}
                       </Grid>
                       <Box >
-                        {console.log("eda name is ", props.edaName)}
                         {props.edaName==="전체 시장"?
                           (currentSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={marketData.kosdaq} />)
                           :
@@ -504,7 +487,6 @@ function EdaInfo(props) {
                       </Grid>
                       
                       <Box >
-                        {console.log("similar data at this point is ", similarDateData)}
                         {similarSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={similarDateData.kospi} />}
                         {similarSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={similarDateData.brent} />}
                         {similarSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={similarDateData.usdkrw} />}
