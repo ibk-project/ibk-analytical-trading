@@ -177,7 +177,7 @@ class Backtest:
                     b[0] = b[1]
                 if np.isnan(b[j]):
                     b[j] = (b[j-1] + b[j+1])/2
-            if np.isnan(b[len(b)-1]):
+            if np.isnan(b[len(b)-1]): 
                 b[len(b)-1] = b[len(b)-2]
             d['bond'+self.stocks[i]] = b 
 
