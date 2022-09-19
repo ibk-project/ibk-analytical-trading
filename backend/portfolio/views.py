@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 
 import FinanceDataReader as fdr
+import yfinance as yf
 import json
 
 import pandas as pd
@@ -113,9 +114,12 @@ class Backtest:
         unemploy.index = ['unemploy']
         unemploy = unemploy.T
 
-        exchange = fdr.DataReader('USD/KRW','2015','2022-07-15')['Close']
-        tlt = fdr.DataReader('TLT','2015','2022-07-15')['Close'] # 미국 장기채 ETF
+        # exchange = fdr.DataReader('USD/KRW','2015','2022-07-15')['Close']
+        exchange = yf.download('USDKRW=X',start='2015-01-01', end='2022-07-15')['Close']
+        # tlt = fdr.DataReader('TLT','2015','2022-07-15')['Close'] # 미국 장기채 ETF
+        tlt = yf.download('TLT', start = '2015-01-01', end = '2022-07-15')['Close']
         gold = fdr.DataReader('132030','2015')['Close'] # KODEX 골드선물(H)
+        
         gold.columns = ['gold']
 
         unemploy_roll = unemploy.rolling(12).mean()[12:]
@@ -248,9 +252,9 @@ class Backtest:
                 if d.loc[i,self.stocks[j]] < d.loc[i,'roll'+self.stocks[j]]:
                     up = False
                 if good | up: # 주식 50
-                    laa_w.loc[i, self.stocks] = [x*0.5 for x in w]
-                    laa_w.loc[i, col_bond] = [x*0.25 for x in w]
-                    laa_w.loc[i, col_gold] = [x*0.25 for x in w]
+                    laa_w.loc[i, self.stocks] = [x * 0.5 for x in w]
+                    laa_w.loc[i, col_bond] = [x * 0.25 for x in w]
+                    laa_w.loc[i, col_gold] = [x * 0.25 for x in w]
                 else: # 채권 50
                     laa_w.loc[i, self.stocks] = [x*0.25 for x in w]
                     laa_w.loc[i, col_bond] = [x*0.5 for x in w]
