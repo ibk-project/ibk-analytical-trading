@@ -270,6 +270,7 @@ class Backtest:
                             bt.algos.Rebalance()
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
+
         d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
         d.dropna(inplace=True)
         print(d)
@@ -756,7 +757,8 @@ def get_sector_output(request):
     if request.method == 'GET':
         t200 = pd.read_csv(csv_filename1,header=0, index_col=0)
         c200 = pd.read_csv(csv_filename2 ,header=0, index_col=0)    
-        
+        print(t200)
+        print(c200)
         t200["Code"] = list(map(lambda x : code_to_six(x) ,t200["Code"].to_list() ))
         symbols = t200["Code"]
         symbols_len = len(symbols)

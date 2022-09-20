@@ -173,11 +173,14 @@ function EdaInfo(props) {
 
         if(modeltype==="market") {
           temp_marketData.similarDates = res.data.Result.points;
+          console.log("temp_marketData similar dates is ", temp_marketData.similarDates);
         }
         else {
           let temp_array = res.data[0]['Similar Dates'].slice(1,-1).split(', ');
           temp_array = temp_array.map(x => x.split("~")[1]);
-          temp_marketData.similarDates = temp_array.map(x => x.splice(0,-1));
+          console.log("temp_array is ", temp_array);
+          temp_marketData.similarDates = temp_array;
+          // temp_marketData.similarDates = temp_array.map(x => x.splice(0,-1));
         }
         setMarketData(temp_marketData);
       });
@@ -290,7 +293,7 @@ function EdaInfo(props) {
     }, [])
 
     useEffect(() => {
-      if (currentSimilarDateEnd != "none") {
+      if (currentSimilarDateEnd !== "none") {
         // 한 달 이전으로 빼기
         let currentSimilarDate_end = currentSimilarDateEnd;
         let split_dates = currentSimilarDateEnd.split("-"); // 기존 형식 yyyy-mm-dd
