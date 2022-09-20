@@ -23,7 +23,7 @@ function Portfolio() {
   // API 부르기
   const [pick, setPick] = useState(['asdf','qwer'])
   const recommend = async () => {
-    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data)});
+    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result.top)});
   }
   useEffect(()=>{
     recommend()
@@ -37,10 +37,10 @@ function Portfolio() {
   })
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
-  const [loaded, setLoaded] = useState(true); // !! 나중에 false로 꼭 바꾸기 
+  const [loaded, setLoaded] = useState(false); // !! 나중에 false로 꼭 바꾸기 
   const [selectedSector, setSector] = useState([])
   const [currentMarket, setMarket] = useState('')
-  const [yields, setYield] = useState(['-1','10'])
+  //const [yields, setYield] = useState(['-1','10'])
   const initIsSelected = {
     'KOSPI 100': false,
     'KOSPI 200': false,
@@ -69,6 +69,7 @@ function Portfolio() {
     '건강관리장비와용품',
     '건축자재']
   const portName = ['최대분산P','샤프P','위험균형P']
+  //const portName = ['port1','port2','port3']
   let initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
@@ -92,6 +93,9 @@ function Portfolio() {
     }, {
       name: '',
       data: []
+    }, {
+      name: '',
+      data: []
     }]
   }
   const mddData = {
@@ -109,7 +113,10 @@ function Portfolio() {
     },{
       name: '',
       data: []
-    },]
+    },{
+      name: '',
+      data: []
+    }]
   }
   const [chartData, setChartOption] = useState({
     pie: pieData,
@@ -119,6 +126,7 @@ function Portfolio() {
   const isMounted = useRef(false);
 
   const getPortfolio = async() => {
+    setLoaded(false)
     const makeChartData = (r) => {
       setPort({
         stocks: r.result.stocks,
@@ -137,7 +145,7 @@ function Portfolio() {
         }
         ww.push(w)
       }
-      setYield([r.port1.data[-1],r.port2.data[-1]])
+      //setYield([r['샤프 P'].data[-1],r.port2.data[-1]])
       setChartOption({
         pie: {
           title: 'stocks weight',
@@ -205,7 +213,7 @@ function Portfolio() {
         "sector": ms,
         "s_ratio": stockBond/100
       }
-    }).then(res => {makeChartData(res.data.result); console.log(res.data.result)});
+    }).then(res => {makeChartData(res.data.result);});
   }
   let sectors = []
   const getSectors = (market) => {
@@ -306,40 +314,47 @@ function Portfolio() {
                     )}
                   </ButtonGroup>
                 </Box> */}
-                <ButtonGroup style={{height:'1.5rem'}} color='inherit' key={currentMarket}>
+                <ButtonGroup style={{height:'1.5rem', marginTop: '10px'}} color='inherit' key={currentMarket}>
                   {markets.map(m =>
                     <Button key={m} value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
                   )}
                 </ButtonGroup>
             </div>
             <div className="sector">
-              <div>Sector</div>
-                <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+              <div style={{marginTop: '15px'}}>Sector</div>
+              <div>
+                <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle', marginTop: '10px'}} key={sectorClicked}>
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(0,5).map(ss =>
-                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
-                  
+
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(5,10).map(ss =>
                       ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
                 </Box>
+              </div>
             </div>
           </div>}
-          {isChecked && <div>
-            <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
-              <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                {
-                  pick.map(p =>
-                    <Button>{p}</Button>
-                  )
-                }
-              </ButtonGroup>
-            </Box>
-          </div>}
+          {isChecked && 
+            <div>
+              <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+                <ButtonGroup style={{height:'1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
+                  {pick.slice(0,5).map((ss, value) =>
+                    <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{ss}</Button>)
+                  }
+                </ButtonGroup>
+                
+                <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                  {pick.slice(5,10).map((ss, value) =>
+                    <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{ss}</Button>)
+                  }
+                </ButtonGroup>
+              </Box>
+            </div>}
         </div>
         {/* 네이버로 쓰기 191000? */}
         <div>
