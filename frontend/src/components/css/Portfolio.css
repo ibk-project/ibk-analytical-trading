@@ -33,7 +33,7 @@
 }
 .backtest {
   grid-row: 3;
-  padding: 15px 25px 10px 20px;
+  padding: 0px 25px 10px 20px;
   display: inline-block;
 }
 button {

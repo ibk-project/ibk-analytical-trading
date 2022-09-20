@@ -57,7 +57,7 @@ class Backtest:
                 n_max = x
             cum.append(n_max)
         return cum
-    
+
     class PrintInfo(bt.Algo):
 
         def __init__(self, fmt_string="{name} {now}"):
@@ -118,18 +118,18 @@ class Backtest:
         exchange = yf.download('USDKRW=X',start='2015-01-01', end='2022-07-15')['Close']
         # tlt = fdr.DataReader('TLT','2015','2022-07-15')['Close'] # 미국 장기채 ETF
         tlt = yf.download('TLT', start = '2015-01-01', end = '2022-07-15')['Close']
-        gold = fdr.DataReader('132030','2015')['Close'] # KODEX 골드선물(H)
+        #지금 필요없음 gold = fdr.DataReader('132030','2015')['Close'] # KODEX 골드선물(H)
         
-        gold.columns = ['gold']
+        #gold.columns = ['gold']
 
         unemploy_roll = unemploy.rolling(12).mean()[12:]
         unemploy_roll.columns = ['unemploy_roll']
         unemploy = unemploy[12:]
-
+        print('qwer')
         # 실업률 데이터 일별로 증폭
         unem = pd.DataFrame(index=df.index,columns=['unemploy'])
         unem_roll = pd.DataFrame(index=df.index,columns=['unemploy_roll'])
-
+        
         for i in df.index[0:-15]:
             unem.loc[i] = unemploy.loc[str(i)[:7],'unemploy']
             unem_roll.loc[i] = unemploy_roll.loc[str(i)[:7],'unemploy_roll']
@@ -143,7 +143,6 @@ class Backtest:
         bond = exchange * tlt
         bond.dropna(inplace=True)
         bond.columns = ['bond']
-        print(bond)
         df = pd.concat([df,bond],axis=1) # df['bond'] = bond
         df.columns = df.columns[:-1].append(pd.Index(['bond']))
 
@@ -153,7 +152,7 @@ class Backtest:
             'quarter': bt.algos.RunQuarterly(),
             'year': bt.algos.RunYearly()
         }
-        print("index in ")
+        #print("index in ")
         # 해당 종목의 데이터만 추출
         
         d = pd.DataFrame()
@@ -171,7 +170,7 @@ class Backtest:
         for i in range(len(self.today)):
             
             b = df.loc[self.today[i]:self.addDate(self.today[i],self.period), 'bond'].reset_index(drop=True)
-            print(b) 
+            #print(b) 
             for j in range(len(b)-1):
                 if np.isnan(b[0]):
                     b[0] = b[1]
@@ -181,6 +180,7 @@ class Backtest:
                 b[len(b)-1] = b[len(b)-2]
             d['bond'+self.stocks[i]] = b 
 
+        '''
         # 종목별 실업률
         for i in range(len(self.today)):
             un = unem.loc[self.addDate(self.today[i],-30):self.addDate(self.today[i],self.period-30), 'unemploy'].reset_index(drop=True)
@@ -220,7 +220,7 @@ class Backtest:
 
         d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate(self.today[0],int(str(x))), "%Y-%m-%d"), d.index))
         d.dropna(inplace=True)
-
+        '''
         # 가중치 설정
         w = self.user_input_s
         if len(self.user_input_sb) != 0:
@@ -228,21 +228,22 @@ class Backtest:
 
         # 주식60 채권40
         col_bond = ['bond'+ x for x in self.stocks]
-        col_gold = ['gold'+x for x in self.stocks]
+        #col_gold = ['gold'+x for x in self.stocks]
         col64 = self.stocks + col_bond
 
         new_w = pd.Series(index=col64)
 
         new_w[:Backtest.nn] = (np.array(w)*self.stock_bond[0]).tolist()
         new_w[Backtest.nn:] = (np.array(w)*self.stock_bond[1]).tolist()
-
+        print(new_w)
         # 동적
+        '''
         col_dy = self.stocks + col_bond + col_gold
         laa_w = pd.DataFrame(index=d.index, columns=col_dy)
         good = True
         up = True
-
-        print("index in ")
+        
+        #print("index in ")
         
         for i in d.index:
             i = str(i)[:10]
@@ -259,6 +260,7 @@ class Backtest:
                     laa_w.loc[i, self.stocks] = [x*0.25 for x in w]
                     laa_w.loc[i, col_bond] = [x*0.5 for x in w]
                     laa_w.loc[i, col_gold] = [x*0.25 for x in w]
+        '''
         
         weight2 = new_w.copy()
         portfolio_2 = bt.AlgoStack(
@@ -267,16 +269,16 @@ class Backtest:
                             bt.algos.WeighSpecified(**weight2),
                             bt.algos.Rebalance()
                         )
-        p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])] ) 
-
-        backtest_p2 = bt.Backtest(p2, d)
+        p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
+        backtest_p2 = bt.Backtest(p2, d[new_w.index])
         result = bt.run(backtest_p2)
+
         Backtest.result_data.drop(Backtest.result_data.index[-1],inplace=True)
         colunms =  Backtest.result_data.columns
         MDD_return = []
         DD_return = []
         stock = Backtest.result_data.fillna(method = 'bfill')
-        
+
         for n in colunms:
             close_list = Backtest.result_data[n].to_list()
             drawdown = [x-y for x, y in zip(close_list, self.cummax(close_list))]
@@ -285,7 +287,7 @@ class Backtest:
             idx_upper = close_list.index(max(close_list[:idx_lower]))
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
-
+        print('here')
         return Backtest.result_data, MDD_return, DD_return
 
 
@@ -380,7 +382,7 @@ class Portfolio:
             vol_rank = pd.DataFrame(columns = ["Daily_std", "Weekly_std"], index = stock_name)
             vol_rank["Daily_std"] = std_daily
             vol_rank["Weekly_std"] = std_weekly
-            print(vol_rank)
+            #print(vol_rank)
             vol_rank["std_rank"] = vol_rank['Weekly_std'].rank(ascending = True) +vol_rank['Daily_std'].rank(ascending = True)
             
             vol_rank["std_rank"] = vol_rank["std_rank"].rank(ascending= True, method ='dense').astype(int)
@@ -556,15 +558,15 @@ class Portfolio:
     def MRC(self):
         def obj_variance(weights, covmat):
             vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
-            print(vol)
+            #print(vol)
             mrc = np.dot(covmat, weights)/vol
-            print(mrc)
+            #print(mrc)
             rc = mrc * weights
             
-            print(rc)
+            #print(rc)
             rc = rc / np.sum(rc)
             res = np.sum((rc - rc/len(rc))**2)
-            print(res) 
+            #print(res) 
             return res 
         
         n_assets = len(self.stock_all.columns)
@@ -650,8 +652,8 @@ def get_portfolio_output(request):
             s_result = pd.read_csv(k1_result, header=0, dtype=object)
         elif market == 'KOSDAQ':
             s_result = pd.read_csv(kq_result, header=0, dtype=object) 
-        print(sector)
-        print(s_result)
+        #print(sector)
+        #print(s_result)
         s12_result = s_result[[(x in sector) for x in s_result['Sector'] ]]
         silmilar = s12_result['s_date'].to_list()
         r_sector = s12_result['Sector'].to_list()
@@ -660,7 +662,7 @@ def get_portfolio_output(request):
         
         for x in r_code:
             d_name = d_set[x]
-            print(d_name)
+            #print(d_name)
             r_name.append(d_name)
         s12_pct = pd.DataFrame()
         for i in range(len(s12_result)):
@@ -669,6 +671,7 @@ def get_portfolio_output(request):
             date = datetime.datetime.strptime(s_date,'%Y-%m-%d')
             e_date = str(date + datetime.timedelta(days=400))
             stock = fdr.DataReader(code, s_date, e_date)['Close']
+            print('second')
             stock = pd.DataFrame(stock)
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
 
@@ -676,14 +679,14 @@ def get_portfolio_output(request):
 
         s12_port = Portfolio(s12_pct, "","")
 
-        print(s12_port)
+        #print(s12_port)
         w1 = list(s12_port.MVP().x)
-        print(w1)
+        #print(w1)
         w2 = list(s12_port.MVP_sharp().x)
-        print(w2)
+        #print(w2)
         w3 = list(s12_port.MRC().x)
 
-        print(w3)
+        #print(w3)
         
         t_port = {}
         t_port['similar_date'] = silmilar
@@ -692,7 +695,7 @@ def get_portfolio_output(request):
         t_port['weight'] = [w1, w2, w3]
         result['result'] = t_port
         
-        print(t_port)
+        #print(t_port)
         
         today = silmilar # 포트폴리오 유사시점
         
@@ -711,7 +714,7 @@ def get_portfolio_output(request):
         
         port1 = {}
         result_data, mdd, dd = Backtest(stocks=stocks,period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = w1, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
-        print(mdd)
+        #print(mdd)
         result_data = result_data.rename_axis('date').reset_index()
         result_data.rename(columns = {'portfolio 1': 'price'}, inplace = True )
         port1["data"] = result_data.to_dict('records')
@@ -719,7 +722,7 @@ def get_portfolio_output(request):
         port1['dd'] =dd
         result['port1'] = port1
         
-        print(port1)
+        #print(port1)
         
         port2 = {}
         result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period, today=today, user_input_s = w2, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
@@ -730,7 +733,7 @@ def get_portfolio_output(request):
         port2['dd'] = dd
         result['port2'] = port2
         
-        print(port2)
+        #print(port2)
         
         port3 = {}
         result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period,today=today, user_input_s = w3, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
@@ -740,7 +743,7 @@ def get_portfolio_output(request):
         port3['mdd'] = mdd
         port3['dd'] = dd
         result['port3'] = port3
-        print (result)
+        #print (result)
         return JsonResponse({'result' : result})
     
     
@@ -832,7 +835,7 @@ def get_sector_output(request):
             sector_data.loc[index, 's_date'] = s_date
         s_result = sector_data[sector_data['f_rank']!=10000].sort_values(by= ['Sector', 'f_rank'], ascending = [False, True]).drop('Name',axis=1).drop_duplicates(['Sector'], keep='first')
         s_result = s_result.sort_values(by = 'f_rank')
-        print(s_result)
+        #print(s_result)
         s_result.to_csv('./KS200_result.csv')
         
         return JsonResponse({"Success" : "True"})
