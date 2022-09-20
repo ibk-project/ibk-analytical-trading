@@ -235,7 +235,7 @@ class Backtest:
 
         new_w[:Backtest.nn] = (np.array(w)*self.stock_bond[0]).tolist()
         new_w[Backtest.nn:] = (np.array(w)*self.stock_bond[1]).tolist()
-        print(new_w)
+
         # 동적
         '''
         col_dy = self.stocks + col_bond + col_gold
@@ -270,7 +270,10 @@ class Backtest:
                             bt.algos.Rebalance()
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
+        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
+        print(d)
         backtest_p2 = bt.Backtest(p2, d[new_w.index])
+        print('222')
         result = bt.run(backtest_p2)
 
         Backtest.result_data.drop(Backtest.result_data.index[-1],inplace=True)
@@ -287,7 +290,7 @@ class Backtest:
             idx_upper = close_list.index(max(close_list[:idx_lower]))
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
-        print('here')
+        print(Backtest.result_data)
         return Backtest.result_data, MDD_return, DD_return
 
 
@@ -361,7 +364,7 @@ class Portfolio:
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
         return MDD_return, DD_return
-            
+
     def stock_set(self):
         # 저변동성 전략
         # 저변동성 값들
