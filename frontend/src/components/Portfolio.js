@@ -68,7 +68,7 @@ function Portfolio() {
     '디스플레이장비및부품',
     '건강관리장비와용품',
     '건축자재']
-  const portName = ['port1','port2']
+  const portName = ['최대분산P','샤프P','위험균형P']
   let initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
@@ -87,28 +87,28 @@ function Portfolio() {
       title: 'yield'
     },
     data: [{
-      name: 'Reggane',
-      data: [16.0234, 18.2423, 23.2341, 27.924, 32.212, 36.464, 39.8456, 38.4456, 35.556, 29.256, 22.056, 17.8909]
+      name: '',
+      data: []
     }, {
-      name: 'Tallinn',
-      data: [-2.990, -3.6798, -0.6465, 4.81234, 10.2567, 14.5234, 17.6234, 16.5234, 12.2340, 6.2345, 2.456450, 4.898099]
+      name: '',
+      data: []
     }]
   }
   const mddData = {
     title: 'DD',
     xAxis: {
-      title: 'Date',
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      title: 'Days Elapsed',
+      categories: [...Array(30).keys()].map( x => x+1 )
     },
     yAxis: {
       title: ''
     },
     data: [{
-      name: 'DD1',
-      data: [0.000, -3.611, -3.022, -2.522, 0.88, -0.133, -4.144, -3.5655, -3.355, -2.866, -1.477, 0.044]
+      name: '',
+      data: []
     },{
-      name: 'DD2',
-      data: [0.000, -2.688, -3.377, -2.255, -0.244, -0.144, -2.122, -2.622, -4.333, -3.844, -2.664, 0.099]
+      name: '',
+      data: []
     },]
   }
   const [chartData, setChartOption] = useState({
@@ -146,8 +146,8 @@ function Portfolio() {
         line: {
           title: 'predicted yield',
           xAxis: {
-            title: 'Date',
-            categories: r.port1.data.map(s => { return s.date })
+            title: 'Days Elapsed',
+            categories: [...Array(30).keys()].map( x => x+1 )
           },
           yAxis: {
             title: 'yield'
@@ -163,8 +163,8 @@ function Portfolio() {
         mdd: {
           title: 'DD',
           xAxis: {
-            title: 'Date',
-            categories: r.port1.data.map(s => { return s.date })
+            title: 'Days Elapsed',
+            categories: [...Array(30).keys()].map( x => x+1 )
           },
           yAxis: {
             title: ''
@@ -205,7 +205,7 @@ function Portfolio() {
         "sector": ms,
         "s_ratio": stockBond/100
       }
-    }).then(res => {makeChartData(res.data.result);});
+    }).then(res => {makeChartData(res.data.result); console.log(res.data.result)});
   }
   let sectors = []
   const getSectors = (market) => {
@@ -294,13 +294,23 @@ function Portfolio() {
           {!isChecked && <div key={isChecked}>
             <div className="market">
               <div>Market</div>
-              <span>
+                {/* <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                    {markets.slice(0,5).map(ss =>
+                      ss.map((s, value) => <Button value={value} onClick={selectMarket} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
+                    )}
+                  </ButtonGroup>
+                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                    {markets.slice(5,10).map(ss =>
+                      ss.map((s, value) => <Button value={value+6} onClick={selectMarket} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
+                    )}
+                  </ButtonGroup>
+                </Box> */}
                 <ButtonGroup style={{height:'1.5rem'}} color='inherit' key={currentMarket}>
                   {markets.map(m =>
                     <Button key={m} value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
                   )}
                 </ButtonGroup>
-              </span>
             </div>
             <div className="sector">
               <div>Sector</div>
@@ -310,6 +320,7 @@ function Portfolio() {
                       ss.map((s, value) => <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
+                  
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(5,10).map(ss =>
                       ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
