@@ -448,7 +448,7 @@ function EdaInfo(props) {
                       
                       <Box key={"1239"}>
                         <Grid container key={"1240"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item key={"1241"} sm={5} sx={{ px:1, pt:1 }}><NewsButton key={"1242"} style={{backgroundColor:'black', color:'white'}}>
+                          <Grid item key={"1241"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"1242"} style={{backgroundColor:'black', color:'white'}}>
                             최근 주요 뉴스 키워드
                           </NewsButton></Grid>
                           {marketData.newsKeywords.map((value) => (
@@ -549,7 +549,7 @@ function EdaInfo(props) {
 
                       <Box key={"6134444"}>
                         <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item key={"grid000"} sm={5} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
+                          <Grid item key={"grid000"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
                             최근 주요 뉴스 키워드
                           </NewsButton></Grid>
                           {similarDateData.newsKeywords.map((value) => (
