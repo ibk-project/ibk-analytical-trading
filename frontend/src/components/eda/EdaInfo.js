@@ -179,7 +179,8 @@ function EdaInfo(props) {
           let temp_array = res.data[0]['Similar Dates'].slice(1,-1).split(', ');
           temp_array = temp_array.map(x => x.split("~")[1]);
           console.log("temp_array is ", temp_array);
-          temp_marketData.similarDates = temp_array;
+          //temp_marketData.similarDates = temp_array;
+          temp_marketData.similarDates = temp_array.map(x => x.slice(0,-1));
           // temp_marketData.similarDates = temp_array.map(x => x.splice(0,-1));
         }
         setMarketData(temp_marketData);
