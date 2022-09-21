@@ -69,7 +69,12 @@ function EdaInfo(props) {
       brent: [],
       usdkrw: [],
       copper: [],
-      currentSector: [],
+      bicheol: [],
+      bank: [],
+      oil: [],
+      cosmetics: [],
+      realestate: [],
+      space: [],
     });
 
     const getIndex = async(tempcode, startDate, endDate, today) => {
@@ -132,7 +137,7 @@ function EdaInfo(props) {
       });
     }
 
-    const getSector = async(sectorName, startDate, endDate) => {
+    const getSector = async(sectorName, startDate, endDate, today) => {
       await axios.get('/api/data-management/stock/sector-avg', {
         params: {
           "start_date": startDate,
@@ -141,21 +146,40 @@ function EdaInfo(props) {
         }
       }).then(res => {
         res.data = res.data.data;
-        let temp_marketData = marketData;
-        if(sectorName === "비철금속") {
-          temp_marketData.bicheol = res.data;
-        } else if(sectorName === "은행") {
-          temp_marketData.bank = res.data;
-        } else if(sectorName === "석유와가스") {
-          temp_marketData.oil = res.data;
-        } else if(sectorName === "화장품") {
-          temp_marketData.cosmetics = res.data;
-        } else if(sectorName === "부동산") {
-          temp_marketData.realestate = res.data;
-        } else if(sectorName === "우주항공과국방") {
-          temp_marketData.space = res.data;
+        if(today===true) {
+          let temp_marketData = marketData;
+          if(sectorName === "비철금속") {
+            temp_marketData.bicheol = res.data;
+          } else if(sectorName === "은행") {
+            temp_marketData.bank = res.data;
+          } else if(sectorName === "석유와가스") {
+            temp_marketData.oil = res.data;
+          } else if(sectorName === "화장품") {
+            temp_marketData.cosmetics = res.data;
+          } else if(sectorName === "부동산") {
+            temp_marketData.realestate = res.data;
+          } else if(sectorName === "우주항공과국방") {
+            temp_marketData.space = res.data;
+          }
+          setMarketData(temp_marketData);
+        } else {
+          let temp_similarData = similarDateData;
+          if(sectorName === "비철금속") {
+            temp_similarData.bicheol = res.data;
+          } else if(sectorName === "은행") {
+            temp_similarData.bank = res.data;
+          } else if(sectorName === "석유와가스") {
+            temp_similarData.oil = res.data;
+          } else if(sectorName === "화장품") {
+            temp_similarData.cosmetics = res.data;
+          } else if(sectorName === "부동산") {
+            temp_similarData.realestate = res.data;
+          } else if(sectorName === "우주항공과국방") {
+            temp_similarData.space = res.data;
+          }
+          setSimilarDateData(temp_similarData);
         }
-        setMarketData(temp_marketData);
+        
       });
     }
 
@@ -249,7 +273,7 @@ function EdaInfo(props) {
       if(props.edaType === "sector"){
         let startDate = marketData.currentDate.split("~")[0];
         let endDate = marketData.currentDate.split("~")[1];
-        getSector(props.edaName, startDate, endDate);
+        getSector(props.edaName, startDate, endDate, true);
       }
     }, [props.edaCode])
 
@@ -270,12 +294,12 @@ function EdaInfo(props) {
       let startDate = marketData.currentDate.split("~")[0];
       let endDate = marketData.currentDate.split("~")[1];
 
-      getSector("비철금속", startDate, endDate);
-      getSector("은행", startDate, endDate);
-      getSector("석유와가스", startDate, endDate);
-      getSector("화장품", startDate, endDate);
-      getSector("부동산", startDate, endDate);
-      getSector("우주항공과국방", startDate, endDate);
+      getSector("비철금속", startDate, endDate, true);
+      getSector("은행", startDate, endDate, true);
+      getSector("석유와가스", startDate, endDate, true);
+      getSector("화장품", startDate, endDate, true);
+      getSector("부동산", startDate, endDate, true);
+      getSector("우주항공과국방", startDate, endDate, true);
 
       // kospi 가져오기
       getIndex("KS11", startDate, endDate, true);
@@ -316,7 +340,14 @@ function EdaInfo(props) {
 
         // getSimilarDateData
         // 백엔드에서 currentSimilarDateEnd 날짜의 (뉴스 키워드 5개)와 주요 지수(kospi, brent유, KRW/USD, copper선물) 정보 가져와서 setSimilarDateData 에 저장
-        
+
+        getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("은행", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("석유와가스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("화장품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("부동산", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("우주항공과국방", currentSimilarDate_start, currentSimilarDate_end, false);
+
         // kospi 가져오기
         getIndex("KS11", currentSimilarDate_start, currentSimilarDate_end, false);
         // kosdaq 가져오기
@@ -328,12 +359,6 @@ function EdaInfo(props) {
         // 구리 선물 가져오기
         getCommodity("HG", currentSimilarDate_start, currentSimilarDate_end, false);
 
-        getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end);
-        getSector("은행", currentSimilarDate_start, currentSimilarDate_end);
-        getSector("석유와가스", currentSimilarDate_start, currentSimilarDate_end);
-        getSector("화장품", currentSimilarDate_start, currentSimilarDate_end);
-        getSector("부동산", currentSimilarDate_start, currentSimilarDate_end);
-        getSector("우주항공과국방", currentSimilarDate_start, currentSimilarDate_end);
 
         getNews(currentSimilarDate_end, false);
 
@@ -411,10 +436,11 @@ function EdaInfo(props) {
                       </Grid>
                       <Box >
                         {props.edaName==="전체 시장"?
-                          (currentSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={marketData.kosdaq} />)
+                          <></>
                           :
                           (currentSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={marketData.kospi} />)
                         }
+                        {currentSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={marketData.kosdaq} />}
                         {currentSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={marketData.brent} />}
                         {currentSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={marketData.usdkrw} />}
                         {currentSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={marketData.copper} />}
@@ -422,12 +448,12 @@ function EdaInfo(props) {
                       
                       <Box key={"1239"}>
                         <Grid container key={"1240"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item key={"1241"} sm={5} sx={{ px:1, pt:1 }}><NewsButton key={"1242"} style={{backgroundColor:'black', color:'white', fontSize:'larger'}}>
+                          <Grid item key={"1241"} sm={5} sx={{ px:1, pt:1 }}><NewsButton key={"1242"} style={{backgroundColor:'black', color:'white'}}>
                             최근 주요 뉴스 키워드
                           </NewsButton></Grid>
                           {marketData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1234123"+value[0]} title={value[1]} arrow><NewsButton key={"1234532"+value[0]} style={{fontSize:'larger'}}>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1234123"+value[0]} title={value[1]} arrow><NewsButton key={"1234532"+value[0]}>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
@@ -444,7 +470,7 @@ function EdaInfo(props) {
                   <Grid container key={"1234754"} style={{textAlign: "center"}}>
                     <Grid item key={"341234"} xs={6}> {/* 왼쪽 파트 */}
                       <Chip key={"512342"} color="default" label={"유사 시점 탐색 결과"} sx={{ fontSize: 20, width: 500, mt: 5, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
-                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 350, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
+                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 250, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
 
                         <List key="929294">
                           {marketData.similarDates.map((value) => (
@@ -462,8 +488,26 @@ function EdaInfo(props) {
                             </ListItem>
                           ))}
                         </List>
-
                       </Paper>
+
+                      {currentSimilarDateEnd==='none'?(
+                        <>
+                        </>
+                      ):(<>
+                        <Chip key={"1237"} label={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName)) + "  " + currentSimilarDateStart+"~"+currentSimilarDateEnd}  sx={{ fontSize: 20, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
+                        <ShortSingleLine 
+                          title={(props.edaName==="전체 시장"?("KOSPI"):
+                          (props.edaName+(props.edaType==="sector"?" 섹터":"")))} 
+                          data={((props.edaType==="market")?(similarDateData.kospi):(
+                          (props.edaName==="비철금속")?(similarDateData.bicheol):
+                          (props.edaName==="은행")?(similarDateData.bank):
+                          (props.edaName==="화장품")?(similarDateData.cosmetics):
+                          (props.edaName==="석유와가스")?(similarDateData.oil):
+                          (props.edaName==="부동산")?(similarDateData.realestate):(similarDateData.space)))} 
+                          place={"left"}/>
+                        </>
+                      )}
+                      
                     </Grid>
                     <Grid item key={"6112344"} xs={6} sx={{textAlign: 'center', paddingTop:'5px'}}> {/* 오른쪽 파트 */}
                     {/* {similarDateEDAReady===false?( */}
@@ -505,12 +549,12 @@ function EdaInfo(props) {
 
                       <Box key={"6134444"}>
                         <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item key={"grid000"} sm={5} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white',  fontSize:'larger'}}>
+                          <Grid item key={"grid000"} sm={5} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
                             최근 주요 뉴스 키워드
                           </NewsButton></Grid>
                           {similarDateData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]} arrow ><NewsButton style={{fontSize:'larger'}}>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]} arrow ><NewsButton>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
