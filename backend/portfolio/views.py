@@ -1,3 +1,4 @@
+from operator import index
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from numpy import empty
@@ -292,11 +293,21 @@ class Backtest:
             idx_upper = close_list.index(max(close_list[:idx_lower]))
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
-
-        Backtest.result_data.drop(Backtest.result_data.tail(5).index, inplace=True)
-        DD_return = [DD_return[0][:-5]]
+        print(Backtest.result_data.index)
+        indexs = Backtest.result_data.index
+        for i in range(len(Backtest.result_data.index)):
+            print(i)
+            if i == 0:
+                continue
+            if indexs[i] == indexs[-1]:
+                print('end')
+                Backtest.result_data.drop(Backtest.result_data.tail(1).index, inplace=True)
+                DD_return = [DD_return[0][:-1]]
+            elif Backtest.result_data.loc[indexs[i], 'portfolio 2'] == 100:
+                print('111')
+                Backtest.result_data.loc[indexs[i], 'portfolio 2'] = (Backtest.result_data.loc[indexs[i-1], 'portfolio 2'] + Backtest.result_data.loc[indexs[i+1], 'portfolio 2'])/2
+        
         print(Backtest.result_data)
-        print(MDD_return)
         print(DD_return)
         return Backtest.result_data, MDD_return, DD_return
 
