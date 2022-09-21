@@ -65,6 +65,7 @@ function EdaInfo(props) {
     const [similarDateData, setSimilarDateData] = useState({
       newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"], ["바이던 음주", "2022-07-06"], ["옥수수 수염차", "2022-07-05"], ["일석 이조", "2022-07-04"]],
       kospi: [],
+      kosdaq: [],
       brent: [],
       usdkrw: [],
       copper: [],
@@ -91,7 +92,9 @@ function EdaInfo(props) {
           setMarketData(temp_marketData);
         } else {
           let temp_similarData = similarDateData;
-          if(tempcode==="KS11")
+          if(tempcode==="KQ11")
+            temp_similarData.kosdaq = res.data.data;
+          else if(tempcode==="KS11")
             temp_similarData.kospi = res.data.data;
           else if(tempcode==="USD/KRW")
             temp_similarData.usdkrw = res.data.data;
@@ -316,6 +319,8 @@ function EdaInfo(props) {
         
         // kospi 가져오기
         getIndex("KS11", currentSimilarDate_start, currentSimilarDate_end, false);
+        // kosdaq 가져오기
+        getIndex("KQ11", currentSimilarDate_start, currentSimilarDate_end, false);
         // USD/KRW 가져오기
         getIndex("USD/KRW", currentSimilarDate_start, currentSimilarDate_end, false);
         // 브랜트유 가져오기
@@ -339,7 +344,7 @@ function EdaInfo(props) {
 
     
     const featureSelection1 = ["KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
-    const featureSelection2 = ["KOSPI", "BRENT", "USD/KRW", "COPPER"];
+    const featureSelection2 = ["KOSPI", "KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
 
     const buttonSX = {
       "&:hover": {
@@ -492,6 +497,7 @@ function EdaInfo(props) {
                       
                       <Box >
                         {similarSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={similarDateData.kospi} />}
+                        {similarSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={similarDateData.kosdaq} />}
                         {similarSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={similarDateData.brent} />}
                         {similarSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={similarDateData.usdkrw} />}
                         {similarSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={similarDateData.copper} />}
