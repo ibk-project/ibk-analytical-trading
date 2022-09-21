@@ -292,7 +292,12 @@ class Backtest:
             idx_upper = close_list.index(max(close_list[:idx_lower]))
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
-        
+
+        Backtest.result_data.drop(Backtest.result_data.tail(5).index, inplace=True)
+        DD_return = [DD_return[0][:-5]]
+        print(Backtest.result_data)
+        print(MDD_return)
+        print(DD_return)
         return Backtest.result_data, MDD_return, DD_return
 
 
