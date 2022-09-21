@@ -53,7 +53,6 @@ function Portfolio() {
   '양방향미디어와서비스',
   '자동차',
   '복합기업',
-  '철강',
   '은행',
   '자동차부품',
   '석유와가스']
@@ -332,7 +331,7 @@ function Portfolio() {
                   </ButtonGroup>
 
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                    {selectedSector.slice(5,10).map(ss =>
+                    {selectedSector.slice(5,selectSector.length).map(ss =>
                       ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
