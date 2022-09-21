@@ -270,11 +270,7 @@ class Backtest:
                             bt.algos.Rebalance()
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
-<<<<<<< HEAD
-        print("========================")
-=======
         d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
->>>>>>> 7b838de9e4978bed75dc860dd036f601415f5e2b
         print(d)
         backtest_p2 = bt.Backtest(p2, d[new_w.index])
         print('222')
@@ -723,7 +719,7 @@ def get_portfolio_output(request):
         result_data, mdd, dd = Backtest(stocks=stocks,period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = w1, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
         #print(mdd)
         result_data = result_data.rename_axis('date').reset_index()
-        result_data.rename(columns = {'portfolio 1': 'price'}, inplace = True )
+        result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
         port1["data"] = result_data.to_dict('records')
         port1['mdd'] = mdd
         port1['dd'] =dd
@@ -745,7 +741,7 @@ def get_portfolio_output(request):
         port3 = {}
         result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period,today=today, user_input_s = w3, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
         result_data = result_data.rename_axis('date').reset_index()
-        result_data.rename(columns = {'portfolio 3': 'price'}, inplace = True )
+        result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
         port3["data"] = result_data.to_dict('records')
         port3['mdd'] = mdd
         port3['dd'] = dd
