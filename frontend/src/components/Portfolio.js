@@ -53,7 +53,6 @@ function Portfolio() {
   '양방향미디어와서비스',
   '자동차',
   '복합기업',
-  '철강',
   '은행',
   '자동차부품',
   '석유와가스']
@@ -74,7 +73,7 @@ function Portfolio() {
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
-  const [sortPort, setSort] = useState([0,1])
+  const [sortPort, setSort] = useState([0,1,2])
   const pieData = {
     data: [[{name: 'sm', y: 0.1}, {name: 'yg', y: 0.9}],[{name: 'sm', y: 0.5}, {name: 'yg', y: 0.5}]]
   }
@@ -187,8 +186,9 @@ function Portfolio() {
         }
       })
     }
-    let sortPort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().map(d => d[1])
-    setSort(sortPort)
+    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().map(d => d[1])
+    console.log(sort)
+    setSort(sort)
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -331,7 +331,7 @@ function Portfolio() {
                   </ButtonGroup>
 
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                    {selectedSector.slice(5,10).map(ss =>
+                    {selectedSector.slice(5,selectSector.length).map(ss =>
                       ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
@@ -346,9 +346,6 @@ function Portfolio() {
                   {pick.slice(0,5).map((ss, value) =>
                     <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{ss}</Button>)
                   }
-                </ButtonGroup>
-                
-                <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                   {pick.slice(5,10).map((ss, value) =>
                     <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{ss}</Button>)
                   }
@@ -356,16 +353,15 @@ function Portfolio() {
               </Box>
             </div>}
         </div>
-        {/* 네이버로 쓰기 191000? */}
         <div>
           <button onClick={onClick}>save</button>
         </div>
       </div>
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
-        <li key="1">종목:  { portfolio.stocks.map(i => { return i + ' ' }) }</li>
-        <li key="2">유사 시점:  { portfolio.similarDate.map(i => {return i + ' '}) }</li>
-        
+        <li key="1">종목:  { loaded ? (portfolio.stocks.map(i => { return i + ' ' })) : '' }</li>
+        <li key="2">유사 시점:  { loaded ? portfolio.similarDate.map(i => {return i + ' '}) : '' }</li>
+
         {
           sortPort.map( n => {
             return(

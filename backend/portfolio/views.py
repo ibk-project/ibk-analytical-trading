@@ -1,3 +1,4 @@
+from operator import index
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from numpy import empty
@@ -154,7 +155,7 @@ class Backtest:
         }
         #print("index in ")
         # 해당 종목의 데이터만 추출
-        
+        print('pre')
         d = pd.DataFrame()
         # 주가
         for i in range(len(self.today)):
@@ -296,7 +297,22 @@ class Backtest:
             idx_upper = close_list.index(max(close_list[:idx_lower]))
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
+        print(Backtest.result_data.index)
+        indexs = Backtest.result_data.index
+        for i in range(len(Backtest.result_data.index)):
+            print(i)
+            if i == 0:
+                continue
+            if indexs[i] == indexs[-1]:
+                print('end')
+                Backtest.result_data.drop(Backtest.result_data.tail(1).index, inplace=True)
+                DD_return = [DD_return[0][:-1]]
+            elif Backtest.result_data.loc[indexs[i], 'portfolio 2'] == 100:
+                print('111')
+                Backtest.result_data.loc[indexs[i], 'portfolio 2'] = (Backtest.result_data.loc[indexs[i-1], 'portfolio 2'] + Backtest.result_data.loc[indexs[i+1], 'portfolio 2'])/2
         
+        print(Backtest.result_data)
+        print(DD_return)
         return Backtest.result_data, MDD_return, DD_return
 
 
@@ -640,7 +656,7 @@ for x , y in dd[['Symbol','Name']].values:
 def get_top_output(request):
     if request.method == 'GET':
         result = {}
-        top_output = ['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', '동국제강' 'BNK금융지주', '한온시스템', 'SK이노베이션']
+        top_output = ['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션']
         result['top'] = top_output
         return JsonResponse({'result' : result})
 
@@ -680,7 +696,7 @@ def get_portfolio_output(request):
             date = datetime.datetime.strptime(s_date,'%Y-%m-%d')
             e_date = str(date + datetime.timedelta(days=400))
             stock = fdr.DataReader(code, s_date, e_date)['Close']
-            print('second')
+            print(len(stock.index))
             stock = pd.DataFrame(stock)
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
 
