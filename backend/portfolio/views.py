@@ -271,13 +271,9 @@ class Backtest:
                             bt.algos.Rebalance()
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
-<<<<<<< HEAD
-        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
-=======
-
         d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
         d.dropna(inplace=True)
->>>>>>> 4e14025bf6b276fddb0d768586de338e04626cc6
+
         print(d)
         backtest_p2 = bt.Backtest(p2, d[new_w.index])
         print('222')
