@@ -270,7 +270,13 @@ class Backtest:
                             bt.algos.Rebalance()
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
+<<<<<<< HEAD
         d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
+=======
+
+        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
+        d.dropna(inplace=True)
+>>>>>>> 4e14025bf6b276fddb0d768586de338e04626cc6
         print(d)
         backtest_p2 = bt.Backtest(p2, d[new_w.index])
         print('222')
@@ -290,7 +296,7 @@ class Backtest:
             idx_upper = close_list.index(max(close_list[:idx_lower]))
             mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
             MDD_return.append(mdd)
-        print(Backtest.result_data)
+        
         return Backtest.result_data, MDD_return, DD_return
 
 
@@ -634,7 +640,7 @@ for x , y in dd[['Symbol','Name']].values:
 def get_top_output(request):
     if request.method == 'GET':
         result = {}
-        top_output = ['삼성전자', '유한양행', '효성', '기아', 'BNK금융지주', 'Naver', '한온시스템', '금호석유', 'SK이노베이션', '동국제강']
+        top_output = ['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', '동국제강' 'BNK금융지주', '한온시스템', 'SK이노베이션']
         result['top'] = top_output
         return JsonResponse({'result' : result})
 
@@ -709,7 +715,7 @@ def get_portfolio_output(request):
         stocks = r_name
         stock_bond = w1
         input_rebal_period = 'week' # week month quarter
-        period = 400
+        period = 300
 
         #model_w = [w1,w2] #[[0.3,0.5,0.2],[0.2,0.8],[0.4,0.6]]
         now = today[0]
@@ -723,7 +729,7 @@ def get_portfolio_output(request):
         port1["data"] = result_data.to_dict('records')
         port1['mdd'] = mdd
         port1['dd'] =dd
-        result['port1'] = port1
+        result['최대분산P'] = port1
         
         #print(port1)
         
@@ -734,7 +740,7 @@ def get_portfolio_output(request):
         port2["data"] = result_data.to_dict('records')
         port2['mdd'] = mdd
         port2['dd'] = dd
-        result['port2'] = port2
+        result['샤프P'] = port2
         
         #print(port2)
         
@@ -745,7 +751,7 @@ def get_portfolio_output(request):
         port3["data"] = result_data.to_dict('records')
         port3['mdd'] = mdd
         port3['dd'] = dd
-        result['port3'] = port3
+        result['위험균형P'] = port3
         #print (result)
         return JsonResponse({'result' : result})
     

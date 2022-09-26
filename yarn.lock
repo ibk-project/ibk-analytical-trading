@@ -861,3 +861,8 @@
   "integrity" "sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg=="
   "resolved" "https://registry.npmjs.org/yaml/-/yaml-1.10.2.tgz"
   "version" "1.10.2"
+
+"yfinance@^0.0.6":
+  "integrity" "sha512-EcJrrcX+ZCpbhouGO6s5y7XRUHGBwFY19PKtUJ17vg1L0dSK2N59Ns0A/ZfLtpWC8WatWjen6gE+KW51bxthsA=="
+  "resolved" "https://registry.npmjs.org/yfinance/-/yfinance-0.0.6.tgz"
+  "version" "0.0.6"
