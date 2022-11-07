@@ -5,7 +5,8 @@ import Accessibility from "highcharts/modules/accessibility";
 
 function MultiLine(props) {
   Accessibility(Highcharts)
-  console.log(props)
+  const n = props.num
+  props.props.data[n].data = props.props.data[n].data.map(p => {return parseFloat(parseFloat(p).toFixed(2))})
   const prop = props.props
   const initialOptions = {
     chart: {
@@ -19,6 +20,7 @@ function MultiLine(props) {
     //     '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
     //     'target="_blank">Wikipedia.com</a>'
     // },
+    credits: { enabled: false },
     xAxis: {
       title: {
         text: prop.xAxis.title
@@ -38,15 +40,15 @@ function MultiLine(props) {
         enableMouseTracking: false
       }
     },
-    series: prop.data[parseInt(props.num)]
+    series: prop.data[props.num]
   }
-  console.log(prop.data[parseInt(props.num)])
+  console.log(props.props.data)
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
     setOptions({
       ...initialOptions,
       title: { text: props.props.title },
-      series: props.props.data
+      series: props.props.data[props.num]
     })
   },[props.props.title, props.props.data])
 

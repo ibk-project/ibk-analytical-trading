@@ -6,25 +6,38 @@ import Accessibility from "highcharts/modules/accessibility";
 function Pie(props) {
   Accessibility(Highcharts);
   const initialOptions = {
-    title : { text : props.title },
-    chart : { type : "pie" },
+    chart : { type : "pie", height: "200px"},
+    credits: { enabled: false },
+    legend: { 
+      align: 'right',
+      verticalAlign: 'top' 
+    },
+    plotOptions: {
+    	pie: {
+        allowPointSelect: true,//차트 데이터 선택 유무 옵션.
+        dataLabels: {
+          enabled: false
+        },
+        showInLegend: true,
+        size: '100%',
+     }
+    },
     series : [{
       name: 'weight',
       data: props.data
     }]
   }
-  console.log(props.data)
   const [ options, setOptions ] = useState(initialOptions)
 
   useEffect(()=>{
     setOptions({
       ...initialOptions,
-      title: { text : props.title },
+      title: { text : '' },
       series : [{
         data: props.data
       }]
     })
-  },[props.title, props.data])
+  },[props.data])
 
   return (
     <Fragment>

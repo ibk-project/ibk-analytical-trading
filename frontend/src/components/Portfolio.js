@@ -21,6 +21,14 @@ function Portfolio() {
   }
   const [userOption, setUserOption] = useState(initUserOption)
   // API 부르기
+  const [pick, setPick] = useState(['asdf','qwer'])
+  const recommend = async () => {
+    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result.top)});
+  }
+  useEffect(()=>{
+    recommend()
+    console.log(pick)
+  },[]) 
   const [showChart, setShowChart] = useState(false)
   const [portfolio, setPort] = useState({
     stocks: [],
@@ -29,10 +37,10 @@ function Portfolio() {
   })
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(false); // !! 나중에 false로 꼭 바꾸기 
   const [selectedSector, setSector] = useState([])
   const [currentMarket, setMarket] = useState('')
-  const [yields, setYield] = useState(['-1','10'])
+  //const [yields, setYield] = useState(['-1','10'])
   const initIsSelected = {
     'KOSPI 100': false,
     'KOSPI 200': false,
@@ -45,7 +53,6 @@ function Portfolio() {
   '양방향미디어와서비스',
   '자동차',
   '복합기업',
-  '철강',
   '은행',
   '자동차부품',
   '석유와가스']
@@ -60,45 +67,55 @@ function Portfolio() {
     '디스플레이장비및부품',
     '건강관리장비와용품',
     '건축자재']
-  const portName = ['port1','port2']
+  const portName = ['최대분산P','샤프P','위험균형P']
+  //const portName = ['port1','port2','port3']
   let initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
+  const [sortPort, setSort] = useState([0,1,2])
   const pieData = {
-    title: '',
-    data: []
+    data: [[{name: 'sm', y: 0.1}, {name: 'yg', y: 0.9}],[{name: 'sm', y: 0.5}, {name: 'yg', y: 0.5}]]
   }
   const lineData = {
     title: '',
     xAxis: {
-      title: 'Date',
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      title: 'Days Elapsed',
+      categories: [...Array(30).keys()].map( x => x+1 )
     },
     yAxis: {
       title: 'yield'
     },
     data: [{
-      name: 'Reggane',
-      data: [16.0, 18.2, 23.1, 27.9, 32.2, 36.4, 39.8, 38.4, 35.5, 29.2, 22.0, 17.8]
+      name: '',
+      data: []
     }, {
-      name: 'Tallinn',
-      data: [-2.9, -3.6, -0.6, 4.8, 10.2, 14.5, 17.6, 16.5, 12.0, 6.5, 2.0, -0.9]
+      name: '',
+      data: []
+    }, {
+      name: '',
+      data: []
     }]
   }
   const mddData = {
     title: 'DD',
     xAxis: {
-      title: 'Date',
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      title: 'Days Elapsed',
+      categories: [...Array(30).keys()].map( x => x+1 )
     },
     yAxis: {
       title: ''
     },
     data: [{
-      name: 'DD',
-      data: [0.0, -3.6, -3.0, -2.5, 0, -0.1, -4.1, -3.6, -3.3, -2.8, -1.4, 0.0]
-    },]
+      name: '',
+      data: []
+    },{
+      name: '',
+      data: []
+    },{
+      name: '',
+      data: []
+    }]
   }
   const [chartData, setChartOption] = useState({
     pie: pieData,
@@ -108,6 +125,7 @@ function Portfolio() {
   const isMounted = useRef(false);
 
   const getPortfolio = async() => {
+    setLoaded(false)
     const makeChartData = (r) => {
       setPort({
         stocks: r.result.stocks,
@@ -126,7 +144,7 @@ function Portfolio() {
         }
         ww.push(w)
       }
-      setYield([r.port1.data[-1],r.port2.data[-1]])
+      //setYield([r['샤프 P'].data[-1],r.port2.data[-1]])
       setChartOption({
         pie: {
           title: 'stocks weight',
@@ -135,8 +153,8 @@ function Portfolio() {
         line: {
           title: 'predicted yield',
           xAxis: {
-            title: 'Date',
-            categories: r.port1.data.map(s => { return s.date })
+            title: 'Days Elapsed',
+            categories: [...Array(30).keys()].map( x => x+1 )
           },
           yAxis: {
             title: 'yield'
@@ -152,8 +170,8 @@ function Portfolio() {
         mdd: {
           title: 'DD',
           xAxis: {
-            title: 'Date',
-            categories: r.port1.data.map(s => { return s.date })
+            title: 'Days Elapsed',
+            categories: [...Array(30).keys()].map( x => x+1 )
           },
           yAxis: {
             title: ''
@@ -168,6 +186,9 @@ function Portfolio() {
         }
       })
     }
+    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().map(d => d[1])
+    console.log(sort)
+    setSort(sort)
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -251,19 +272,6 @@ function Portfolio() {
   useEffect(()=>{
     if(!isMounted.current) return;
     getPortfolio()
-    // setChartOption({
-    //   pie: {
-    //     ...chartData.pie,
-    //     title: userOption.option1,
-    //   },
-    //   line: {
-    //     ...chartData.line,
-    //     title: userOption.option2
-    //   },
-    //   mdd: {
-    //     ...chartData.mdd
-    //   }
-    // })
   },[showChart])
   useEffect(()=>{
     if(!isMounted.current) return;
@@ -287,7 +295,6 @@ function Portfolio() {
               style={{width:'400px', verticalAlign: 'middle', color: 'black'}}
             />
           </div>
-          {/* <span style={{display:'inline-block'}} key={stockBond}>주식: {stockBond} 채권: {100-stockBond}</span> */}
         </span>
         <div className="options">
           <span style={{fontSize: 'large'}}>마켓/섹터 고르기</span>
@@ -295,46 +302,56 @@ function Portfolio() {
           {!isChecked && <div key={isChecked}>
             <div className="market">
               <div>Market</div>
-              <span>
-                <ButtonGroup style={{height:'1.5rem'}} color='inherit' key={currentMarket}>
+                {/* <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                    {markets.slice(0,5).map(ss =>
+                      ss.map((s, value) => <Button value={value} onClick={selectMarket} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
+                    )}
+                  </ButtonGroup>
+                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
+                    {markets.slice(5,10).map(ss =>
+                      ss.map((s, value) => <Button value={value+6} onClick={selectMarket} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
+                    )}
+                  </ButtonGroup>
+                </Box> */}
+                <ButtonGroup style={{height:'1.5rem', marginTop: '10px'}} color='inherit' key={currentMarket}>
                   {markets.map(m =>
                     <Button key={m} value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
                   )}
                 </ButtonGroup>
-              </span>
             </div>
             <div className="sector">
-              <div>Sector</div>
-              {/* <span style={{marginTop: '10px', display: 'inline', width:'300px'}}> */}
-              {/* <Box sx={{display:'flex', flexDirection: 'column'}}  key={selectedSector}>
-                {selectedSector.map(ss => {
-                  return (
-                    <ButtonGroup style={{height:'1.5rem'}} color='inherit'>
-                      {ss.map(s =>
-                        <Button value={s} onClick={selectSector} style={{backgroundColor: isSelected[s] ? 'lightgray':null}}>{s}</Button>
-                      )}
-                    </ButtonGroup>
-                  )}
-                )}
-              </Box> */}
-                {/* <div style={{marginTop: '10px', display: 'inline', width:'300px'}}> */}
-
-                <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+              <div style={{marginTop: '15px'}}>Sector</div>
+              <div>
+                <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle', marginTop: '10px'}} key={sectorClicked}>
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(0,5).map(ss =>
-                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
+
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                    {selectedSector.slice(5,10).map(ss =>
+                    {selectedSector.slice(5,selectSector.length).map(ss =>
                       ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
                 </Box>
-              {/* </span>  */}
+              </div>
             </div>
-
           </div>}
+          {isChecked && 
+            <div>
+              <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
+                <ButtonGroup style={{height:'1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
+                  {pick.slice(0,5).map((ss, value) =>
+                    <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{ss}</Button>)
+                  }
+                  {pick.slice(5,10).map((ss, value) =>
+                    <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{ss}</Button>)
+                  }
+                </ButtonGroup>
+              </Box>
+            </div>}
         </div>
         <div>
           <button onClick={onClick}>save</button>
@@ -342,32 +359,41 @@ function Portfolio() {
       </div>
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
-        <li key="1">종목:  { portfolio.stocks.map(i => { return i + ' ' }) }</li>
-        <li key="2">유사 시점:  { portfolio.similarDate.map(i => {return i + ' '}) }</li>
-        <Accordion style={{marginTop:'15px'}}>
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <span>Portfolio 1</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[0].data[chartData.line.data[0].data.length-1]-100).toFixed(2) : ''}%</span>
-          </AccordionSummary>
-          <AccordionDetails key={chartData}>
-            <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}} key={chartData}>
-              <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data[0]} />
-            </div>
-            <div className="backtest">
-              <div className="title1">Backtest</div>
-              <div className="chart" style={{width: '900px', margin: '0 auto'}}>
-                <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line} num='0'/>
-                </span>
-                <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd} num='0'/>
-                </span>
-              </div>
-            </div>
-          </AccordionDetails>
-        </Accordion>
-        <Accordion>
+        <li key="1">종목:  { loaded ? (portfolio.stocks.map(i => { return i + ' ' })) : '' }</li>
+        <li key="2">유사 시점:  { loaded ? portfolio.similarDate.map(i => {return i + ' '}) : '' }</li>
+
+        {
+          sortPort.map( n => {
+            return(
+            <Accordion style={{marginTop:'15px'}}>
+              <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+                <span>{portName[n]}</span>
+                <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span>
+              </AccordionSummary>
+              <AccordionDetails key={chartData}>
+                <div style={{width: '170px', maxWidth: '170px', display: 'inline-block', verticalAlign: 'top'}} key={chartData}>
+                  <div className="title1" style={{marginBottom: '70px'}}>Stocks Weight</div>
+                  <Pie title={chartData.pie.title} data={chartData.pie.data[n]} />
+                </div>
+                <div className="backtest">
+                  <div className="chart" style={{width: '900px', margin: '0 auto'}}>
+                    <div className="title1">Backtest</div>
+                    <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
+                      <MultiLine props={chartData.line} num={n}/>
+                    </span>
+                    <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
+                      <MultiLine props={chartData.mdd} num={n}/>
+                    </span>
+                  </div>
+                </div>
+              </AccordionDetails>
+            </Accordion>)
+          })
+        }
+        
+        
+       
+        {/* <Accordion>
           <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
             <span>Portfolio 2</span>
             <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[1].data[chartData.line.data[1].data.length-1]-100).toFixed(2) : ''}%</span>
@@ -389,7 +415,8 @@ function Portfolio() {
               </div>
             </div>
           </AccordionDetails>
-        </Accordion>
+        </Accordion> */}
+      
       </div>
   	</div>
   );
