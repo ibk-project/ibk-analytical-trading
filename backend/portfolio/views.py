@@ -29,27 +29,37 @@ kscsv = os.path.join(os.path.dirname(__file__), 'kospi-1.csv')
 kqcsv = os.path.join(os.path.dirname(__file__), 'kosdaq-1.csv')
 unemploycsv = os.path.join(os.path.dirname(__file__), 'unemploy.csv')
 #d = pd.DataFrame()
+
 class Backtest:
     now = '0000-00-00'
     result_data = pd.DataFrame()
+    stock_bond = [0.6,0.4]
     nn = 0
+    MDD_return = []
+    DD_return = [] 
+    new_w = pd.Series()
+    cnt = 0
+    risk = 0
+    draw_start = 0
+    finish_early = False
 
-    def __init__(self, stocks, today, period=30, stock_bond=[0.6,0.4], input_rebal_period='week', user_w=0, user_input_sb=[] , user_input_s=[]):
+    def __init__(self, stocks, today, period=30, stock_bond=[0.6,0.4], input_rebal_period='week', user_w=0, user_input_sb=[], user_input_s=[], risk=0):
         self.PrintInfo = self.PrintInfo
         Backtest.now = today[0]
         Backtest.nn = len(stocks)
         self.stocks = stocks
         self.today = today
         self.period = period
-        self.stock_bond = stock_bond
         self.input_rebal_period = input_rebal_period
         self.user_w = user_w
-        self.user_input_sb = user_input_sb
-        self.user_input_s = user_input_s
+        Backtest.user_input_sb = user_input_sb
+        Backtest.user_input_s = user_input_s
+        Backtest.stock_bond = stock_bond
+        Backtest.risk = risk
 
     def addDate(self, date, r):    
-        return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
-
+        return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+    # __call__ 에서 안쓰면 cummax, drawdown 삭제
     def cummax(self, nums):
         cum = []
         n_max = 0
@@ -58,7 +68,7 @@ class Backtest:
                 n_max = x
             cum.append(n_max)
         return cum
-
+    
     class PrintInfo(bt.Algo):
 
         def __init__(self, fmt_string="{name} {now}"):
@@ -66,10 +76,11 @@ class Backtest:
             self.fmt_string = fmt_string
 
         def addDate(self, date, r):
-            return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+            return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
 
         def __call__(self, target):
-            #print(self.fmt_string.format(**target.__dict__))
+            if Backtest.finish_early:
+                return True
             Backtest.result_data.loc[self.addDate(Backtest.now,1),target.__dict__['name']] = target.__dict__['_price']
             Backtest.now = str(target.__dict__['now'])[0:10]
             return True
@@ -80,9 +91,45 @@ class Backtest:
             super().__init__()
             self.weight = weight
 
+        def cummax(self, nums):
+            cum = []
+            n_max = 0
+            for x in nums:
+                if x > n_max:
+                    n_max = x
+                cum.append(n_max)
+            return cum
+        
+        def drawdown(self):
+            Backtest.cnt += 1
+            close_list = Backtest.result_data['portfolio 2'].to_list()[Backtest.draw_start:]
+            drawdown = [x-y for x, y in zip(close_list, self.cummax(close_list))]
+            Backtest.DD_return.extend([x/y * 100 for x, y in zip(drawdown, self.cummax(close_list))])
+            idx_lower = drawdown.index(min(drawdown))
+            idx_upper = close_list.index(max(close_list[:idx_lower+1]))
+            mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
+            Backtest.MDD_return.append(mdd)
+            
+            Backtest.draw_start = len(Backtest.result_data.columns) - 1
+
         def __call__(self, target):
+            if Backtest.finish_early:
+                return True
+            print("target")
+            self.drawdown()
             # added copy to make sure these are not overwritten
-            target.temp["weights"] = dict(self.weight.loc[Backtest.now,:])
+            print("start")
+            if Backtest.DD_return[-1] < Backtest.risk:
+                if Backtest.stock_bond[0] - 0.05 <= 0:
+                    finish_early = True
+                    return True
+                
+                Backtest.stock_bond[0] -= 0.05
+                Backtest.stock_bond[1] += 0.05
+                
+                Backtest.new_w[:Backtest.nn] = (np.array(Backtest.user_input_s)*Backtest.stock_bond[0]).tolist()
+                Backtest.new_w[Backtest.nn:] = (np.array(Backtest.user_input_s)*Backtest.stock_bond[1]).tolist()   
+            target.temp["weights"] = Backtest.new_w.to_dict()
 
             return True
 
@@ -92,13 +139,12 @@ class Backtest:
                 self.PrintInfo('{name}:{now}. Value:{_value:0.0f}, Price:{_price:0.4f}'),
                 bt.algos.PrintRisk()
                 )
-        # Data
         
+        # Data
         KOSPI = pd.read_csv(kscsv,
                             parse_dates=['Unnamed: 0'],
                             index_col=0)
         KOSPI.index = pd.to_datetime(KOSPI.index.astype(str), format='%Y-%m-%d')
-
         KOSDAQ = pd.read_csv(kqcsv,
                             parse_dates=['Unnamed: 0'],
                             index_col=0)
@@ -115,22 +161,16 @@ class Backtest:
         unemploy.index = ['unemploy']
         unemploy = unemploy.T
 
-        # exchange = fdr.DataReader('USD/KRW','2015','2022-07-15')['Close']
-        exchange = yf.download('USDKRW=X',start='2015-01-01', end='2022-07-15')['Close']
-        # tlt = fdr.DataReader('TLT','2015','2022-07-15')['Close'] # 미국 장기채 ETF
+        exchange = yf.download('USDKRW=X', start='2015-01-01', end='2022-07-15')['Close']
         tlt = yf.download('TLT', start = '2015-01-01', end = '2022-07-15')['Close']
-        #지금 필요없음 gold = fdr.DataReader('132030','2015')['Close'] # KODEX 골드선물(H)
-        
-        #gold.columns = ['gold']
 
         unemploy_roll = unemploy.rolling(12).mean()[12:]
         unemploy_roll.columns = ['unemploy_roll']
         unemploy = unemploy[12:]
-        print('qwer')
         # 실업률 데이터 일별로 증폭
         unem = pd.DataFrame(index=df.index,columns=['unemploy'])
         unem_roll = pd.DataFrame(index=df.index,columns=['unemploy_roll'])
-        
+
         for i in df.index[0:-15]:
             unem.loc[i] = unemploy.loc[str(i)[:7],'unemploy']
             unem_roll.loc[i] = unemploy_roll.loc[str(i)[:7],'unemploy_roll']
@@ -153,10 +193,9 @@ class Backtest:
             'quarter': bt.algos.RunQuarterly(),
             'year': bt.algos.RunYearly()
         }
-        #print("index in ")
         # 해당 종목의 데이터만 추출
-        print('pre')
         d = pd.DataFrame()
+
         # 주가
         for i in range(len(self.today)):
             neww = df.loc[self.today[i]:self.addDate(self.today[i],self.period), self.stocks[i]]
@@ -169,9 +208,7 @@ class Backtest:
 
         # 채권
         for i in range(len(self.today)):
-            
             b = df.loc[self.today[i]:self.addDate(self.today[i],self.period), 'bond'].reset_index(drop=True)
-            #print(b) 
             for j in range(len(b)-1):
                 if np.isnan(b[0]):
                     b[0] = b[1]
@@ -181,135 +218,50 @@ class Backtest:
                 b[len(b)-1] = b[len(b)-2]
             d['bond'+self.stocks[i]] = b 
 
-        '''
-        # 종목별 실업률
-        for i in range(len(self.today)):
-            un = unem.loc[self.addDate(self.today[i],-30):self.addDate(self.today[i],self.period-30), 'unemploy'].reset_index(drop=True)
-            for j in range(len(un)-1):
-                if np.isnan(un[0]):
-                    un[0] = un[1]
-                if np.isnan(un[j]):
-                    un[j] = (un[j-1] + un[j+1])/2
-            if np.isnan(un[len(un)-1]):
-                un[len(un)-1] = un[len(un)-2]
-            d['unem'+self.stocks[i]] = un
-
-        # 종목별 실업률 rolling
-        for i in range(len(self.today)):
-            un = unem_roll.loc[self.today[i]:self.addDate(self.today[i],self.period), 'unemploy_roll'].reset_index(drop=True)
-            for j in range(len(un)-1):
-                if np.isnan(un[0]):
-                    un[0] = un[1]
-                if np.isnan(un[j]):
-                    un[j] = (un[j-1] + un[j+1])/2
-            if np.isnan(un[len(un)-1]):
-                un[len(un)-1] = un[len(un)-2]
-            d['unem_roll'+self.stocks[i]] = un
-
-        # 종목별 실업률 rolling
-        for i in range(len(self.today)):
-            g = gold.loc[self.today[i]:self.addDate(self.today[i],self.period)].reset_index(drop=True)
-            for j in range(len(g)-1):
-                
-                if np.isnan(g[0]):
-                    g[0] = g[1]
-                if np.isnan(g[j]):
-                    g[j] = (g[j-1] + g[j+1])/2
-            if np.isnan(un[len(un)-1]):
-                un[len(g)-1] = g[len(g)-2]
-            d['gold'+self.stocks[i]] = g
-
-        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate(self.today[0],int(str(x))), "%Y-%m-%d"), d.index))
-        d.dropna(inplace=True)
-        '''
         # 가중치 설정
-        w = self.user_input_s
-        if len(self.user_input_sb) != 0:
-            self.stock_bond = self.user_input_sb
+        w = Backtest.user_input_s
+        if len(Backtest.user_input_sb) != 0:
+            Backtest.stock_bond = Backtest.user_input_sb
 
         # 주식60 채권40
         col_bond = ['bond'+ x for x in self.stocks]
         #col_gold = ['gold'+x for x in self.stocks]
         col64 = self.stocks + col_bond
+    
+        Backtest.new_w = pd.Series(index=col64)
 
-        new_w = pd.Series(index=col64)
+        Backtest.new_w[:Backtest.nn] = (np.array(w)*Backtest.stock_bond[0]).tolist()
+        Backtest.new_w[Backtest.nn:] = (np.array(w)*Backtest.stock_bond[1]).tolist()
 
-        new_w[:Backtest.nn] = (np.array(w)*self.stock_bond[0]).tolist()
-        new_w[Backtest.nn:] = (np.array(w)*self.stock_bond[1]).tolist()
-
-        # 동적
-        '''
-        col_dy = self.stocks + col_bond + col_gold
-        laa_w = pd.DataFrame(index=d.index, columns=col_dy)
-        good = True
-        up = True
-        
-        #print("index in ")
-        
-        for i in d.index:
-            i = str(i)[:10]
-            for j in range(len(self.stocks)):
-                if d.loc[i,'unem'+self.stocks[j]] > d.loc[i,'unem_roll'+self.stocks[j]] : # 불황기
-                    good = False
-                if d.loc[i,self.stocks[j]] < d.loc[i,'roll'+self.stocks[j]]:
-                    up = False
-                if good | up: # 주식 50
-                    laa_w.loc[i, self.stocks] = [x * 0.5 for x in w]
-                    laa_w.loc[i, col_bond] = [x * 0.25 for x in w]
-                    laa_w.loc[i, col_gold] = [x * 0.25 for x in w]
-                else: # 채권 50
-                    laa_w.loc[i, self.stocks] = [x*0.25 for x in w]
-                    laa_w.loc[i, col_bond] = [x*0.5 for x in w]
-                    laa_w.loc[i, col_gold] = [x*0.25 for x in w]
-        '''
-        
-        weight2 = new_w.copy()
+        weight2 = Backtest.new_w.copy()
         portfolio_2 = bt.AlgoStack(
-                            rebal_period['week'],
+                            rebal_period['month'],
                             bt.algos.SelectThese(col64),
-                            bt.algos.WeighSpecified(**weight2),
+                            #bt.algos.WeighSpecified(**weight2),
+                            self.WeighSpecified(weight2),
                             bt.algos.Rebalance()
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
-        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01',x), '%Y-%m-%d'), d.index))
-        d.dropna(inplace=True)
 
-        print(d)
-        backtest_p2 = bt.Backtest(p2, d[new_w.index])
-        print('222')
+        d.index = list(map(lambda x: datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
+        d.dropna(inplace=True)
+        
+        backtest_p2 = bt.Backtest(p2, d[Backtest.new_w.index])
         result = bt.run(backtest_p2)
 
         Backtest.result_data.drop(Backtest.result_data.index[-1],inplace=True)
-        colunms =  Backtest.result_data.columns
-        MDD_return = []
-        DD_return = []
         stock = Backtest.result_data.fillna(method = 'bfill')
 
-        for n in colunms:
-            close_list = Backtest.result_data[n].to_list()
-            drawdown = [x-y for x, y in zip(close_list, self.cummax(close_list))]
-            DD_return.append([x/y * 100 for x, y in zip(drawdown, self.cummax(close_list))])
-            idx_lower = drawdown.index(min(drawdown))
-            idx_upper = close_list.index(max(close_list[:idx_lower]))
-            mdd = (close_list[idx_lower] - close_list[idx_upper])/close_list[idx_upper]
-            MDD_return.append(mdd)
-        print(Backtest.result_data.index)
         indexs = Backtest.result_data.index
         for i in range(len(Backtest.result_data.index)):
-            print(i)
             if i == 0:
                 continue
             if indexs[i] == indexs[-1]:
-                print('end')
                 Backtest.result_data.drop(Backtest.result_data.tail(1).index, inplace=True)
-                DD_return = [DD_return[0][:-1]]
             elif Backtest.result_data.loc[indexs[i], 'portfolio 2'] == 100:
-                print('111')
                 Backtest.result_data.loc[indexs[i], 'portfolio 2'] = (Backtest.result_data.loc[indexs[i-1], 'portfolio 2'] + Backtest.result_data.loc[indexs[i+1], 'portfolio 2'])/2
-        
-        print(Backtest.result_data)
-        print(DD_return)
-        return Backtest.result_data, MDD_return, DD_return
+
+        return Backtest.result_data, Backtest.MDD_return, Backtest.DD_return
 
 
 
