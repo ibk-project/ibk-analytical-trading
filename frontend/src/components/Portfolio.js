@@ -27,8 +27,7 @@ function Portfolio() {
   }
   useEffect(()=>{
     recommend()
-    console.log(pick)
-  },[]) 
+  },[])
   const [showChart, setShowChart] = useState(false)
   const [portfolio, setPort] = useState({
     stocks: [],
@@ -68,8 +67,14 @@ function Portfolio() {
     '건강관리장비와용품',
     '건축자재']
   const portName = ['최대분산P','샤프P','위험균형P']
+  const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
   //const portName = ['port1','port2','port3']
-  let initSectorClicked = [false, false, false, false, false, false, false, false, false, false, false, false]
+  let initBool = [false, false, false, false, false, false, false, false, false, false, false, false]
+  let initSectorClicked = {
+    'KOSPI 100': [...initBool],
+    'KOSPI 200': [...initBool],
+    'KOSDAQ': [...initBool]
+  }
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
@@ -117,10 +122,31 @@ function Portfolio() {
       data: []
     }]
   }
+  const riskData = {
+    title: 'DD',
+    xAxis: {
+      title: 'Days Elapsed',
+      categories: [...Array(30).keys()].map( x => x+1 )
+    },
+    yAxis: {
+      title: ''
+    },
+    data: [{
+      name: '',
+      data: []
+    },{
+      name: '',
+      data: []
+    },{
+      name: '',
+      data: []
+    }]    
+  }
   const [chartData, setChartOption] = useState({
     pie: pieData,
     line: lineData,
-    mdd: mddData
+    mdd: mddData,
+    risk: riskData
   })
   const isMounted = useRef(false);
 
@@ -186,9 +212,9 @@ function Portfolio() {
         }
       })
     }
-    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().map(d => d[1])
+    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
     console.log(sort)
-    setSort(sort)
+    setSort(()=>[...sort])
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -226,10 +252,8 @@ function Portfolio() {
     }
     setSector([...sectors])
   }
-  const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
   const selectMarket = (e) => {
     setMarket(e.target.value)
-    setSectorClick([...initSectorClicked])
     setSelect({
       ...initIsSelected,
       [e.target.value]: true
@@ -238,9 +262,14 @@ function Portfolio() {
   }
   const selectSector = (e) => {
     const n = e.target.value
-    let sss = sectorClicked
+    console.log(sectorClicked)
+    let sss = sectorClicked[currentMarket]
     sss[n] = !sss[n]
-    setSectorClick([...sss])
+    setSectorClick((prev)=>({
+      ...prev,
+      [currentMarket]: sss
+    }))
+    console.log(sectorClicked)
   }
   const check = () => {
     setCheck(!isChecked)
@@ -250,13 +279,13 @@ function Portfolio() {
     //getPortfolio()
     setShowChart(!showChart)
   }
-  const onChange = (e) => {
-    initUserOption = {
-      ...userOption,
-      [e.target.name]: e.target.value
-    }
-    setUserOption(initUserOption)
-  }
+  // const onChange = (e) => {
+  //   initUserOption = {
+  //     ...userOption,
+  //     [e.target.name]: e.target.value
+  //   }
+  //   setUserOption(initUserOption)
+  // }
   const changeSlider = (e, v) => {
     setStockBond(v)
   }
@@ -302,18 +331,6 @@ function Portfolio() {
           {!isChecked && <div key={isChecked}>
             <div className="market">
               <div>Market</div>
-                {/* <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
-                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                    {markets.slice(0,5).map(ss =>
-                      ss.map((s, value) => <Button value={value} onClick={selectMarket} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
-                    )}
-                  </ButtonGroup>
-                  <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                    {markets.slice(5,10).map(ss =>
-                      ss.map((s, value) => <Button value={value+6} onClick={selectMarket} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
-                    )}
-                  </ButtonGroup>
-                </Box> */}
                 <ButtonGroup style={{height:'1.5rem', marginTop: '10px'}} color='inherit' key={currentMarket}>
                   {markets.map(m =>
                     <Button key={m} value={m} onClick={selectMarket} style={{backgroundColor: isSelected[m] ? 'lightgray':null}}>{m}</Button>
@@ -326,13 +343,13 @@ function Portfolio() {
                 <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle', marginTop: '10px'}} key={sectorClicked}>
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(0,5).map(ss =>
-                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
 
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
-                    {selectedSector.slice(5,selectSector.length).map(ss =>
-                      ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{s}</Button>)
+                    {selectedSector.slice(5,10).map(ss =>
+                      ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
                 </Box>
@@ -344,10 +361,10 @@ function Portfolio() {
               <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
                 <ButtonGroup style={{height:'1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                   {pick.slice(0,5).map((ss, value) =>
-                    <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[value] ? 'lightgray':null}}>{ss}</Button>)
+                    <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>)
                   }
                   {pick.slice(5,10).map((ss, value) =>
-                    <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[value+6] ? 'lightgray':null}}>{ss}</Button>)
+                    <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{ss}</Button>)
                   }
                 </ButtonGroup>
               </Box>
@@ -383,6 +400,15 @@ function Portfolio() {
                     </span>
                     <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
                       <MultiLine props={chartData.mdd} num={n}/>
+                    </span>
+                    <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
+                      <MultiLine props={chartData.risk} num={n}/>
+                    </span>
+                    <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
+                      <div>value 1</div>
+                      <div>value 2</div>
+                      <div>value 3</div>
+                      <div>value 4</div>
                     </span>
                   </div>
                 </div>
