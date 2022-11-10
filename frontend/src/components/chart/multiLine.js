@@ -42,7 +42,7 @@ function MultiLine(props) {
     },
     series: prop.data[props.num]
   }
-  console.log(props.props.data)
+  //console.log(props.props.data)
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
     setOptions({
