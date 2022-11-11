@@ -79,6 +79,7 @@ function Portfolio() {
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
   const [sortPort, setSort] = useState([0,1,2])
+  const [risk, setRisk] = useState([[0,0,0],[0,0,0],[0,0,0]])
   const pieData = {
     data: [[{name: 'sm', y: 0.1}, {name: 'yg', y: 0.9}],[{name: 'sm', y: 0.5}, {name: 'yg', y: 0.5}]]
   }
@@ -130,7 +131,6 @@ function Portfolio() {
       data: [3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }]
   }
-  const risk = [0,0,0,0]
   const [chartData, setChartOption] = useState({
     pie: pieData,
     line: lineData,
@@ -142,6 +142,7 @@ function Portfolio() {
   const getPortfolio = async() => {
     setLoaded(false)
     const makeChartData = (r) => {
+      setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk])
       setPort({
         stocks: r.result.stocks,
         similarDate: r.result.similar_date,
@@ -200,12 +201,27 @@ function Portfolio() {
             })
         },
         var: {
+          title: 'Risk',
+          xAxis: {
+            title: 'Days Elapsed',
+            categories: [...Array(30).keys()].map( x => x+1 )
+          },
+          yAxis: {
+            title: ''
+          },
+          data: 
+            portName.map( p => {
+              return ({
+                name: p+' Risk',
+                data: r[p].VaR.map(i => parseFloat(i).toFixed(2)) // dd 안되면 여기 보기!!
+              })
+            })
         }
       })
     }
-    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
-    console.log(sort)
-    setSort(()=>[...sort])
+    // let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
+    // console.log(sort)
+    // setSort(()=>[...sort])
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -230,7 +246,7 @@ function Portfolio() {
         "sector": ms,
         "s_ratio": stockBond/100
       }
-    }).then(res => {makeChartData(res.data.result);});
+    }).then(res => {console.log(res.data.result); makeChartData(res.data.result);});
   }
   let sectors = []
   const getSectors = (market) => {
@@ -294,6 +310,9 @@ function Portfolio() {
   useEffect(()=>{
     if(!isMounted.current) return;
     setLoaded(true);
+    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
+    //console.log(chartData)
+    setSort(()=>[...sort])
   },[chartData])
   return(
     <div className="container">
@@ -365,16 +384,17 @@ function Portfolio() {
       </div>
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
-        <li key="1">종목:  { loaded ? (portfolio.stocks.map(i => { return i + ' ' })) : '' }</li>
+        <li key="1">종목:  { loaded ? portfolio.stocks.map(i => { return i + ' ' }) : '' }</li>
         <li key="2">유사 시점:  { loaded ? portfolio.similarDate.map(i => {return i + ' '}) : '' }</li>
 
         {
-          sortPort.map( n => {
+          loaded && sortPort.map( n => {
             return(
             <Accordion style={{marginTop:'15px'}} key={n}>
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
-                <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span>
+                {/* <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span> */}
+                <span style={{marginLeft: '20px'}}>예상 수익: {(chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2)}%</span>
               </AccordionSummary>
               <AccordionDetails key={chartData}>
                 <div style={{width: '170px', maxWidth: '170px', display: 'inline-block', verticalAlign: 'top'}} key={chartData}>
@@ -391,13 +411,12 @@ function Portfolio() {
                       <MultiLine props={chartData.mdd} num={n}/>
                     </span>
                     <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
-                      <MultiLine props={chartData.risk} num={n}/>
+                      <MultiLine props={chartData.var} num={n}/>
                     </span>
                     <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
-                      <div>value 1</div>
-                      <div>value 2</div>
-                      <div>value 3</div>
-                      <div>value 4</div>
+                      <div>sharpe : {risk[n][0]}</div>
+                      <div>trainer : {risk[n][1]}</div>
+                      <div>zensen : {risk[n][2]}</div>
                     </span>
                   </div>
                 </div>
