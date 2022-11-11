@@ -7,6 +7,7 @@ import Exporting from "highcharts/modules/exporting";
 function ShortSingleLine(props) {
   Accessibility(Highcharts);
   Exporting(Highcharts);
+  const [distance, setDistance] = useState(0);
   const [options, setOptions] = useState({
     rangeSelector: {
       selected: 1,
@@ -28,6 +29,7 @@ function ShortSingleLine(props) {
       height: (props.place==="left"?(9 / 16 * 100):(9 / 20 * 100)) + '%' // 16:9 ratio
     }
   });
+
   useEffect(() => {
     let data = [];
     for(let i = 0; i < props.data.length; i++) {
@@ -53,14 +55,29 @@ function ShortSingleLine(props) {
       })
     ))
 
-    
+    // 과거시점과 현재시점의 유사도 계산, calculating the similarity of past date and now: Correlation-adjusted Distance 방법
+    if(props.currentData !== undefined) {
+      console.log("data in graph is ", props.data);
+      if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
+        let distance = 0; // 주가 distance
+        for(let i=1; i<=60; i++){
+          let difference = props.data[0-i]['Close'] - props.currentData[0-i]['Close'];
+          difference = difference * difference / 60;
+          distance = distance + difference;
+        }
+        distance = Math.sqrt(distance / 60);
+      }
 
 
+      setDistance(distance);
+    }
   }, [props.title, props.data])
+
   
   return(
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
+      <div>Distance is {distance}</div>
     </Fragment>
   );
 }
