@@ -58,7 +58,7 @@ class Backtest:
         Backtest.risk = risk
 
     def addDate(self, date, r):    
-        return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+        return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
     # __call__ 에서 안쓰면 cummax, drawdown 삭제
     def cummax(self, nums):
         cum = []
@@ -76,7 +76,7 @@ class Backtest:
             self.fmt_string = fmt_string
 
         def addDate(self, date, r):
-            return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+            return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
 
         def __call__(self, target):
             if Backtest.finish_early:
@@ -243,7 +243,7 @@ class Backtest:
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
 
-        d.index = list(map(lambda x: datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
+        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
         d.dropna(inplace=True)
         
         backtest_p2 = bt.Backtest(p2, d[Backtest.new_w.index])
@@ -596,7 +596,7 @@ kq_result = os.path.join(os.path.dirname(__file__), 'KQ_result.csv')
 
 dd = fdr.StockListing('KRX')
 d_set = {}
-for x , y in dd[['Symbol','Name']].values:
+for x , y in dd[['Code','Name']].values:
     d_set[x]=y
 
 
@@ -612,7 +612,7 @@ def get_top_output(request):
 def get_portfolio_output(request):
     if request.method == 'GET':
         result = {}
-
+        print('run pf output')
         market = request.GET['market']
         sector = request.GET['sector']
         ratio = request.GET['s_ratio']
@@ -625,8 +625,7 @@ def get_portfolio_output(request):
             s_result = pd.read_csv(k1_result, header=0, dtype=object)
         elif market == 'KOSDAQ':
             s_result = pd.read_csv(kq_result, header=0, dtype=object) 
-        #print(sector)
-        #print(s_result)
+
         s12_result = s_result[[(x in sector) for x in s_result['Sector'] ]]
         silmilar = s12_result['s_date'].to_list()
         r_sector = s12_result['Sector'].to_list()
@@ -635,8 +634,9 @@ def get_portfolio_output(request):
         
         for x in r_code:
             d_name = d_set[x]
-            #print(d_name)
             r_name.append(d_name)
+        
+        
         s12_pct = pd.DataFrame()
         for i in range(len(s12_result)):
             code = s12_result.iloc[i,0]
@@ -649,17 +649,18 @@ def get_portfolio_output(request):
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
 
         
-
+        
         s12_port = Portfolio(s12_pct, "","")
 
-        #print(s12_port)
         w1 = list(s12_port.MVP().x)
-        #print(w1)
         w2 = list(s12_port.MVP_sharp().x)
-        #print(w2)
         w3 = list(s12_port.MRC().x)
+        
+        
+        pf_ = s12_pct.pct_change()
+        ks11 = fdr.DataReader('KS11', start='2022-01-01')
+        market_return = ks11['Close'].pct_change().mean() * 252
 
-        #print(w3)
         
         t_port = {}
         t_port['similar_date'] = silmilar
@@ -668,11 +669,10 @@ def get_portfolio_output(request):
         t_port['weight'] = [w1, w2, w3]
         result['result'] = t_port
         
-        #print(t_port)
         
         today = silmilar # 포트폴리오 유사시점
         
-        user_w = 0 # 일반:0, 샤프 지수:1 , 위험균형 : 2
+        user_w = 0 # 일반:0, 샤프 지수:1, 위험균형:2
         user_input_sb = [float(ratio), 1-float(ratio)] #[0.6,0.4] # p1 : 종목 채권
         user_input_s = [] # 종목별 비중
 
@@ -692,8 +692,28 @@ def get_portfolio_output(request):
         result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
         port1["data"] = result_data.to_dict('records')
         port1['mdd'] = mdd
-        port1['dd'] =dd
+        port1['dd'] = dd
+        
+        
+        pf = pf_
+        pf1_var = np.dot(np.array(w1).T, np.dot(pf.cov(), np.array(w1))) 
+        pf1_vol = np.sqrt(pf1_var)
+        pf1_return = pf * w1
+        pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
+        pf1_return = pf1_return.sum(axis=1)
+        beta = 1
+        sharpe_1 = (pf1_return.mean() * 252 - market_return)/pf1_vol
+        trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
+        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
+        
+        VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
+        VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
+        port1['VaR'] = [VaR_1, VaR_2]
+
+        port1['risk'] = [sharpe_1, trainer_1, zensen_1]
+        
         result['최대분산P'] = port1
+        
         
         #print(port1)
         
@@ -704,6 +724,24 @@ def get_portfolio_output(request):
         port2["data"] = result_data.to_dict('records')
         port2['mdd'] = mdd
         port2['dd'] = dd
+        
+        pf = pf_
+        pf1_var = np.dot(np.array(w2).T, np.dot(pf.cov(), np.array(w1))) 
+        pf1_vol = np.sqrt(pf1_var)
+        pf1_return = pf * w2
+        pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
+        pf1_return = pf1_return.sum(axis=1)
+        beta = 1
+        sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
+        trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
+        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01))) 
+        port2['risk'] = [sharpe_1, trainer_1, zensen_1]
+        
+        
+        VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
+        VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
+        port2['VaR'] = [VaR_1, VaR_2]
+        
         result['샤프P'] = port2
         
         #print(port2)
@@ -715,6 +753,23 @@ def get_portfolio_output(request):
         port3["data"] = result_data.to_dict('records')
         port3['mdd'] = mdd
         port3['dd'] = dd
+        
+        pf = pf_
+        pf1_var = np.dot(np.array(w3).T, np.dot(pf.cov(), np.array(w1))) 
+        pf1_vol = np.sqrt(pf1_var)
+        pf1_return = pf * w3
+        pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
+        pf1_return = pf1_return.sum(axis=1)
+        beta = 1
+        sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
+        trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
+        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01))) 
+        port3['risk'] = [sharpe_1, trainer_1, zensen_1]
+        
+        VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
+        VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
+        port3['VaR'] = [VaR_1, VaR_2]
+        
         result['위험균형P'] = port3
         #print (result)
         return JsonResponse({'result' : result})
