@@ -160,7 +160,106 @@ function EdaInfo(props) {
             temp_marketData.realestate = res.data;
           } else if(sectorName === "우주항공과국방") {
             temp_marketData.space = res.data;
+          } else if(sectorName === "양방향미디어와서비스") {
+            temp_marketData.interactivemedia = res.data;
+          } else if(sectorName === "게임엔터테인먼트") {
+            temp_marketData.game = res.data;
+          } else if(sectorName === "IT서비스") {
+            temp_marketData.itservice = res.data;
+          } else if(sectorName === "디스플레이패널") {
+            temp_marketData.displaypanel = res.data;
+          } else if(sectorName === "항공사") {
+            temp_marketData.airplane = res.data;
+          } else if(sectorName === "전자장비와기기") {
+            temp_marketData.electricdevice = res.data;
+          } else if(sectorName === "에너지장비및서비스") {
+            temp_marketData.energydevice = res.data;
+          } else if(sectorName === "조선") {
+            temp_marketData.shipbuilding = res.data;
+          } else if(sectorName === "건강관리업체및서비스") {
+            temp_marketData.healthcare = res.data;
+          } else if(sectorName === "출판") {
+            temp_marketData.publish = res.data;
+          } else if(sectorName === "반도체와반도체장비") {
+            temp_marketData.semiconductor = res.data;
+          } else if(sectorName === "방송과엔터테인먼트") {
+            temp_marketData.entertainment = res.data;
+          } else if(sectorName === "전기유틸리티") {
+            temp_marketData.electricutility = res.data;
+          } else if(sectorName === "문구류") {
+            temp_marketData.pencil = res.data;
+          } else if(sectorName === "통신장비") {
+            temp_marketData.communication = res.data;
+          } else if(sectorName === "도로와철도운송") {
+            temp_marketData.road = res.data;
+          } else if(sectorName === "생물공학") {
+            temp_marketData.biology = res.data;
+          } else if(sectorName === "해운사") {
+            temp_marketData.shipping = res.data;
+          } else if(sectorName === "소프트웨어") {
+            temp_marketData.software = res.data;
+          } else if(sectorName === "건설") {
+            temp_marketData.construction = res.data;
+          } else if(sectorName === "복합유틸리티") {
+            temp_marketData.complexutility = res.data;
+          } else if(sectorName === "디스플레이장비및부품") {
+            temp_marketData.displaydevice = res.data;
+          } else if(sectorName === "전자제품") {
+            temp_marketData.electronics = res.data;
+          } else if(sectorName === "전문소매") {
+            temp_marketData.retail = res.data;
+          } else if(sectorName === "화학") {
+            temp_marketData.chemistry = res.data;
           }
+          /*
+            {'code': '277', 'name': '창업투자'},
+            {'code': '303', 'name': '가구'},
+            {'code': '298', 'name': '가정용기기와용품'},
+            {'code': '321', 'name': '증권'},
+            {'code': '296', 'name': '운송인프라'},
+            {'code': '288', 'name': '건강관리기술'},
+            {'code': '317', 'name': '호텔,레스토랑,레저'},
+            {'code': '339', 'name': '다각화된소비자서비스'},
+            {'code': '274', 'name': '섬유,의류,신발,호화품'},
+            {'code': '283', 'name': '전기제품'},
+            {'code': '308', 'name': '인터넷과카탈로그소매'},
+            {'code': '292', 'name': '핸드셋'},
+            {'code': '311', 'name': '포장재'},
+            {'code': '281', 'name': '건강관리장비와용품'},
+            {'code': '299', 'name': '기계'},
+            {'code': '318', 'name': '종이와목재'},
+            {'code': '273', 'name': '자동차'},
+            {'code': '310', 'name': '광고'},
+            {'code': '262', 'name': '생명과학도구및서비스'},
+            {'code': '261', 'name': '제약'},
+            {'code': '276', 'name': '복합기업'},
+            {'code': '309', 'name': '음료'},
+            {'code': '337', 'name': '카드'},
+            {'code': '289', 'name': '건축자재'},
+            {'code': '293', 'name': '컴퓨터와주변기기'},
+            {'code': '271', 'name': '레저용장비와제품'},
+            {'code': '270', 'name': '자동차부품'},
+            {'code': '306', 'name': '전기장비'},
+            {'code': '304', 'name': '철강'},
+            {'code': '265', 'name': '판매업체'},
+            {'code': '320', 'name': '건축제품'},
+            {'code': '338', 'name': '사무용전자제품'},
+            {'code': '264', 'name': '백화점과일반상점'},
+            {'code': '297', 'name': '가정용품'},
+            {'code': '324', 'name': '상업서비스와공급품'},
+            {'code': '290', 'name': '교육서비스'},
+            {'code': '326', 'name': '항공화물운송과물류'},
+            {'code': '333', 'name': '무선통신서비스'},
+            {'code': '315', 'name': '손해보험'},
+            {'code': '302', 'name': '식품과기본식료품소매'},
+            {'code': '312', 'name': '가스유틸리티'},
+            {'code': '330', 'name': '생명보험'},
+            {'code': '336', 'name': '다각화된통신서비스'},
+            {'code': '319', 'name': '기타금융'},
+            {'code': '268', 'name': '식품'},
+            {'code': '334', 'name': '무역회사와판매업체'},
+            {'code': '275', 'name': '담배'},
+          */
           setMarketData(temp_marketData);
         } else {
           let temp_similarData = similarDateData;
@@ -176,6 +275,56 @@ function EdaInfo(props) {
             temp_similarData.realestate = res.data;
           } else if(sectorName === "우주항공과국방") {
             temp_similarData.space = res.data;
+          } else if(sectorName === "양방향미디어와서비스") {
+            temp_similarData.interactivemedia = res.data;
+          } else if(sectorName === "게임엔터테인먼트") {
+            temp_similarData.game = res.data;
+          } else if(sectorName === "IT서비스") {
+            temp_similarData.itservice = res.data;
+          } else if(sectorName === "디스플레이패널") {
+            temp_similarData.displaypanel = res.data;
+          } else if(sectorName === "항공사") {
+            temp_similarData.airplane = res.data;
+          } else if(sectorName === "전자장비와기기") {
+            temp_similarData.electricdevice = res.data;
+          } else if(sectorName === "에너지장비및서비스") {
+            temp_similarData.energydevice = res.data;
+          } else if(sectorName === "조선") {
+            temp_similarData.shipbuilding = res.data;
+          } else if(sectorName === "건강관리업체및서비스") {
+            temp_similarData.healthcare = res.data;
+          } else if(sectorName === "출판") {
+            temp_similarData.publish = res.data;
+          } else if(sectorName === "반도체와반도체장비") {
+            temp_similarData.semiconductor = res.data;
+          } else if(sectorName === "방송과엔터테인먼트") {
+            temp_similarData.entertainment = res.data;
+          } else if(sectorName === "전기유틸리티") {
+            temp_similarData.electricutility = res.data;
+          } else if(sectorName === "문구류") {
+            temp_similarData.pencil = res.data;
+          } else if(sectorName === "통신장비") {
+            temp_similarData.communication = res.data;
+          } else if(sectorName === "도로와철도운송") {
+            temp_similarData.road = res.data;
+          } else if(sectorName === "생물공학") {
+            temp_similarData.biology = res.data;
+          } else if(sectorName === "해운사") {
+            temp_similarData.shipping = res.data;
+          } else if(sectorName === "소프트웨어") {
+            temp_similarData.software = res.data;
+          } else if(sectorName === "건설") {
+            temp_similarData.construction = res.data;
+          } else if(sectorName === "복합유틸리티") {
+            temp_similarData.complexutility = res.data;
+          } else if(sectorName === "디스플레이장비및부품") {
+            temp_similarData.displaydevice = res.data;
+          } else if(sectorName === "전자제품") {
+            temp_similarData.electronics = res.data;
+          } else if(sectorName === "전문소매") {
+            temp_similarData.retail = res.data;
+          } else if(sectorName === "화학") {
+            temp_similarData.chemistry = res.data;
           }
           setSimilarDateData(temp_similarData);
         }
@@ -300,6 +449,31 @@ function EdaInfo(props) {
       getSector("화장품", startDate, endDate, true);
       getSector("부동산", startDate, endDate, true);
       getSector("우주항공과국방", startDate, endDate, true);
+      getSector("양방향미디어와서비스", startDate, endDate, true);
+      getSector("게임엔터테인먼트", startDate, endDate, true);
+      getSector("IT서비스", startDate, endDate, true);
+      getSector("디스플레이패널", startDate, endDate, true);
+      getSector("항공사", startDate, endDate, true);
+      getSector("전자장비와기기", startDate, endDate, true);
+      getSector("에너지장비및서비스", startDate, endDate, true);
+      getSector("조선", startDate, endDate, true);
+      getSector("건강관리업체및서비스", startDate, endDate, true);
+      getSector("출판", startDate, endDate, true);
+      getSector("반도체와반도체장비", startDate, endDate, true);
+      getSector("방송과엔터테인먼트", startDate, endDate, true);
+      getSector("전기유틸리티", startDate, endDate, true);
+      getSector("문구류", startDate, endDate, true);
+      getSector("통신장비", startDate, endDate, true);
+      getSector("도로와철도운송", startDate, endDate, true);
+      getSector("생물공학", startDate, endDate, true);
+      getSector("해운사", startDate, endDate, true);
+      getSector("소프트웨어", startDate, endDate, true);
+      getSector("건설", startDate, endDate, true);
+      getSector("복합유틸리티", startDate, endDate, true);
+      getSector("디스플레이장비및부품", startDate, endDate, true);
+      getSector("전자제품", startDate, endDate, true);
+      getSector("전문소매", startDate, endDate, true);
+      getSector("화학", startDate, endDate, true);
 
       // kospi 가져오기
       getIndex("KS11", startDate, endDate, true);
@@ -347,6 +521,31 @@ function EdaInfo(props) {
         getSector("화장품", currentSimilarDate_start, currentSimilarDate_end, false);
         getSector("부동산", currentSimilarDate_start, currentSimilarDate_end, false);
         getSector("우주항공과국방", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("양방향미디어와서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("게임엔터테인먼트", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("IT서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("디스플레이패널", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("항공사", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("전자장비와기기", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("에너지장비및서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("조선", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("건강관리업체및서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("출판", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("반도체와반도체장비", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("방송과엔터테인먼트", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("전기유틸리티", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("문구류", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("통신장비", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("도로와철도운송", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("생물공학", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("해운사", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("소프트웨어", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("건설", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("복합유틸리티", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("디스플레이장비및부품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("전자제품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("전문소매", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("화학", currentSimilarDate_start, currentSimilarDate_end, false);
 
         // kospi 가져오기
         getIndex("KS11", currentSimilarDate_start, currentSimilarDate_end, false);
@@ -411,7 +610,33 @@ function EdaInfo(props) {
                       (props.edaName==="은행")?(marketData.bank):
                       (props.edaName==="화장품")?(marketData.cosmetics):
                       (props.edaName==="석유와가스")?(marketData.oil):
-                      (props.edaName==="부동산")?(marketData.realestate):(marketData.space)))} 
+                      (props.edaName==="부동산")?(marketData.realestate):
+                      (props.edaName==="우주항공과국방")?(marketData.space):
+                      (props.edaName==="양방향미디어와서비스")?(marketData.interactivemedia):
+                      (props.edaName==="게임엔터테인먼트")?(marketData.game):
+                      (props.edaName==="IT서비스")?(marketData.itservice):
+                      (props.edaName==="디스플레이패널")?(marketData.displaypanel):
+                      (props.edaName==="항공사")?(marketData.airplane):
+                      (props.edaName==="전자장비와기기")?(marketData.electricdevice):
+                      (props.edaName==="에너지장비및서비스")?(marketData.energydevice):
+                      (props.edaName==="조선")?(marketData.shipbuilding):
+                      (props.edaName==="건강관리업체및서비스")?(marketData.healthcare):
+                      (props.edaName==="출판")?(marketData.publish):
+                      (props.edaName==="반도체와반도체장비")?(marketData.semiconductor):
+                      (props.edaName==="방송과엔터테인먼트")?(marketData.entertainment):
+                      (props.edaName==="전기유틸리티")?(marketData.electricutility):
+                      (props.edaName==="문구류")?(marketData.pencil):
+                      (props.edaName==="통신장비")?(marketData.communication):
+                      (props.edaName==="도로와철도운송")?(marketData.road):
+                      (props.edaName==="생물공학")?(marketData.biology):
+                      (props.edaName==="해운사")?(marketData.shipping):
+                      (props.edaName==="소프트웨어")?(marketData.software):
+                      (props.edaName==="건설")?(marketData.construction):
+                      (props.edaName==="복합유틸리티")?(marketData.complexutility):
+                      (props.edaName==="디스플레이장비및부품")?(marketData.displaydevice):
+                      (props.edaName==="전자제품")?(marketData.electronics):
+                      (props.edaName==="전문소매")?(marketData.retail):(marketData.chemistry) //화학
+                      ))} 
                       place={"left"}/>
                     </Grid>
                     <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', pb:'7px'}}> {/* 오른쪽 파트 */}
@@ -503,8 +728,66 @@ function EdaInfo(props) {
                           (props.edaName==="은행")?(similarDateData.bank):
                           (props.edaName==="화장품")?(similarDateData.cosmetics):
                           (props.edaName==="석유와가스")?(similarDateData.oil):
-                          (props.edaName==="부동산")?(similarDateData.realestate):(similarDateData.space)))} 
-                          place={"left"}/>
+                          (props.edaName==="부동산")?(similarDateData.realestate):
+                          (props.edaName==="우주항공과국방")?(similarDateData.space):
+                          (props.edaName==="양방향미디어와서비스")?(similarDateData.interactivemedia):
+                          (props.edaName==="게임엔터테인먼트")?(similarDateData.game):
+                          (props.edaName==="IT서비스")?(similarDateData.itservice):
+                          (props.edaName==="디스플레이패널")?(similarDateData.displaypanel):
+                          (props.edaName==="항공사")?(similarDateData.airplane):
+                          (props.edaName==="전자장비와기기")?(similarDateData.electricdevice):
+                          (props.edaName==="에너지장비및서비스")?(similarDateData.energydevice):
+                          (props.edaName==="조선")?(similarDateData.shipbuilding):
+                          (props.edaName==="건강관리업체및서비스")?(similarDateData.healthcare):
+                          (props.edaName==="출판")?(similarDateData.publish):
+                          (props.edaName==="반도체와반도체장비")?(similarDateData.semiconductor):
+                          (props.edaName==="방송과엔터테인먼트")?(similarDateData.entertainment):
+                          (props.edaName==="전기유틸리티")?(similarDateData.electricutility):
+                          (props.edaName==="문구류")?(similarDateData.pencil):
+                          (props.edaName==="통신장비")?(similarDateData.communication):
+                          (props.edaName==="도로와철도운송")?(similarDateData.road):
+                          (props.edaName==="생물공학")?(similarDateData.biology):
+                          (props.edaName==="해운사")?(similarDateData.shipping):
+                          (props.edaName==="소프트웨어")?(similarDateData.software):
+                          (props.edaName==="건설")?(similarDateData.construction):
+                          (props.edaName==="복합유틸리티")?(similarDateData.complexutility):
+                          (props.edaName==="디스플레이장비및부품")?(similarDateData.displaydevice):
+                          (props.edaName==="전자제품")?(similarDateData.electronics):
+                          (props.edaName==="전문소매")?(similarDateData.retail):(similarDateData.chemistry)
+                          ))} 
+                          place={"left"}
+                          currentData={((props.edaType==="market")?(marketData.kospi):(
+                            (props.edaName==="비철금속")?(marketData.bicheol):
+                            (props.edaName==="은행")?(marketData.bank):
+                            (props.edaName==="화장품")?(marketData.cosmetics):
+                            (props.edaName==="석유와가스")?(marketData.oil):
+                            (props.edaName==="부동산")?(marketData.realestate):
+                            (props.edaName==="우주항공과국방")?(marketData.space):
+                            (props.edaName==="양방향미디어와서비스")?(marketData.interactivemedia):
+                            (props.edaName==="게임엔터테인먼트")?(marketData.game):
+                            (props.edaName==="IT서비스")?(marketData.itservice):
+                            (props.edaName==="디스플레이패널")?(marketData.displaypanel):
+                            (props.edaName==="항공사")?(marketData.airplane):
+                            (props.edaName==="전자장비와기기")?(marketData.electricdevice):
+                            (props.edaName==="에너지장비및서비스")?(marketData.energydevice):
+                            (props.edaName==="조선")?(marketData.shipbuilding):
+                            (props.edaName==="건강관리업체및서비스")?(marketData.healthcare):
+                            (props.edaName==="출판")?(marketData.publish):
+                            (props.edaName==="반도체와반도체장비")?(marketData.semiconductor):
+                            (props.edaName==="방송과엔터테인먼트")?(marketData.entertainment):
+                            (props.edaName==="전기유틸리티")?(marketData.electricutility):
+                            (props.edaName==="문구류")?(marketData.pencil):
+                            (props.edaName==="통신장비")?(marketData.communication):
+                            (props.edaName==="도로와철도운송")?(marketData.road):
+                            (props.edaName==="생물공학")?(marketData.biology):
+                            (props.edaName==="해운사")?(marketData.shipping):
+                            (props.edaName==="소프트웨어")?(marketData.software):
+                            (props.edaName==="건설")?(marketData.construction):
+                            (props.edaName==="복합유틸리티")?(marketData.complexutility):
+                            (props.edaName==="디스플레이장비및부품")?(marketData.displaydevice):
+                            (props.edaName==="전자제품")?(marketData.electronics):
+                            (props.edaName==="전문소매")?(marketData.retail):(marketData.chemistry) //화학
+                            ))}/>
                         </>
                       )}
                       
