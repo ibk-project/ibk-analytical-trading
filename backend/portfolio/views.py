@@ -658,7 +658,8 @@ def get_portfolio_output(request):
         
         
         pf_ = s12_pct.pct_change()
-        ks11 = fdr.DataReader('KS11', start='2022-01-01')
+        ks11 = fdr.DataReader('KS11', start='2021-10-01')
+        ks11 = ks11.iloc[-252:]
         market_return = ks11['Close'].pct_change().mean() * 252
 
         
@@ -701,21 +702,20 @@ def get_portfolio_output(request):
         pf1_return = pf * w1
         pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
         pf1_return = pf1_return.sum(axis=1)
-        beta = 1
-        sharpe_1 = (pf1_return.mean() * 252 - market_return)/pf1_vol
+        pf1_return = pf1_return.fillna(pf1_return.mean())
+        cov = np.cov(pf1_return.fillna(method = 'bfill').tolist(), ks11['Close'].pct_change().fillna(method = 'bfill').tolist())[0,1]
+        beta = cov/ks11['Close'].pct_change().var() 
+        sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
         trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
         zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
         
         VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
         VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
         port1['VaR'] = [VaR_1, VaR_2]
-
         port1['risk'] = [sharpe_1, trainer_1, zensen_1]
-        
         result['최대분산P'] = port1
         
         
-        #print(port1)
         
         port2 = {}
         result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period, today=today, user_input_s = w2, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
@@ -731,10 +731,12 @@ def get_portfolio_output(request):
         pf1_return = pf * w2
         pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
         pf1_return = pf1_return.sum(axis=1)
-        beta = 1
+        pf1_return = pf1_return.fillna(pf1_return.mean())
+        cov = np.cov(pf1_return.fillna(method = 'bfill').tolist(), ks11['Close'].pct_change().fillna(method = 'bfill').tolist())[0,1]
+        beta = cov/ks11['Close'].pct_change().var() 
         sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
         trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
-        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01))) 
+        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
         port2['risk'] = [sharpe_1, trainer_1, zensen_1]
         
         
@@ -760,10 +762,12 @@ def get_portfolio_output(request):
         pf1_return = pf * w3
         pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
         pf1_return = pf1_return.sum(axis=1)
-        beta = 1
+        pf1_return = pf1_return.fillna(pf1_return.mean())
+        cov = np.cov(pf1_return.fillna(method = 'bfill').tolist(), ks11['Close'].pct_change().fillna(method = 'bfill').tolist())[0,1]
+        beta = cov/ks11['Close'].pct_change().var() 
         sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
         trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
-        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01))) 
+        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
         port3['risk'] = [sharpe_1, trainer_1, zensen_1]
         
         VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
