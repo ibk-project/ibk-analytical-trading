@@ -93,13 +93,13 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: []
+      data: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }, {
       name: '',
-      data: []
+      data: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }, {
       name: '',
-      data: []
+      data: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }]
   }
   const mddData = {
@@ -113,16 +113,10 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: []
-    },{
-      name: '',
-      data: []
-    },{
-      name: '',
-      data: []
+      data: [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }]
   }
-  const riskData = {
+  const varData = {
     title: 'DD',
     xAxis: {
       title: 'Days Elapsed',
@@ -133,20 +127,15 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: []
-    },{
-      name: '',
-      data: []
-    },{
-      name: '',
-      data: []
-    }]    
+      data: [3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    }]
   }
+  const risk = [0,0,0,0]
   const [chartData, setChartOption] = useState({
     pie: pieData,
     line: lineData,
     mdd: mddData,
-    risk: riskData
+    risk: varData
   })
   const isMounted = useRef(false);
 
@@ -189,7 +178,7 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p,
-                data: r[p].data.map(d => { return d.price })
+                data: r[p].data.map(d => { return parseFloat(d.price).toFixed(2) })
               })
             })
         },
@@ -206,9 +195,11 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p+' DD',
-                data: r[p].dd[0]
+                data: r[p].dd.map(i => parseFloat(i).toFixed(2)) // dd 안되면 여기 보기!!
               })
             })
+        },
+        var: {
         }
       })
     }
@@ -222,7 +213,7 @@ function Portfolio() {
       m = KOSDAQ
     }
     
-    sectorClicked.forEach((s, index) => {
+    sectorClicked[currentMarket].forEach((s, index) => {
       if(s === true){
         ms += ','
         ms += m[index]
@@ -262,14 +253,12 @@ function Portfolio() {
   }
   const selectSector = (e) => {
     const n = e.target.value
-    console.log(sectorClicked)
     let sss = sectorClicked[currentMarket]
     sss[n] = !sss[n]
     setSectorClick((prev)=>({
       ...prev,
       [currentMarket]: sss
     }))
-    console.log(sectorClicked)
   }
   const check = () => {
     setCheck(!isChecked)
@@ -343,13 +332,13 @@ function Portfolio() {
                 <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle', marginTop: '10px'}} key={sectorClicked}>
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(0,5).map(ss =>
-                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button key={value} value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
 
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(5,10).map(ss =>
-                      ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button key={value+6} value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
                 </Box>
@@ -361,10 +350,10 @@ function Portfolio() {
               <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
                 <ButtonGroup style={{height:'1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                   {pick.slice(0,5).map((ss, value) =>
-                    <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>)
+                    <Button key={value} value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>)
                   }
                   {pick.slice(5,10).map((ss, value) =>
-                    <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{ss}</Button>)
+                    <Button key={value+6} value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{ss}</Button>)
                   }
                 </ButtonGroup>
               </Box>
@@ -382,7 +371,7 @@ function Portfolio() {
         {
           sortPort.map( n => {
             return(
-            <Accordion style={{marginTop:'15px'}}>
+            <Accordion style={{marginTop:'15px'}} key={n}>
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
                 <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span>
