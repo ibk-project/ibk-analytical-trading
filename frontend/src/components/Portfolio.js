@@ -36,7 +36,7 @@ function Portfolio() {
   })
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
-  const [loaded, setLoaded] = useState(false); // !! 나중에 false로 꼭 바꾸기 
+  const [loaded, setLoaded] = useState(false);
   const [selectedSector, setSector] = useState([])
   const [currentMarket, setMarket] = useState('')
   //const [yields, setYield] = useState(['-1','10'])
@@ -141,6 +141,7 @@ function Portfolio() {
 
   const getPortfolio = async() => {
     setLoaded(false)
+    setLoading(true)
     const makeChartData = (r) => {
       setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk])
       setPort({
@@ -219,9 +220,6 @@ function Portfolio() {
         }
       })
     }
-    // let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
-    // console.log(sort)
-    // setSort(()=>[...sort])
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -284,13 +282,6 @@ function Portfolio() {
     //getPortfolio()
     setShowChart(!showChart)
   }
-  // const onChange = (e) => {
-  //   initUserOption = {
-  //     ...userOption,
-  //     [e.target.name]: e.target.value
-  //   }
-  //   setUserOption(initUserOption)
-  // }
   const changeSlider = (e, v) => {
     setStockBond(v)
   }
@@ -310,6 +301,7 @@ function Portfolio() {
   useEffect(()=>{
     if(!isMounted.current) return;
     setLoaded(true);
+    setLoading(false);
     let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
     //console.log(chartData)
     setSort(()=>[...sort])
@@ -424,33 +416,12 @@ function Portfolio() {
             </Accordion>)
           })
         }
-        
-        
-       
-        {/* <Accordion>
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <span>Portfolio 2</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[1].data[chartData.line.data[1].data.length-1]-100).toFixed(2) : ''}%</span>
-          </AccordionSummary>
-          <AccordionDetails key={chartData}>
-            <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}}>
-              <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data[1]} key={chartData} />
-            </div>
-            <div className="backtest">
-              <div className="title1">Backtest</div>
-              <div className="chart" style={{width: '900px', margin: '0 auto'}}>
-                <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line} num='1'/>
-                </span>
-                <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd} num='1'/>
-                </span>
-              </div>
-            </div>
-          </AccordionDetails>
-        </Accordion> */}
-      
+        { 
+          isLoading && 
+          <div style={{textAlign: "center", margin: "30px"}}>
+            <CircularProgress shrink color="inherit"/>
+          </div> 
+        }
       </div>
   	</div>
   );

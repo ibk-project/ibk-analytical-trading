@@ -7,7 +7,7 @@ function MultiLine(props) {
   Accessibility(Highcharts)
   
   const n = props.num
-  //console.log(props)
+  console.log(props)
   //const propsData = props.props.data[n]//.data.map(p => {return parseFloat(parseFloat(p).toFixed(2))})
   const prop = props.props
   const initialOptions = {
@@ -44,10 +44,8 @@ function MultiLine(props) {
     },
     series: [props.props.data[n].data]
   }
-  //console.log(props.props.data)
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
-    
     setOptions(()=>({
       ...initialOptions,
       title: { text: props.props.title },
