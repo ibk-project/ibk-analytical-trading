@@ -60,6 +60,79 @@ function EdaInfo(props) {
       cosmetics: [],
       realestate: [],
       space: [],
+      interactivemedia: [],
+      game: [],
+      itservice: [],
+      displaypanel: [],
+      airplane: [],
+      electricdevice: [],
+      energydevice: [],
+      shipbuilding: [],
+      healthcare: [],
+      publish: [],
+      semiconductor: [],
+      entertainment: [],
+      electricutility: [],
+      entertainment: [],
+      pencil: [],
+      communication: [],
+      road: [],
+      biology: [],
+      shipping: [],
+      software: [],
+      construction: [],
+      complexutility: [],
+      displaydevice: [],
+      electronics: [],
+      retail: [],
+      chemistry: [],
+      vc: [],
+      furniture: [],
+      homeutility: [],
+      stock: [],
+      transportation: [],
+      healthtechnology: [],
+      hotel: [],
+      consumerservice: [],
+      fiber: [],
+      elctricproduct: [],
+      internetretail: [],
+      handset: [],
+      packing: [],
+      healthcaredevice: [],
+      machine: [],
+      paper: [],
+      car: [],
+      advertisement: [],
+      biologytool: [],
+      pharmacy: [],
+      mixed: [],
+      drink: [],
+      card: [],
+      buildingmaterial: [],
+      computer: [],
+      leisure: [],
+      carpart: [],
+      electricequipment: [],
+      steel: [],
+      sales: [],
+      buildingproduct: [],
+      office: [],
+      departmentstore: [],
+      homethings: [],
+      commercialservice: [],
+      educationservice: [],
+      aircargo: [],
+      radiocommunication: [],
+      damageinsurance: [],
+      grooceries: [],
+      gasutility: [],
+      biologyinsurance: [],
+      mixedcommunication: [],
+      finance: [],
+      food: [],
+      trade: [],
+      tobacco: [],
     });
 
     const [similarDateData, setSimilarDateData] = useState({
@@ -75,6 +148,79 @@ function EdaInfo(props) {
       cosmetics: [],
       realestate: [],
       space: [],
+      interactivemedia: [],
+      game: [],
+      itservice: [],
+      displaypanel: [],
+      airplane: [],
+      electricdevice: [],
+      energydevice: [],
+      shipbuilding: [],
+      healthcare: [],
+      publish: [],
+      semiconductor: [],
+      entertainment: [],
+      electricutility: [],
+      entertainment: [],
+      pencil: [],
+      communication: [],
+      road: [],
+      biology: [],
+      shipping: [],
+      software: [],
+      construction: [],
+      complexutility: [],
+      displaydevice: [],
+      electronics: [],
+      retail: [],
+      chemistry: [],
+      vc: [],
+      furniture: [],
+      homeutility: [],
+      stock: [],
+      transportation: [],
+      healthtechnology: [],
+      hotel: [],
+      consumerservice: [],
+      fiber: [],
+      elctricproduct: [],
+      internetretail: [],
+      handset: [],
+      packing: [],
+      healthcaredevice: [],
+      machine: [],
+      paper: [],
+      car: [],
+      advertisement: [],
+      biologytool: [],
+      pharmacy: [],
+      mixed: [],
+      drink: [],
+      card: [],
+      buildingmaterial: [],
+      computer: [],
+      leisure: [],
+      carpart: [],
+      electricequipment: [],
+      steel: [],
+      sales: [],
+      buildingproduct: [],
+      office: [],
+      departmentstore: [],
+      homethings: [],
+      commercialservice: [],
+      educationservice: [],
+      aircargo: [],
+      radiocommunication: [],
+      damageinsurance: [],
+      grooceries: [],
+      gasutility: [],
+      biologyinsurance: [],
+      mixedcommunication: [],
+      finance: [],
+      food: [],
+      trade: [],
+      tobacco: [],
     });
 
     const getIndex = async(tempcode, startDate, endDate, today) => {
@@ -210,6 +356,100 @@ function EdaInfo(props) {
             temp_marketData.retail = res.data;
           } else if(sectorName === "화학") {
             temp_marketData.chemistry = res.data;
+          } else if (sectorName === "창업투자") {
+            temp_marketData.vc = res.data;
+          } else if (sectorName === "가구") {
+            temp_marketData.furniture = res.data;
+          } else if (sectorName === "가정용기기와용품") {
+            temp_marketData.homeutility = res.data;
+          } else if (sectorName === "증권") {
+            temp_marketData.stock = res.data;
+          } else if (sectorName === "운송인프라") {
+            temp_marketData.transportation = res.data;
+          } else if (sectorName === "건강관리기술") {
+            temp_marketData.healthtechnology = res.data;
+          } else if (sectorName === "호텔") {
+            temp_marketData.hotel = res.data;
+          } else if (sectorName === "다각화된소비자서비스") {
+            temp_marketData.consumerservice = res.data;
+          } else if (sectorName === "섬유") {
+            temp_marketData.fiber = res.data;
+          } else if (sectorName === "전기제품") {
+            temp_marketData.elctricproduct = res.data;
+          } else if (sectorName === "인터넷과카탈로그소매") {
+            temp_marketData.internetretail = res.data;
+          } else if (sectorName === "핸드셋") {
+            temp_marketData.handset = res.data;
+          } else if (sectorName === "포장재") {
+            temp_marketData.packing = res.data;
+          } else if (sectorName === "건강관리장비와용품") {
+            temp_marketData.healthcaredevice = res.data;
+          } else if (sectorName === "기계") {
+            temp_marketData.machine = res.data;
+          } else if (sectorName === "종이와목재") {
+            temp_marketData.paper = res.data;
+          } else if (sectorName === "자동차") {
+            temp_marketData.car = res.data;
+          } else if (sectorName === "광고") {
+            temp_marketData.advertisement = res.data;
+          } else if (sectorName === "생명과학도구및서비스") {
+            temp_marketData.biologytool = res.data;
+          } else if (sectorName === "제약") {
+            temp_marketData.pharmacy = res.data;
+          } else if (sectorName === "복합기업") {
+            temp_marketData.mixed = res.data;
+          } else if (sectorName === "음료") {
+            temp_marketData.drink = res.data;
+          } else if (sectorName === "카드") {
+            temp_marketData.card = res.data;
+          } else if (sectorName === "건축자재") {
+            temp_marketData.buildingmaterial = res.data;
+          } else if (sectorName === "컴퓨터와주변기기") {
+            temp_marketData.computer = res.data;
+          } else if (sectorName === "레저용장비와제품") {
+            temp_marketData.leisure = res.data;
+          } else if (sectorName === "자동차부품") {
+            temp_marketData.carpart = res.data;
+          } else if (sectorName === "전기장비") {
+            temp_marketData.electricequipment = res.data;
+          } else if (sectorName === "철강") {
+            temp_marketData.steel = res.data;
+          } else if (sectorName === "판매업체") {
+            temp_marketData.sales = res.data;
+          } else if (sectorName === "건축제품") {
+            temp_marketData.buildingproduct = res.data;
+          } else if (sectorName === "사무용전자제품") {
+            temp_marketData.office = res.data;
+          } else if (sectorName === "백화점과일반상점") {
+            temp_marketData.departmentstore = res.data;
+          } else if (sectorName === "가정용품") {
+            temp_marketData.homethings = res.data;
+          } else if (sectorName === "상업서비스와공급품") {
+            temp_marketData.commercialservice = res.data;
+          } else if (sectorName === "교육서비스") {
+            temp_marketData.educationservice = res.data;
+          } else if (sectorName === "항공화물운송과물류") {
+            temp_marketData.aircargo = res.data;
+          } else if (sectorName === "무선통신서비스") {
+            temp_marketData.radiocommunication = res.data;
+          } else if (sectorName === "손해보험") {
+            temp_marketData.damageinsurance = res.data;
+          } else if (sectorName === "식품과기본식료품소매") {
+            temp_marketData.grooceries = res.data;
+          } else if (sectorName === "가스유틸리티") {
+            temp_marketData.gasutility = res.data;
+          } else if (sectorName === "생명보험") {
+            temp_marketData.biologyinsurance = res.data;
+          } else if (sectorName === "다각화된통신서비스") {
+            temp_marketData.mixedcommunication = res.data;
+          } else if (sectorName === "기타금융") {
+            temp_marketData.finance = res.data;
+          } else if (sectorName === "식품") {
+            temp_marketData.food = res.data;
+          } else if (sectorName === "무역회사와판매업체") {
+            temp_marketData.trade = res.data;
+          } else if (sectorName === "담배") {
+            temp_marketData.tobacco = res.data;
           }
           /*
             {'code': '277', 'name': '창업투자'},
@@ -325,6 +565,100 @@ function EdaInfo(props) {
             temp_similarData.retail = res.data;
           } else if(sectorName === "화학") {
             temp_similarData.chemistry = res.data;
+          } else if (sectorName === "창업투자") {
+            temp_marketData.vc = res.data;
+          } else if (sectorName === "가구") {
+            temp_marketData.furniture = res.data;
+          } else if (sectorName === "가정용기기와용품") {
+            temp_marketData.homeutility = res.data;
+          } else if (sectorName === "증권") {
+            temp_marketData.stock = res.data;
+          } else if (sectorName === "운송인프라") {
+            temp_marketData.transportation = res.data;
+          } else if (sectorName === "건강관리기술") {
+            temp_marketData.healthtechnology = res.data;
+          } else if (sectorName === "호텔") {
+            temp_marketData.hotel = res.data;
+          } else if (sectorName === "다각화된소비자서비스") {
+            temp_marketData.consumerservice = res.data;
+          } else if (sectorName === "섬유") {
+            temp_marketData.fiber = res.data;
+          } else if (sectorName === "전기제품") {
+            temp_marketData.elctricproduct = res.data;
+          } else if (sectorName === "인터넷과카탈로그소매") {
+            temp_marketData.internetretail = res.data;
+          } else if (sectorName === "핸드셋") {
+            temp_marketData.handset = res.data;
+          } else if (sectorName === "포장재") {
+            temp_marketData.packing = res.data;
+          } else if (sectorName === "건강관리장비와용품") {
+            temp_marketData.healthcaredevice = res.data;
+          } else if (sectorName === "기계") {
+            temp_marketData.machine = res.data;
+          } else if (sectorName === "종이와목재") {
+            temp_marketData.paper = res.data;
+          } else if (sectorName === "자동차") {
+            temp_marketData.car = res.data;
+          } else if (sectorName === "광고") {
+            temp_marketData.advertisement = res.data;
+          } else if (sectorName === "생명과학도구및서비스") {
+            temp_marketData.biologytool = res.data;
+          } else if (sectorName === "제약") {
+            temp_marketData.pharmacy = res.data;
+          } else if (sectorName === "복합기업") {
+            temp_marketData.mixed = res.data;
+          } else if (sectorName === "음료") {
+            temp_marketData.drink = res.data;
+          } else if (sectorName === "카드") {
+            temp_marketData.card = res.data;
+          } else if (sectorName === "건축자재") {
+            temp_marketData.buildingmaterial = res.data;
+          } else if (sectorName === "컴퓨터와주변기기") {
+            temp_marketData.computer = res.data;
+          } else if (sectorName === "레저용장비와제품") {
+            temp_marketData.leisure = res.data;
+          } else if (sectorName === "자동차부품") {
+            temp_marketData.carpart = res.data;
+          } else if (sectorName === "전기장비") {
+            temp_marketData.electricequipment = res.data;
+          } else if (sectorName === "철강") {
+            temp_marketData.steel = res.data;
+          } else if (sectorName === "판매업체") {
+            temp_marketData.sales = res.data;
+          } else if (sectorName === "건축제품") {
+            temp_marketData.buildingproduct = res.data;
+          } else if (sectorName === "사무용전자제품") {
+            temp_marketData.office = res.data;
+          } else if (sectorName === "백화점과일반상점") {
+            temp_marketData.departmentstore = res.data;
+          } else if (sectorName === "가정용품") {
+            temp_marketData.homethings = res.data;
+          } else if (sectorName === "상업서비스와공급품") {
+            temp_marketData.commercialservice = res.data;
+          } else if (sectorName === "교육서비스") {
+            temp_marketData.educationservice = res.data;
+          } else if (sectorName === "항공화물운송과물류") {
+            temp_marketData.aircargo = res.data;
+          } else if (sectorName === "무선통신서비스") {
+            temp_marketData.radiocommunication = res.data;
+          } else if (sectorName === "손해보험") {
+            temp_marketData.damageinsurance = res.data;
+          } else if (sectorName === "식품과기본식료품소매") {
+            temp_marketData.grooceries = res.data;
+          } else if (sectorName === "가스유틸리티") {
+            temp_marketData.gasutility = res.data;
+          } else if (sectorName === "생명보험") {
+            temp_marketData.biologyinsurance = res.data;
+          } else if (sectorName === "다각화된통신서비스") {
+            temp_marketData.mixedcommunication = res.data;
+          } else if (sectorName === "기타금융") {
+            temp_marketData.finance = res.data;
+          } else if (sectorName === "식품") {
+            temp_marketData.food = res.data;
+          } else if (sectorName === "무역회사와판매업체") {
+            temp_marketData.trade = res.data;
+          } else if (sectorName === "담배") {
+            temp_marketData.tobacco = res.data;
           }
           setSimilarDateData(temp_similarData);
         }
@@ -474,6 +808,53 @@ function EdaInfo(props) {
       getSector("전자제품", startDate, endDate, true);
       getSector("전문소매", startDate, endDate, true);
       getSector("화학", startDate, endDate, true);
+      getSector("창업투자", startDate, endDate, true);
+      getSector("가구", startDate, endDate, true);
+      getSector("가정용기기와용품", startDate, endDate, true);
+      getSector("증권", startDate, endDate, true);
+      getSector("운송인프라", startDate, endDate, true);
+      getSector("건강관리기술", startDate, endDate, true);
+      getSector("호텔", startDate, endDate, true);
+      getSector("다각화된소비자서비스", startDate, endDate, true);
+      getSector("섬유", startDate, endDate, true);
+      getSector("전기제품", startDate, endDate, true);
+      getSector("인터넷과카탈로그소매", startDate, endDate, true);
+      getSector("핸드셋", startDate, endDate, true);
+      getSector("포장재", startDate, endDate, true);
+      getSector("건강관리장비와용품", startDate, endDate, true);
+      getSector("기계", startDate, endDate, true);
+      getSector("종이와목재", startDate, endDate, true);
+      getSector("자동차", startDate, endDate, true);
+      getSector("광고", startDate, endDate, true);
+      getSector("생명과학도구및서비스", startDate, endDate, true);
+      getSector("제약", startDate, endDate, true);
+      getSector("복합기업", startDate, endDate, true);
+      getSector("음료", startDate, endDate, true);
+      getSector("카드", startDate, endDate, true);
+      getSector("건축자재", startDate, endDate, true);
+      getSector("컴퓨터와주변기기", startDate, endDate, true);
+      getSector("레저용장비와제품", startDate, endDate, true);
+      getSector("자동차부품", startDate, endDate, true);
+      getSector("전기장비", startDate, endDate, true);
+      getSector("철강", startDate, endDate, true);
+      getSector("판매업체", startDate, endDate, true);
+      getSector("건축제품", startDate, endDate, true);
+      getSector("사무용전자제품", startDate, endDate, true);
+      getSector("백화점과일반상점", startDate, endDate, true);
+      getSector("가정용품", startDate, endDate, true);
+      getSector("상업서비스와공급품", startDate, endDate, true);
+      getSector("교육서비스", startDate, endDate, true);
+      getSector("항공화물운송과물류", startDate, endDate, true);
+      getSector("무선통신서비스", startDate, endDate, true);
+      getSector("손해보험", startDate, endDate, true);
+      getSector("식품과기본식료품소매", startDate, endDate, true);
+      getSector("가스유틸리티", startDate, endDate, true);
+      getSector("생명보험", startDate, endDate, true);
+      getSector("다각화된통신서비스", startDate, endDate, true);
+      getSector("기타금융", startDate, endDate, true);
+      getSector("식품", startDate, endDate, true);
+      getSector("무역회사와판매업체", startDate, endDate, true);
+      getSector("담배", startDate, endDate, true);
 
       // kospi 가져오기
       getIndex("KS11", startDate, endDate, true);
@@ -546,6 +927,53 @@ function EdaInfo(props) {
         getSector("전자제품", currentSimilarDate_start, currentSimilarDate_end, false);
         getSector("전문소매", currentSimilarDate_start, currentSimilarDate_end, false);
         getSector("화학", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("창업투자", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("가구", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("가정용기기와용품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("증권", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("운송인프라", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("건강관리기술", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("호텔", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("다각화된소비자서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("섬유", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("전기제품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("인터넷과카탈로그소매", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("핸드셋", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("포장재", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("건강관리장비와용품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("기계", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("종이와목재", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("자동차", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("광고", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("생명과학도구및서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("제약", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("복합기업", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("음료", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("카드", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("건축자재", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("컴퓨터와주변기기", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("레저용장비와제품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("자동차부품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("전기장비", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("철강", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("판매업체", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("건축제품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("사무용전자제품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("백화점과일반상점", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("가정용품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("상업서비스와공급품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("교육서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("항공화물운송과물류", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("무선통신서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("손해보험", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("식품과기본식료품소매", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("가스유틸리티", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("생명보험", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("다각화된통신서비스", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("기타금융", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("식품", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("무역회사와판매업체", currentSimilarDate_start, currentSimilarDate_end, false);
+        getSector("담배", currentSimilarDate_start, currentSimilarDate_end, false);
 
         // kospi 가져오기
         getIndex("KS11", currentSimilarDate_start, currentSimilarDate_end, false);
@@ -635,9 +1063,55 @@ function EdaInfo(props) {
                       (props.edaName==="복합유틸리티")?(marketData.complexutility):
                       (props.edaName==="디스플레이장비및부품")?(marketData.displaydevice):
                       (props.edaName==="전자제품")?(marketData.electronics):
-                      (props.edaName==="전문소매")?(marketData.retail):(marketData.chemistry) //화학
-                      ))} 
-                      place={"left"}/>
+                      (props.edaName==="전문소매")?(marketData.retail):
+                      (props.edaName==="화학")?(marketData.chemistry):
+                      (props.edaName==="창업투자")?(marketData.vc):
+                      (props.edaName==="가구")?(marketData.furniture):
+                      (props.edaName==="가정용기기와용품")?(marketData.homeutility):
+                      (props.edaName==="증권")?(marketData.stock):
+                      (props.edaName==="운송인프라")?(marketData.transportation):
+                      (props.edaName==="건강관리기술")?(marketData.healthtechnology):
+                      (props.edaName==="호텔")?(marketData.hotel):
+                      (props.edaName==="다각화된소비자서비스")?(marketData.consumerservice):
+                      (props.edaName==="섬유")?(marketData.fiber):
+                      (props.edaName==="전기제품")?(marketData.elctricproduct):
+                      (props.edaName==="인터넷과카탈로그소매")?(marketData.internetretail):
+                      (props.edaName==="핸드셋")?(marketData.handset):
+                      (props.edaName==="포장재")?(marketData.packing):
+                      (props.edaName==="건강관리장비와용품")?(marketData.healthcaredevice):
+                      (props.edaName==="기계")?(marketData.machine):
+                      (props.edaName==="종이와목재")?(marketData.paper):
+                      (props.edaName==="자동차")?(marketData.car):
+                      (props.edaName==="광고")?(marketData.advertisement):
+                      (props.edaName==="생명과학도구및서비스")?(marketData.biologytool):
+                      (props.edaName==="제약")?(marketData.pharmacy):
+                      (props.edaName==="복합기업")?(marketData.mixed):
+                      (props.edaName==="음료")?(marketData.drink):
+                      (props.edaName==="카드")?(marketData.card):
+                      (props.edaName==="건축자재")?(marketData.buildingmaterial):
+                      (props.edaName==="컴퓨터와주변기기")?(marketData.computer):
+                      (props.edaName==="레저용장비와제품")?(marketData.leisure):
+                      (props.edaName==="자동차부품")?(marketData.carpart):
+                      (props.edaName==="전기장비")?(marketData.electricequipment):
+                      (props.edaName==="철강")?(marketData.steel):
+                      (props.edaName==="판매업체")?(marketData.sales):
+                      (props.edaName==="건축제품")?(marketData.buildingproduct):
+                      (props.edaName==="사무용전자제품")?(marketData.office):
+                      (props.edaName==="백화점과일반상점")?(marketData.departmentstore):
+                      (props.edaName==="가정용품")?(marketData.homethings):
+                      (props.edaName==="상업서비스와공급품")?(marketData.commercialservice):
+                      (props.edaName==="교육서비스")?(marketData.educationservice):
+                      (props.edaName==="항공화물운송과물류")?(marketData.aircargo):
+                      (props.edaName==="무선통신서비스")?(marketData.radiocommunication):
+                      (props.edaName==="손해보험")?(marketData.damageinsurance):
+                      (props.edaName==="식품과기본식료품소매")?(marketData.grooceries):
+                      (props.edaName==="가스유틸리티")?(marketData.gasutility):
+                      (props.edaName==="생명보험")?(marketData.biologyinsurance):
+                      (props.edaName==="다각화된통신서비스")?(marketData.mixedcommunication):
+                      (props.edaName==="기타금융")?(marketData.finance):
+                      (props.edaName==="식품")?(marketData.food):
+                      (props.edaName==="무역회사와판매업체")?(marketData.trade):(marketData.tobacco) //담배
+                      ))} place={"left"}/>
                     </Grid>
                     <Grid item key={"grid101"} xs={6} sx={{textAlign: 'center', pb:'7px'}}> {/* 오른쪽 파트 */}
                       <Chip key={"1236"} label={marketData.currentDate} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
@@ -753,7 +1227,54 @@ function EdaInfo(props) {
                           (props.edaName==="복합유틸리티")?(similarDateData.complexutility):
                           (props.edaName==="디스플레이장비및부품")?(similarDateData.displaydevice):
                           (props.edaName==="전자제품")?(similarDateData.electronics):
-                          (props.edaName==="전문소매")?(similarDateData.retail):(similarDateData.chemistry)
+                          (props.edaName==="전문소매")?(similarDateData.retail):
+                          (props.edaName==="화학")?(similarDateData.chemistry):
+                          (props.edaName==="창업투자")?(similarDateData.vc):
+                          (props.edaName==="가구")?(similarDateData.furniture):
+                          (props.edaName==="가정용기기와용품")?(similarDateData.homeutility):
+                          (props.edaName==="증권")?(similarDateData.stock):
+                          (props.edaName==="운송인프라")?(similarDateData.transportation):
+                          (props.edaName==="건강관리기술")?(similarDateData.healthtechnology):
+                          (props.edaName==="호텔")?(similarDateData.hotel):
+                          (props.edaName==="다각화된소비자서비스")?(similarDateData.consumerservice):
+                          (props.edaName==="섬유")?(similarDateData.fiber):
+                          (props.edaName==="전기제품")?(similarDateData.elctricproduct):
+                          (props.edaName==="인터넷과카탈로그소매")?(similarDateData.internetretail):
+                          (props.edaName==="핸드셋")?(similarDateData.handset):
+                          (props.edaName==="포장재")?(similarDateData.packing):
+                          (props.edaName==="건강관리장비와용품")?(similarDateData.healthcaredevice):
+                          (props.edaName==="기계")?(similarDateData.machine):
+                          (props.edaName==="종이와목재")?(similarDateData.paper):
+                          (props.edaName==="자동차")?(similarDateData.car):
+                          (props.edaName==="광고")?(similarDateData.advertisement):
+                          (props.edaName==="생명과학도구및서비스")?(similarDateData.biologytool):
+                          (props.edaName==="제약")?(similarDateData.pharmacy):
+                          (props.edaName==="복합기업")?(similarDateData.mixed):
+                          (props.edaName==="음료")?(similarDateData.drink):
+                          (props.edaName==="카드")?(similarDateData.card):
+                          (props.edaName==="건축자재")?(similarDateData.buildingmaterial):
+                          (props.edaName==="컴퓨터와주변기기")?(similarDateData.computer):
+                          (props.edaName==="레저용장비와제품")?(similarDateData.leisure):
+                          (props.edaName==="자동차부품")?(similarDateData.carpart):
+                          (props.edaName==="전기장비")?(similarDateData.electricequipment):
+                          (props.edaName==="철강")?(similarDateData.steel):
+                          (props.edaName==="판매업체")?(similarDateData.sales):
+                          (props.edaName==="건축제품")?(similarDateData.buildingproduct):
+                          (props.edaName==="사무용전자제품")?(similarDateData.office):
+                          (props.edaName==="백화점과일반상점")?(similarDateData.departmentstore):
+                          (props.edaName==="가정용품")?(similarDateData.homethings):
+                          (props.edaName==="상업서비스와공급품")?(similarDateData.commercialservice):
+                          (props.edaName==="교육서비스")?(similarDateData.educationservice):
+                          (props.edaName==="항공화물운송과물류")?(similarDateData.aircargo):
+                          (props.edaName==="무선통신서비스")?(similarDateData.radiocommunication):
+                          (props.edaName==="손해보험")?(similarDateData.damageinsurance):
+                          (props.edaName==="식품과기본식료품소매")?(similarDateData.grooceries):
+                          (props.edaName==="가스유틸리티")?(similarDateData.gasutility):
+                          (props.edaName==="생명보험")?(similarDateData.biologyinsurance):
+                          (props.edaName==="다각화된통신서비스")?(similarDateData.mixedcommunication):
+                          (props.edaName==="기타금융")?(similarDateData.finance):
+                          (props.edaName==="식품")?(similarDateData.food):
+                          (props.edaName==="무역회사와판매업체")?(similarDateData.trade):(similarDateData.tobacco) //담배
                           ))} 
                           place={"left"}
                           currentData={((props.edaType==="market")?(marketData.kospi):(
@@ -786,7 +1307,54 @@ function EdaInfo(props) {
                             (props.edaName==="복합유틸리티")?(marketData.complexutility):
                             (props.edaName==="디스플레이장비및부품")?(marketData.displaydevice):
                             (props.edaName==="전자제품")?(marketData.electronics):
-                            (props.edaName==="전문소매")?(marketData.retail):(marketData.chemistry) //화학
+                            (props.edaName==="전문소매")?(marketData.retail):
+                            (props.edaName==="화학")?(marketData.chemistry):
+                            (props.edaName==="창업투자")?(marketData.vc):
+                            (props.edaName==="가구")?(marketData.furniture):
+                            (props.edaName==="가정용기기와용품")?(marketData.homeutility):
+                            (props.edaName==="증권")?(marketData.stock):
+                            (props.edaName==="운송인프라")?(marketData.transportation):
+                            (props.edaName==="건강관리기술")?(marketData.healthtechnology):
+                            (props.edaName==="호텔")?(marketData.hotel):
+                            (props.edaName==="다각화된소비자서비스")?(marketData.consumerservice):
+                            (props.edaName==="섬유")?(marketData.fiber):
+                            (props.edaName==="전기제품")?(marketData.elctricproduct):
+                            (props.edaName==="인터넷과카탈로그소매")?(marketData.internetretail):
+                            (props.edaName==="핸드셋")?(marketData.handset):
+                            (props.edaName==="포장재")?(marketData.packing):
+                            (props.edaName==="건강관리장비와용품")?(marketData.healthcaredevice):
+                            (props.edaName==="기계")?(marketData.machine):
+                            (props.edaName==="종이와목재")?(marketData.paper):
+                            (props.edaName==="자동차")?(marketData.car):
+                            (props.edaName==="광고")?(marketData.advertisement):
+                            (props.edaName==="생명과학도구및서비스")?(marketData.biologytool):
+                            (props.edaName==="제약")?(marketData.pharmacy):
+                            (props.edaName==="복합기업")?(marketData.mixed):
+                            (props.edaName==="음료")?(marketData.drink):
+                            (props.edaName==="카드")?(marketData.card):
+                            (props.edaName==="건축자재")?(marketData.buildingmaterial):
+                            (props.edaName==="컴퓨터와주변기기")?(marketData.computer):
+                            (props.edaName==="레저용장비와제품")?(marketData.leisure):
+                            (props.edaName==="자동차부품")?(marketData.carpart):
+                            (props.edaName==="전기장비")?(marketData.electricequipment):
+                            (props.edaName==="철강")?(marketData.steel):
+                            (props.edaName==="판매업체")?(marketData.sales):
+                            (props.edaName==="건축제품")?(marketData.buildingproduct):
+                            (props.edaName==="사무용전자제품")?(marketData.office):
+                            (props.edaName==="백화점과일반상점")?(marketData.departmentstore):
+                            (props.edaName==="가정용품")?(marketData.homethings):
+                            (props.edaName==="상업서비스와공급품")?(marketData.commercialservice):
+                            (props.edaName==="교육서비스")?(marketData.educationservice):
+                            (props.edaName==="항공화물운송과물류")?(marketData.aircargo):
+                            (props.edaName==="무선통신서비스")?(marketData.radiocommunication):
+                            (props.edaName==="손해보험")?(marketData.damageinsurance):
+                            (props.edaName==="식품과기본식료품소매")?(marketData.grooceries):
+                            (props.edaName==="가스유틸리티")?(marketData.gasutility):
+                            (props.edaName==="생명보험")?(marketData.biologyinsurance):
+                            (props.edaName==="다각화된통신서비스")?(marketData.mixedcommunication):
+                            (props.edaName==="기타금융")?(marketData.finance):
+                            (props.edaName==="식품")?(marketData.food):
+                            (props.edaName==="무역회사와판매업체")?(marketData.trade):(marketData.tobacco) //담배
                             ))}/>
                         </>
                       )}
