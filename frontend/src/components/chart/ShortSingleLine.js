@@ -60,16 +60,25 @@ function ShortSingleLine(props) {
       console.log("data in graph is ", props.data);
       if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
         let distance = 0; // 주가 distance
+        let pastList = [], currentList = [];
         for(let i=1; i<=60; i++){
           let difference = props.data[0-i]['Close'] - props.currentData[0-i]['Close'];
           difference = difference * difference / 60;
           distance = distance + difference;
+          pastList.append(props.data[0-i]['Close']);
+          currentList.append(props.currentData[0-i]['Close']);
         }
         distance = Math.sqrt(distance / 60);
+        let cov = require( 'compute-covariance' );
+        let mat = cov(pastList, currentList);
+        console.log("mat is ", mat);
+
+        // mat이 [(cov)] 라고 가정 (ex. [2.5])
+        let adjusted_cov = distance + 1-cov;
       }
 
 
-      setDistance(distance);
+      setDistance(adjusted_cov);
     }
   }, [props.title, props.data])
 
@@ -77,7 +86,7 @@ function ShortSingleLine(props) {
   return(
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
-      <div>Distance is {distance}</div>
+      <div>Adjusted Covariance is {adjusted_cov}</div>
     </Fragment>
   );
 }
