@@ -36,7 +36,7 @@ function Portfolio() {
   })
   const [stockBond, setStockBond] = useState(60)
   const [isLoading, setLoading] = useState(false)
-  const [loaded, setLoaded] = useState(false); // !! 나중에 false로 꼭 바꾸기 
+  const [loaded, setLoaded] = useState(false);
   const [selectedSector, setSector] = useState([])
   const [currentMarket, setMarket] = useState('')
   //const [yields, setYield] = useState(['-1','10'])
@@ -79,6 +79,7 @@ function Portfolio() {
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
   const [sortPort, setSort] = useState([0,1,2])
+  const [risk, setRisk] = useState([[0,0,0],[0,0,0],[0,0,0]])
   const pieData = {
     data: [[{name: 'sm', y: 0.1}, {name: 'yg', y: 0.9}],[{name: 'sm', y: 0.5}, {name: 'yg', y: 0.5}]]
   }
@@ -93,13 +94,13 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: []
+      data: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }, {
       name: '',
-      data: []
+      data: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }, {
       name: '',
-      data: []
+      data: [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }]
   }
   const mddData = {
@@ -113,16 +114,10 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: []
-    },{
-      name: '',
-      data: []
-    },{
-      name: '',
-      data: []
+      data: [2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     }]
   }
-  const riskData = {
+  const varData = {
     title: 'DD',
     xAxis: {
       title: 'Days Elapsed',
@@ -133,26 +128,22 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: []
-    },{
-      name: '',
-      data: []
-    },{
-      name: '',
-      data: []
-    }]    
+      data: [3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    }]
   }
   const [chartData, setChartOption] = useState({
     pie: pieData,
     line: lineData,
     mdd: mddData,
-    risk: riskData
+    risk: varData
   })
   const isMounted = useRef(false);
 
   const getPortfolio = async() => {
     setLoaded(false)
+    setLoading(true)
     const makeChartData = (r) => {
+      setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk])
       setPort({
         stocks: r.result.stocks,
         similarDate: r.result.similar_date,
@@ -189,7 +180,7 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p,
-                data: r[p].data.map(d => { return d.price })
+                data: r[p].data.map(d => { return parseFloat(d.price).toFixed(2) })
               })
             })
         },
@@ -206,15 +197,29 @@ function Portfolio() {
             portName.map( p => {
               return ({
                 name: p+' DD',
-                data: r[p].dd[0]
+                data: r[p].dd.map(i => parseFloat(i).toFixed(2)) // dd 안되면 여기 보기!!
+              })
+            })
+        },
+        var: {
+          title: 'Risk',
+          xAxis: {
+            title: 'Days Elapsed',
+            categories: [...Array(30).keys()].map( x => x+1 )
+          },
+          yAxis: {
+            title: ''
+          },
+          data: 
+            portName.map( p => {
+              return ({
+                name: p+' Risk',
+                data: r[p].VaR.map(i => parseFloat(i).toFixed(2)) // dd 안되면 여기 보기!!
               })
             })
         }
       })
     }
-    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
-    console.log(sort)
-    setSort(()=>[...sort])
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -222,7 +227,7 @@ function Portfolio() {
       m = KOSDAQ
     }
     
-    sectorClicked.forEach((s, index) => {
+    sectorClicked[currentMarket].forEach((s, index) => {
       if(s === true){
         ms += ','
         ms += m[index]
@@ -239,7 +244,7 @@ function Portfolio() {
         "sector": ms,
         "s_ratio": stockBond/100
       }
-    }).then(res => {makeChartData(res.data.result);});
+    }).then(res => {console.log(res.data.result); makeChartData(res.data.result);});
   }
   let sectors = []
   const getSectors = (market) => {
@@ -262,14 +267,12 @@ function Portfolio() {
   }
   const selectSector = (e) => {
     const n = e.target.value
-    console.log(sectorClicked)
     let sss = sectorClicked[currentMarket]
     sss[n] = !sss[n]
     setSectorClick((prev)=>({
       ...prev,
       [currentMarket]: sss
     }))
-    console.log(sectorClicked)
   }
   const check = () => {
     setCheck(!isChecked)
@@ -279,13 +282,6 @@ function Portfolio() {
     //getPortfolio()
     setShowChart(!showChart)
   }
-  // const onChange = (e) => {
-  //   initUserOption = {
-  //     ...userOption,
-  //     [e.target.name]: e.target.value
-  //   }
-  //   setUserOption(initUserOption)
-  // }
   const changeSlider = (e, v) => {
     setStockBond(v)
   }
@@ -305,6 +301,10 @@ function Portfolio() {
   useEffect(()=>{
     if(!isMounted.current) return;
     setLoaded(true);
+    setLoading(false);
+    let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
+    //console.log(chartData)
+    setSort(()=>[...sort])
   },[chartData])
   return(
     <div className="container">
@@ -343,13 +343,13 @@ function Portfolio() {
                 <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle', marginTop: '10px'}} key={sectorClicked}>
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(0,5).map(ss =>
-                      ss.map((s, value) => <Button value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button key={value} value={value} onClick={selectSector} style={{minHeight: '0px', minWidth: '0px', padding: '6px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
 
                   <ButtonGroup style={{height:'1.5rem', width: '1200px'}} color='inherit'>
                     {selectedSector.slice(5,10).map(ss =>
-                      ss.map((s, value) => <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{s}</Button>)
+                      ss.map((s, value) => <Button key={value+6} value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{s}</Button>)
                     )}
                   </ButtonGroup>
                 </Box>
@@ -361,10 +361,10 @@ function Portfolio() {
               <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
                 <ButtonGroup style={{height:'1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                   {pick.slice(0,5).map((ss, value) =>
-                    <Button value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>)
+                    <Button key={value} value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>)
                   }
                   {pick.slice(5,10).map((ss, value) =>
-                    <Button value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{ss}</Button>)
+                    <Button key={value+6} value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{ss}</Button>)
                   }
                 </ButtonGroup>
               </Box>
@@ -376,16 +376,17 @@ function Portfolio() {
       </div>
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
-        <li key="1">종목:  { loaded ? (portfolio.stocks.map(i => { return i + ' ' })) : '' }</li>
+        <li key="1">종목:  { loaded ? portfolio.stocks.map(i => { return i + ' ' }) : '' }</li>
         <li key="2">유사 시점:  { loaded ? portfolio.similarDate.map(i => {return i + ' '}) : '' }</li>
 
         {
-          sortPort.map( n => {
+          loaded && sortPort.map( n => {
             return(
-            <Accordion style={{marginTop:'15px'}}>
+            <Accordion style={{marginTop:'15px'}} key={n}>
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
-                <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span>
+                {/* <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span> */}
+                <span style={{marginLeft: '20px'}}>예상 수익: {(chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2)}%</span>
               </AccordionSummary>
               <AccordionDetails key={chartData}>
                 <div style={{width: '170px', maxWidth: '170px', display: 'inline-block', verticalAlign: 'top'}} key={chartData}>
@@ -402,13 +403,12 @@ function Portfolio() {
                       <MultiLine props={chartData.mdd} num={n}/>
                     </span>
                     <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
-                      <MultiLine props={chartData.risk} num={n}/>
+                      <MultiLine props={chartData.var} num={n}/>
                     </span>
                     <span style={{width: '450px', display:'inline-block', verticalAlign: 'top'}}>
-                      <div>value 1</div>
-                      <div>value 2</div>
-                      <div>value 3</div>
-                      <div>value 4</div>
+                      <div>sharpe : {risk[n][0]}</div>
+                      <div>trainer : {risk[n][1]}</div>
+                      <div>zensen : {risk[n][2]}</div>
                     </span>
                   </div>
                 </div>
@@ -416,33 +416,12 @@ function Portfolio() {
             </Accordion>)
           })
         }
-        
-        
-       
-        {/* <Accordion>
-          <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
-            <span>Portfolio 2</span>
-            <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[1].data[chartData.line.data[1].data.length-1]-100).toFixed(2) : ''}%</span>
-          </AccordionSummary>
-          <AccordionDetails key={chartData}>
-            <div style={{paddingBottom: '10px', width: '170px', display: 'inline-block'}}>
-              <div className="title1">Stocks Weight</div>
-              <Pie title={chartData.pie.title} data={chartData.pie.data[1]} key={chartData} />
-            </div>
-            <div className="backtest">
-              <div className="title1">Backtest</div>
-              <div className="chart" style={{width: '900px', margin: '0 auto'}}>
-                <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.line} num='1'/>
-                </span>
-                <span style={{width: '450px', display:'inline-block'}}>
-                  <MultiLine props={chartData.mdd} num='1'/>
-                </span>
-              </div>
-            </div>
-          </AccordionDetails>
-        </Accordion> */}
-      
+        { 
+          isLoading && 
+          <div style={{textAlign: "center", margin: "30px"}}>
+            <CircularProgress shrink color="inherit"/>
+          </div> 
+        }
       </div>
   	</div>
   );
