@@ -566,99 +566,99 @@ function EdaInfo(props) {
           } else if(sectorName === "화학") {
             temp_similarData.chemistry = res.data;
           } else if (sectorName === "창업투자") {
-            temp_marketData.vc = res.data;
+            temp_similarData.vc = res.data;
           } else if (sectorName === "가구") {
-            temp_marketData.furniture = res.data;
+            temp_similarData.furniture = res.data;
           } else if (sectorName === "가정용기기와용품") {
-            temp_marketData.homeutility = res.data;
+            temp_similarData.homeutility = res.data;
           } else if (sectorName === "증권") {
-            temp_marketData.stock = res.data;
+            temp_similarData.stock = res.data;
           } else if (sectorName === "운송인프라") {
-            temp_marketData.transportation = res.data;
+            temp_similarData.transportation = res.data;
           } else if (sectorName === "건강관리기술") {
-            temp_marketData.healthtechnology = res.data;
+            temp_similarData.healthtechnology = res.data;
           } else if (sectorName === "호텔") {
-            temp_marketData.hotel = res.data;
+            temp_similarData.hotel = res.data;
           } else if (sectorName === "다각화된소비자서비스") {
-            temp_marketData.consumerservice = res.data;
+            temp_similarData.consumerservice = res.data;
           } else if (sectorName === "섬유") {
-            temp_marketData.fiber = res.data;
+            temp_similarData.fiber = res.data;
           } else if (sectorName === "전기제품") {
-            temp_marketData.elctricproduct = res.data;
+            temp_similarData.elctricproduct = res.data;
           } else if (sectorName === "인터넷과카탈로그소매") {
-            temp_marketData.internetretail = res.data;
+            temp_similarData.internetretail = res.data;
           } else if (sectorName === "핸드셋") {
-            temp_marketData.handset = res.data;
+            temp_similarData.handset = res.data;
           } else if (sectorName === "포장재") {
-            temp_marketData.packing = res.data;
+            temp_similarData.packing = res.data;
           } else if (sectorName === "건강관리장비와용품") {
-            temp_marketData.healthcaredevice = res.data;
+            temp_similarData.healthcaredevice = res.data;
           } else if (sectorName === "기계") {
-            temp_marketData.machine = res.data;
+            temp_similarData.machine = res.data;
           } else if (sectorName === "종이와목재") {
-            temp_marketData.paper = res.data;
+            temp_similarData.paper = res.data;
           } else if (sectorName === "자동차") {
-            temp_marketData.car = res.data;
+            temp_similarData.car = res.data;
           } else if (sectorName === "광고") {
-            temp_marketData.advertisement = res.data;
+            temp_similarData.advertisement = res.data;
           } else if (sectorName === "생명과학도구및서비스") {
-            temp_marketData.biologytool = res.data;
+            temp_similarData.biologytool = res.data;
           } else if (sectorName === "제약") {
-            temp_marketData.pharmacy = res.data;
+            temp_similarData.pharmacy = res.data;
           } else if (sectorName === "복합기업") {
-            temp_marketData.mixed = res.data;
+            temp_similarData.mixed = res.data;
           } else if (sectorName === "음료") {
-            temp_marketData.drink = res.data;
+            temp_similarData.drink = res.data;
           } else if (sectorName === "카드") {
-            temp_marketData.card = res.data;
+            temp_similarData.card = res.data;
           } else if (sectorName === "건축자재") {
-            temp_marketData.buildingmaterial = res.data;
+            temp_similarData.buildingmaterial = res.data;
           } else if (sectorName === "컴퓨터와주변기기") {
-            temp_marketData.computer = res.data;
+            temp_similarData.computer = res.data;
           } else if (sectorName === "레저용장비와제품") {
-            temp_marketData.leisure = res.data;
+            temp_similarData.leisure = res.data;
           } else if (sectorName === "자동차부품") {
-            temp_marketData.carpart = res.data;
+            temp_similarData.carpart = res.data;
           } else if (sectorName === "전기장비") {
-            temp_marketData.electricequipment = res.data;
+            temp_similarData.electricequipment = res.data;
           } else if (sectorName === "철강") {
-            temp_marketData.steel = res.data;
+            temp_similarData.steel = res.data;
           } else if (sectorName === "판매업체") {
-            temp_marketData.sales = res.data;
+            temp_similarData.sales = res.data;
           } else if (sectorName === "건축제품") {
-            temp_marketData.buildingproduct = res.data;
+            temp_similarData.buildingproduct = res.data;
           } else if (sectorName === "사무용전자제품") {
-            temp_marketData.office = res.data;
+            temp_similarData.office = res.data;
           } else if (sectorName === "백화점과일반상점") {
-            temp_marketData.departmentstore = res.data;
+            temp_similarData.departmentstore = res.data;
           } else if (sectorName === "가정용품") {
-            temp_marketData.homethings = res.data;
+            temp_similarData.homethings = res.data;
           } else if (sectorName === "상업서비스와공급품") {
-            temp_marketData.commercialservice = res.data;
+            temp_similarData.commercialservice = res.data;
           } else if (sectorName === "교육서비스") {
-            temp_marketData.educationservice = res.data;
+            temp_similarData.educationservice = res.data;
           } else if (sectorName === "항공화물운송과물류") {
-            temp_marketData.aircargo = res.data;
+            temp_similarData.aircargo = res.data;
           } else if (sectorName === "무선통신서비스") {
-            temp_marketData.radiocommunication = res.data;
+            temp_similarData.radiocommunication = res.data;
           } else if (sectorName === "손해보험") {
-            temp_marketData.damageinsurance = res.data;
+            temp_similarData.damageinsurance = res.data;
           } else if (sectorName === "식품과기본식료품소매") {
-            temp_marketData.grooceries = res.data;
+            temp_similarData.grooceries = res.data;
           } else if (sectorName === "가스유틸리티") {
-            temp_marketData.gasutility = res.data;
+            temp_similarData.gasutility = res.data;
           } else if (sectorName === "생명보험") {
-            temp_marketData.biologyinsurance = res.data;
+            temp_similarData.biologyinsurance = res.data;
           } else if (sectorName === "다각화된통신서비스") {
-            temp_marketData.mixedcommunication = res.data;
+            temp_similarData.mixedcommunication = res.data;
           } else if (sectorName === "기타금융") {
-            temp_marketData.finance = res.data;
+            temp_similarData.finance = res.data;
           } else if (sectorName === "식품") {
-            temp_marketData.food = res.data;
+            temp_similarData.food = res.data;
           } else if (sectorName === "무역회사와판매업체") {
-            temp_marketData.trade = res.data;
+            temp_similarData.trade = res.data;
           } else if (sectorName === "담배") {
-            temp_marketData.tobacco = res.data;
+            temp_similarData.tobacco = res.data;
           }
           setSimilarDateData(temp_similarData);
         }
