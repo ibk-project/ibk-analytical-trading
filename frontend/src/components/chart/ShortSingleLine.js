@@ -7,7 +7,7 @@ import Exporting from "highcharts/modules/exporting";
 function ShortSingleLine(props) {
   Accessibility(Highcharts);
   Exporting(Highcharts);
-  const [distance, setDistance] = useState(0);
+  const [adjustedCov, setAdjustedCov] = useState(0);
   const [options, setOptions] = useState({
     rangeSelector: {
       selected: 1,
@@ -58,6 +58,7 @@ function ShortSingleLine(props) {
     // 과거시점과 현재시점의 유사도 계산, calculating the similarity of past date and now: Correlation-adjusted Distance 방법
     if(props.currentData !== undefined) {
       console.log("data in graph is ", props.data);
+      let adjusted_cov = 0;
       if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
         let distance = 0; // 주가 distance
         let pastList = [], currentList = [];
@@ -74,11 +75,11 @@ function ShortSingleLine(props) {
         console.log("mat is ", mat);
 
         // mat이 [(cov)] 라고 가정 (ex. [2.5])
-        let adjusted_cov = distance + 1-cov;
+        adjusted_cov = distance + 1-cov;
       }
 
 
-      setDistance(adjusted_cov);
+      setAdjustedCov(adjusted_cov);
     }
   }, [props.title, props.data])
 
@@ -86,7 +87,7 @@ function ShortSingleLine(props) {
   return(
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
-      <div>Adjusted Covariance is {adjusted_cov}</div>
+      <div>Adjusted Covariance is {adjustedCov}</div>
     </Fragment>
   );
 }
