@@ -59,6 +59,7 @@ function ShortSingleLine(props) {
     if(props.currentData !== undefined) {
       console.log("data in graph is ", props.data);
       let adjusted_cov = 0;
+      console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
       if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
         let distance = 0; // 주가 distance
         let pastList = [], currentList = [];
@@ -72,13 +73,12 @@ function ShortSingleLine(props) {
         distance = Math.sqrt(distance / 60);
         let cov = require( 'compute-covariance' );
         let mat = cov(pastList, currentList);
-        console.log("mat is ", mat);
-
         // mat이 [(cov)] 라고 가정 (ex. [2.5])
         adjusted_cov = distance + 1-cov;
+        console.log("1. adusted cov is ", adjusted_cov);
       }
 
-
+      console.log("2. adusted cov is ", adjusted_cov);
       setAdjustedCov(adjusted_cov);
     }
   }, [props.title, props.data])
