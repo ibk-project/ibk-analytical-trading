@@ -1,10 +1,11 @@
 .container {
   font-family: KoreanTITGD3, Manrope-SemiBold;
   display: grid;
+  grid-template-columns: 30rem 40rem;
+  grid-template-areas: "options portfolio";
+  padding: 3rem calc((100% - 70rem) / 2);
   grid-gap: 10px;
-  width: 70%;
-  margin: auto;
-  margin-top: 10px;
+  width: 70rem;
 }
 .title {
   font-size: x-large;
@@ -20,19 +21,18 @@
   margin-bottom: 15px;
 }
 .option {
-  grid-row: 1;
   padding: 15px 25px 15px 20px;
 }
 .options {
-  margin-top: 10px;
+  grid-area: "options";
+  margin-top: 30px;
   margin-bottom: 5px;
 }
 .portfolio {
-  grid-row: 2;
+  grid-area: "portfolio";
   padding: 15px 25px 10px 20px;
 }
 .backtest {
-  grid-row: 3;
   padding: 0px 25px 10px 20px;
   display: inline-block;
 }
