@@ -1,4 +1,7 @@
 from codecs import CodecInfo
+import math
+import statistics
+import numpy as np
 from django.shortcuts import render
 
 from django.http.response import JsonResponse, HttpResponse
@@ -3069,3 +3072,58 @@ def get_news_feature(request):
         except:
             return JsonResponse({"Data" : "None"})
 
+#Calculate Correlation-adjusted Distance
+@api_view(['GET'])
+def get_similarity_distance(request, period1, period2):
+    if request.method == 'GET':
+        adjusted_cov = 0
+        if(len(period1)>60 and len(period2)>60):
+            distance = 0
+            pastList = []
+            currentList = []
+            for i in range(1, 60):
+                difference = period1[0-i]['Close'] - period2[0-i]['Close']
+                difference = difference * difference / 60
+                distance = distance + difference
+                pastList.append(period1[0-i]['Close'])
+                currentList.append(period2[0-i]['Close'])
+            distance = math.sqrt(distance/60)
+            cov = np.cov([pastList, currentList])
+            a = statistics.stdev(pastList)
+            b = statistics.stdev(currentList)
+            corr = cov/(a*b)
+            adjustedCov = distance + 1 - corr
+
+        try:
+            with open(adjustedCov, encoding='UTF-8-sig') as f:
+                json_data = json.load(f)
+                json_data = json.dumps(json_data, ensure_ascii = False)
+            return HttpResponse(json_data)
+        except:
+            return JsonResponse({"Data" : "None"})
+        
+
+
+# console.log("data in graph is ", props.data);
+# let adjusted_cov = 0;
+# console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
+# if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
+# let distance = 0; // 주가 distance
+# let pastList = [], currentList = [];
+# for(let i=1; i<=60; i++){
+#     let difference = props.data[0-i]['Close'] - props.currentData[0-i]['Close'];
+#     difference = difference * difference / 60;
+#     distance = distance + difference;
+#     pastList.append(props.data[0-i]['Close']);
+#     currentList.append(props.currentData[0-i]['Close']);
+# }
+# distance = Math.sqrt(distance / 60);
+# let cov = require( 'compute-covariance' );
+# let mat = cov(pastList, currentList);
+# // mat이 [(cov)] 라고 가정 (ex. [2.5])
+# adjusted_cov = distance + 1-cov;
+# console.log("1. adusted cov is ", adjusted_cov);
+# }
+
+# console.log("2. adusted cov is ", adjusted_cov);
+# setAdjustedCov(adjusted_cov);
