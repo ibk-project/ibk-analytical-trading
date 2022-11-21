@@ -3076,11 +3076,13 @@ def get_news_feature(request):
 @api_view(['GET'])
 def get_similarity_distance(request, period1, period2):
     if request.method == 'GET':
-        adjusted_cov = 0
+        adjustedCov = 0
         if(len(period1)>60 and len(period2)>60):
             distance = 0
             pastList = []
             currentList = []
+
+            # 단순 Distance 산식
             for i in range(1, 60):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
                 difference = difference * difference / 60
@@ -3088,19 +3090,28 @@ def get_similarity_distance(request, period1, period2):
                 pastList.append(period1[0-i]['Close'])
                 currentList.append(period2[0-i]['Close'])
             distance = math.sqrt(distance/60)
-            cov = np.cov([pastList, currentList])
+
+            # Indexed Distance 산식
+            # 원 경제변수 시계열을 기간말값=100으로 변환하는 인덱스화 적용 이후에 Distance 계산
+            pastList2 = [100 * x / pastList[-1] for x in pastList]
+            currentList2 = [100 * x / currentList[-1] for x in currentList]
+            # 이 둘을 이용해 위 단순 Distance와 같이 계산
+
+            # Correlation 산식 (using 단순 Distance)
             a = statistics.stdev(pastList)
             b = statistics.stdev(currentList)
+            cov = np.cov([pastList, currentList])
             corr = cov/(a*b)
-            adjustedCov = distance + 1 - corr
 
+            adjustedCov = distance + 1 - corr
+            
         try:
             with open(adjustedCov, encoding='UTF-8-sig') as f:
                 json_data = json.load(f)
                 json_data = json.dumps(json_data, ensure_ascii = False)
             return HttpResponse(json_data)
         except:
-            return JsonResponse({"Data" : "None"})
+            return JsonResponse({"None"})
         
 
 

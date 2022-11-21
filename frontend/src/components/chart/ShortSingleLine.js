@@ -8,6 +8,7 @@ function ShortSingleLine(props) {
   Accessibility(Highcharts);
   Exporting(Highcharts);
   const [adjustedCov, setAdjustedCov] = useState(0);
+  const [similarityDistance, setSimilarityDistance] = useState(0);
   const [options, setOptions] = useState({
     rangeSelector: {
       selected: 1,
@@ -29,6 +30,18 @@ function ShortSingleLine(props) {
       height: (props.place==="left"?(9 / 16 * 100):(9 / 20 * 100)) + '%' // 16:9 ratio
     }
   });
+
+  const getSimilarityDistance = async(period1, period2) => {
+    await axios.get('/api/data-management/index/get', {
+      params: {
+        "period1": period1,
+        "period2": period2,
+      }
+    }).then(res => {
+      console.log("distance result is ", res);
+      setSimilarityDistance(res);
+    });
+  }
 
   useEffect(() => {
     let data = [];
@@ -61,21 +74,22 @@ function ShortSingleLine(props) {
       let adjusted_cov = 0;
       console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
       if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
-        let distance = 0; // 주가 distance
-        let pastList = [], currentList = [];
-        for(let i=1; i<=60; i++){
-          let difference = props.data[0-i]['Close'] - props.currentData[0-i]['Close'];
-          difference = difference * difference / 60;
-          distance = distance + difference;
-          pastList.append(props.data[0-i]['Close']);
-          currentList.append(props.currentData[0-i]['Close']);
-        }
-        distance = Math.sqrt(distance / 60);
-        let cov = require( 'compute-covariance' );
-        let mat = cov(pastList, currentList);
-        // mat이 [(cov)] 라고 가정 (ex. [2.5])
-        adjusted_cov = distance + 1-cov;
-        console.log("1. adusted cov is ", adjusted_cov);
+        // let distance = 0; // 주가 distance
+        // let pastList = [], currentList = [];
+        // for(let i=1; i<=60; i++){
+        //   let difference = props.data[0-i]['Close'] - props.currentData[0-i]['Close'];
+        //   difference = difference * difference / 60;
+        //   distance = distance + difference;
+        //   pastList.append(props.data[0-i]['Close']);
+        //   currentList.append(props.currentData[0-i]['Close']);
+        // }
+        // distance = Math.sqrt(distance / 60);
+        // let cov = require( 'compute-covariance' );
+        // let mat = cov(pastList, currentList);
+        // // mat이 [(cov)] 라고 가정 (ex. [2.5])
+        // adjusted_cov = distance + 1-cov;
+        // console.log("1. adusted cov is ", adjusted_cov);
+        adjusted_cov = getSimilarityDistance(props.data, props.currentData);
       }
 
       console.log("2. adusted cov is ", adjusted_cov);
@@ -87,7 +101,7 @@ function ShortSingleLine(props) {
   return(
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
-      <div>Adjusted Covariance is {adjustedCov}</div>
+      <div>Adjusted Covariance is {adjustedCov}, {similarityDistance}</div>
     </Fragment>
   );
 }
