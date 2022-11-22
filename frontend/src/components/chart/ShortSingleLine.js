@@ -88,7 +88,7 @@ function ShortSingleLine(props) {
   return(
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
-      <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div>
+      {/* <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div> */}
       {(props.currentData?(
         <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div>
       ):(
