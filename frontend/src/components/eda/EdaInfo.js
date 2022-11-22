@@ -294,7 +294,7 @@ function EdaInfo(props) {
         }
       }).then(res => {
         res.data = res.data.data;
-        console.og(res.data);
+        console.log(res.data);
         if(today===true) {
           let temp_marketData = marketData;
           if(sectorName === "비철금속") {
@@ -705,7 +705,6 @@ function EdaInfo(props) {
     }
 
     useEffect(() => {
-      console.log("eda code changed");
       getSimilarDates();
       if(props.edaType === "sector"){
         let startDate = marketData.currentDate.split("~")[0];
@@ -969,7 +968,6 @@ function EdaInfo(props) {
       setSimilarSelectedFeature(e.target.outerText);
     }
     const similarPointButtonClick = (e) => {
-      console.log("clicked is ", e.target);
       setSimilarPointButton(e.target.id);
     }
 
@@ -1127,7 +1125,7 @@ function EdaInfo(props) {
                   <Grid container key={"1234754"} style={{textAlign: "center"}}>
                     <Grid item key={"341234"} xs={6}> {/* 왼쪽 파트 */}
                       <Chip key={"512342"} color="default" label={"유사 시점 탐색 결과"} sx={{ fontSize: 20, width: 500, mt: 5, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
-                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 250, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
+                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 350, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
 
                         <List key="929294">
                           {marketData.similarDates.map((value) => (
