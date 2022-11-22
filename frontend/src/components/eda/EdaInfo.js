@@ -292,6 +292,7 @@ function EdaInfo(props) {
         }
       }).then(res => {
         res.data = res.data.data;
+        console.og(res.data);
         if(today===true) {
           let temp_marketData = marketData;
           if(sectorName === "비철금속") {

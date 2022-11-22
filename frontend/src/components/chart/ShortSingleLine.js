@@ -3,6 +3,7 @@ import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import Accessibility from "highcharts/modules/accessibility";
 import Exporting from "highcharts/modules/exporting";
+import axios from 'axios';
 
 function ShortSingleLine(props) {
   Accessibility(Highcharts);
@@ -74,21 +75,7 @@ function ShortSingleLine(props) {
       let adjusted_cov = 0;
       console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
       if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
-        // let distance = 0; // 주가 distance
-        // let pastList = [], currentList = [];
-        // for(let i=1; i<=60; i++){
-        //   let difference = props.data[0-i]['Close'] - props.currentData[0-i]['Close'];
-        //   difference = difference * difference / 60;
-        //   distance = distance + difference;
-        //   pastList.append(props.data[0-i]['Close']);
-        //   currentList.append(props.currentData[0-i]['Close']);
-        // }
-        // distance = Math.sqrt(distance / 60);
-        // let cov = require( 'compute-covariance' );
-        // let mat = cov(pastList, currentList);
-        // // mat이 [(cov)] 라고 가정 (ex. [2.5])
-        // adjusted_cov = distance + 1-cov;
-        // console.log("1. adusted cov is ", adjusted_cov);
+        
         adjusted_cov = getSimilarityDistance(props.data, props.currentData);
       }
 
@@ -101,7 +88,12 @@ function ShortSingleLine(props) {
   return(
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
-      <div>Adjusted Covariance is {adjustedCov}, {similarityDistance}</div>
+      <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div>
+      {(props.currentData?(
+        <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div>
+      ):(
+        <></>
+      ))}
     </Fragment>
   );
 }
