@@ -86,8 +86,6 @@ function ShortSingleLine(props) {
       //   getSimilarityDistance(props.data, props.currentData);
       // }
       getSimilarityDistance(props.data, props.currentData);
-
-      console.log("2. adusted cov is ", adjusted_cov);
       // setAdjustedCov(adjusted_cov);
     }
   }, [props.title, props.data])
