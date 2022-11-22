@@ -34,7 +34,7 @@ function ShortSingleLine(props) {
   });
 
   const getSimilarityDistance = async(period1, period2) => {
-    await axios.get('/api/data-management/index/get', {
+    await axios.get('/api/data-management/index/get_similarity_distance', {
       params: {
         "period1": period1,
         "period2": period2,
