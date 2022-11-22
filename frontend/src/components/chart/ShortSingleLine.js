@@ -4,6 +4,7 @@ import HighchartsReact from "highcharts-react-official";
 import Accessibility from "highcharts/modules/accessibility";
 import Exporting from "highcharts/modules/exporting";
 import axios from 'axios';
+import { alignProperty } from "@mui/material/styles/cssUtils";
 
 function ShortSingleLine(props) {
   Accessibility(Highcharts);
@@ -46,8 +47,10 @@ function ShortSingleLine(props) {
 
   useEffect(() => {
     let data = [];
+    // let closeOnly = [];
     for(let i = 0; i < props.data.length; i++) {
         data.push([Date.parse(props.data[i]['Date']), props.data[i]['Close']]);
+        // closeOnly.push(props.data[i]['Close']);
     }
 
     (props.place==="left"?(
@@ -71,16 +74,21 @@ function ShortSingleLine(props) {
 
     // 과거시점과 현재시점의 유사도 계산, calculating the similarity of past date and now: Correlation-adjusted Distance 방법
     if(props.currentData !== undefined) {
+      // let closeOnly_current = [];
+      // for(let i = 0; i < props.currentData.length; i++) {
+      //   closeOnly_current.push(props.data[i]['Close']);
+      // }
       console.log("data in graph is ", props.data);
-      let adjusted_cov = 0;
+      // let adjusted_cov = 0;
       console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
-      if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
-        
-        adjusted_cov = getSimilarityDistance(props.data, props.currentData);
-      }
+
+      // if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
+      //   getSimilarityDistance(props.data, props.currentData);
+      // }
+      getSimilarityDistance(props.data, props.currentData);
 
       console.log("2. adusted cov is ", adjusted_cov);
-      setAdjustedCov(adjusted_cov);
+      // setAdjustedCov(adjusted_cov);
     }
   }, [props.title, props.data])
 
@@ -90,7 +98,7 @@ function ShortSingleLine(props) {
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
       {/* <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div> */}
       {(props.currentData?(
-        <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div>
+        <div>Distance score is {similarityDistance}</div>
       ):(
         <></>
       ))}

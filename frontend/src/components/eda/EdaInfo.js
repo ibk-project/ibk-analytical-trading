@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -12,7 +11,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
-import { Container } from "@mui/material";
 import styled from 'styled-components'
 
 import ShortSingleLine from '../chart/ShortSingleLine';
@@ -75,7 +73,6 @@ function EdaInfo(props) {
       semiconductor: [],
       entertainment: [],
       electricutility: [],
-      entertainment: [],
       pencil: [],
       communication: [],
       road: [],
@@ -163,7 +160,6 @@ function EdaInfo(props) {
       semiconductor: [],
       entertainment: [],
       electricutility: [],
-      entertainment: [],
       pencil: [],
       communication: [],
       road: [],
@@ -670,7 +666,7 @@ function EdaInfo(props) {
             break;
           }
           let tempnews = res.data[tempday];
-          if(tempnews[0]!="" && tempnews[1]!=""){
+          if(tempnews[0]!=="" && tempnews[1]!==""){
             todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday]);
             newsLen += 1;
           }
@@ -1150,10 +1146,10 @@ function EdaInfo(props) {
                     {/* {similarDateEDAReady===false?( */}
                     <div style={{display:"flex", height:"20px", margin:"auto", marginTop:"-15px", marginBottom:"5px"}}>
                       <div style={{display:"flex", margin:"auto", fontWeight:"bolder"}}>
-                        <Button id="button1" style={{backgroundColor:(similarPointButton=="button1"?"midnightblue":"white"), color:(similarPointButton=="button1"?"white":"black"), width:"160px"}} onClick={(e) => similarPointButtonClick(e)}>
+                        <Button id="button1" style={{backgroundColor:(similarPointButton==="button1"?"midnightblue":"white"), color:(similarPointButton==="button1"?"white":"black"), width:"160px"}} onClick={(e) => similarPointButtonClick(e)}>
                           {(props.edaName==="전체 시장"?("KOSPI"):(props.edaName))}
                         </Button>
-                        <Button id="button2" style={{backgroundColor:(similarPointButton=="button2"?"midnightblue":"white"), color:(similarPointButton=="button2"?"white":"black"), width:"160px"}} onClick={(e) => similarPointButtonClick(e)}>
+                        <Button id="button2" style={{backgroundColor:(similarPointButton==="button2"?"midnightblue":"white"), color:(similarPointButton==="button2"?"white":"black"), width:"160px"}} onClick={(e) => similarPointButtonClick(e)}>
                           주요 지수
                         </Button>
                       </div>
@@ -1165,7 +1161,7 @@ function EdaInfo(props) {
                       </Typography>
                       </>
                     ):(
-                      (similarPointButton=="button1"?
+                      (similarPointButton==="button1"?
                       <>
                         <Chip key={"1237"} label={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName)) + "  " + currentSimilarDateStart+"~"+currentSimilarDateEnd}  sx={{ fontSize: 20, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
                         <ShortSingleLine 

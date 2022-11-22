@@ -3077,11 +3077,11 @@ def get_news_feature(request):
 def get_similarity_distance(request, period1, period2):
     if request.method == 'GET':
         adjustedCov = 0
-        if(len(period1)>60 and len(period2)>60):
-            distance = 0
-            pastList = []
-            currentList = []
+        distance = 0
+        pastList = []
+        currentList = []
 
+        if(len(period1)>60 and len(period2)>60):
             # 단순 Distance 산식
             for i in range(1, 60):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
@@ -3104,6 +3104,32 @@ def get_similarity_distance(request, period1, period2):
             corr = cov/(a*b)
 
             adjustedCov = distance + 1 - corr
+
+        elif(len(period1)>10 and len(period2)>10): # data가 60개 이하일 때
+            num = len(period1)
+            if(len(period1)>len(period2)): 
+                num = len(period2)
+            
+            for i in range(1,num):
+                difference = period1[0-i]['Close'] - period2[0-i]['Close']
+                difference = difference * difference / num
+                distance = distance + difference
+                pastList.append(period1[0-i]['Close'])
+                currentList.append(period2[0-i]['Close'])
+            distance = math.sqrt(distance/num)
+            
+            a = statistics.stdev(pastList)
+            b = statistics.stdev(currentList)
+            cov = np.cov([pastList, currentList])
+            corr = cov/(a*b)
+
+            # adjustedCov = distance + 1 - corr
+            adjustedCov = distance
+
+        else:
+            # Too less data
+            adjustedCov = 0
+
             
         try:
             with open(adjustedCov, encoding='UTF-8-sig') as f:
