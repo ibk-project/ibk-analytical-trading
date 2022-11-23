@@ -3072,10 +3072,13 @@ def get_news_feature(request):
         except:
             return JsonResponse({"Data" : "None"})
 
+
 #Calculate Correlation-adjusted Distance
 @api_view(['GET'])
-def get_similarity_distance(request, period1, period2):
+def get_similarity_distance(request):
     if request.method == 'GET':
+        period1 = request.GET['period1']
+        period2 = request.GET['period2']
         adjustedCov = 0
         distance = 0
         pastList = []
@@ -3103,7 +3106,8 @@ def get_similarity_distance(request, period1, period2):
             cov = np.cov([pastList, currentList])
             corr = cov/(a*b)
 
-            adjustedCov = distance + 1 - corr
+            # adjustedCov = distance + 1 - corr
+            adjustedCov = distance
 
         elif(len(period1)>10 and len(period2)>10): # data가 60개 이하일 때
             num = len(period1)
