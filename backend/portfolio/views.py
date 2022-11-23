@@ -631,6 +631,8 @@ def get_portfolio_output(request):
         sector = request.GET['sector']
         ratio = request.GET['s_ratio']
         sector = sector.replace('[','').replace(']','').split(',')
+        user_holding = request.GET['holding_date']
+        user_holding = int(user_holding)
         
         s_result =''
         if market == 'KOSPI200':
@@ -662,11 +664,13 @@ def get_portfolio_output(request):
         
         s12_port = Portfolio(s12_pct, "","")
 
+        
+        
         w1 = list(s12_port.MVP().x)
         w2 = list(s12_port.MVP_sharp().x)
         w3 = list(s12_port.MRC().x)
         weight_list = [w1, w2, w3]
-        user_holding = 252
+        
         
         pf_ = s12_pct.pct_change()
         ks11 = fdr.DataReader('KS11', start='2021-10-01')
@@ -700,6 +704,7 @@ def get_portfolio_output(request):
         result_data, mdd, dd = Backtest(stocks=stocks,period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = w1, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
         result_data = result_data.rename_axis('date').reset_index()
         result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
+        
         port1["data"] = result_data.to_dict('records')
         port1['mdd'] = mdd
         port1['dd'] = dd
@@ -725,8 +730,11 @@ def get_portfolio_output(request):
         
         VaR_1 = 100 * pf1_var/100 * (user_holding/252) * 2.33
         VaR_2 = 100 * pf1_var/100 * (user_holding/252) * 1.65
+        
         port1['VaR'] = [VaR_1, VaR_2]
         port1['risk'] = [sharpe_1, trainer_1, zensen_1]
+        
+        
         result['최대분산P'] = port1
         
         

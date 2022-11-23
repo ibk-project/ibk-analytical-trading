@@ -35,6 +35,7 @@ function Portfolio() {
     weight: []
   })
   const [stockBond, setStockBond] = useState(60)
+  const [totalPeriod, setPeriod] = useState(60)
   const [isLoading, setLoading] = useState(false)
   const [loaded, setLoaded] = useState(false);
   const [selectedSector, setSector] = useState([])
@@ -282,13 +283,12 @@ function Portfolio() {
     //getPortfolio()
     setShowChart(!showChart)
   }
-  const changeSlider = (e, v) => {
-    setStockBond(v)
-  }
   const valueLabelFormat = (value) => {
     return `주식: ${value}% 채권: ${100-value}%`;
   }
-
+  const valueLabelFormatPeriod = (value) => {
+    return `${value}일`;
+  }
   useEffect(() => {
     setTimeout(() => {
       isMounted.current = true;
@@ -310,21 +310,47 @@ function Portfolio() {
     <div className="container">
       <div className="option">
         <div className="title">User input</div>
-        <span className="options">
+        <div className="options">
           <span style={{fontSize: 'large'}} key={stockBond}>주식 - 채권 비중 : {stockBond} - {100-stockBond}</span>
           <div style={{width:'400px', verticalAlign: 'middle', color: ''}}>
             <Slider
               aria-label="주식 채권 비중"
               defaultValue={60}
               valueLabelFormat={valueLabelFormat}
-              onChange={changeSlider}
+              onChange={(e, v) => setStockBond(v)}
               valueLabelDisplay="auto"
               min={0}
               max={100}
               style={{width:'400px', verticalAlign: 'middle', color: 'black'}}
             />
           </div>
-        </span>
+        </div>
+
+        <div className="options">
+          <span style={{fontSize: 'large', marginTop: '20px'}} key={totalPeriod}>전체 보유기간 : {totalPeriod}일</span>
+          <div style={{width:'400px', verticalAlign: 'middle', color: ''}}>
+            <Slider
+              aria-label="주식 보유 기간"
+              defaultValue={60}
+              valueLabelFormat={valueLabelFormatPeriod}
+              onChange={(e, v) => setPeriod(v)}
+              valueLabelDisplay="auto"
+              min={30}
+              max={180}
+              style={{width:'400px', verticalAlign: 'middle', color: 'black'}}
+            />
+          </div>
+        </div>
+
+        <div className="options">
+          <div style={{display:'flex', flexDirection: 'row', fontSize: 'large'}} key={stockBond}>투자 성향</div>
+          {['1','2','3','4','5'].map((i) =>
+            <Button sx={{fontSize: 'middle', margin: '10px 10px 0 0', border: "solid 1px black", borderRadius: "10px", color: "black", padding: "3px" }} key={i}>
+              {i}
+            </Button>
+          )}
+        </div>
+
         <div className="options">
           <span style={{fontSize: 'large'}}>마켓/섹터 고르기</span>
           <Checkbox size="small" color="default" value={isChecked} onClick={check} /><span style={{fontSize: 'small'}}>추천 종목</span>

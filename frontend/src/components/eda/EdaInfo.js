@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -12,7 +11,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import Tooltip from '@mui/material/Tooltip';
-import { Container } from "@mui/material";
 import styled from 'styled-components'
 
 import ShortSingleLine from '../chart/ShortSingleLine';
@@ -36,6 +34,8 @@ function EdaInfo(props) {
     const [edaName, setEdaName] = useState("none"); // none, (name)
     const [edaCode, setEdaCode] = useState("none"); // none, (code)
     const [edaFlag, setEdaFlag] = useState(false);
+
+    const [similarPointButton, setSimilarPointButton] = useState("button1"); // "button1", "button2" 유사시점에서 KOSPI/섹터 그래프를 보여줄지, 주요지수 그래프를 보여줄지 고르는 버튼
 
     const [currentSimilarDateEnd, setCurrentSimilarDateEnd] = useState("none");
     const [currentSimilarDateStart, setCurrentSimlilarDateStart] = useState("none");
@@ -73,7 +73,6 @@ function EdaInfo(props) {
       semiconductor: [],
       entertainment: [],
       electricutility: [],
-      entertainment: [],
       pencil: [],
       communication: [],
       road: [],
@@ -161,7 +160,6 @@ function EdaInfo(props) {
       semiconductor: [],
       entertainment: [],
       electricutility: [],
-      entertainment: [],
       pencil: [],
       communication: [],
       road: [],
@@ -292,6 +290,7 @@ function EdaInfo(props) {
         }
       }).then(res => {
         res.data = res.data.data;
+        console.log(res.data);
         if(today===true) {
           let temp_marketData = marketData;
           if(sectorName === "비철금속") {
@@ -451,55 +450,6 @@ function EdaInfo(props) {
           } else if (sectorName === "담배") {
             temp_marketData.tobacco = res.data;
           }
-          /*
-            {'code': '277', 'name': '창업투자'},
-            {'code': '303', 'name': '가구'},
-            {'code': '298', 'name': '가정용기기와용품'},
-            {'code': '321', 'name': '증권'},
-            {'code': '296', 'name': '운송인프라'},
-            {'code': '288', 'name': '건강관리기술'},
-            {'code': '317', 'name': '호텔,레스토랑,레저'},
-            {'code': '339', 'name': '다각화된소비자서비스'},
-            {'code': '274', 'name': '섬유,의류,신발,호화품'},
-            {'code': '283', 'name': '전기제품'},
-            {'code': '308', 'name': '인터넷과카탈로그소매'},
-            {'code': '292', 'name': '핸드셋'},
-            {'code': '311', 'name': '포장재'},
-            {'code': '281', 'name': '건강관리장비와용품'},
-            {'code': '299', 'name': '기계'},
-            {'code': '318', 'name': '종이와목재'},
-            {'code': '273', 'name': '자동차'},
-            {'code': '310', 'name': '광고'},
-            {'code': '262', 'name': '생명과학도구및서비스'},
-            {'code': '261', 'name': '제약'},
-            {'code': '276', 'name': '복합기업'},
-            {'code': '309', 'name': '음료'},
-            {'code': '337', 'name': '카드'},
-            {'code': '289', 'name': '건축자재'},
-            {'code': '293', 'name': '컴퓨터와주변기기'},
-            {'code': '271', 'name': '레저용장비와제품'},
-            {'code': '270', 'name': '자동차부품'},
-            {'code': '306', 'name': '전기장비'},
-            {'code': '304', 'name': '철강'},
-            {'code': '265', 'name': '판매업체'},
-            {'code': '320', 'name': '건축제품'},
-            {'code': '338', 'name': '사무용전자제품'},
-            {'code': '264', 'name': '백화점과일반상점'},
-            {'code': '297', 'name': '가정용품'},
-            {'code': '324', 'name': '상업서비스와공급품'},
-            {'code': '290', 'name': '교육서비스'},
-            {'code': '326', 'name': '항공화물운송과물류'},
-            {'code': '333', 'name': '무선통신서비스'},
-            {'code': '315', 'name': '손해보험'},
-            {'code': '302', 'name': '식품과기본식료품소매'},
-            {'code': '312', 'name': '가스유틸리티'},
-            {'code': '330', 'name': '생명보험'},
-            {'code': '336', 'name': '다각화된통신서비스'},
-            {'code': '319', 'name': '기타금융'},
-            {'code': '268', 'name': '식품'},
-            {'code': '334', 'name': '무역회사와판매업체'},
-            {'code': '275', 'name': '담배'},
-          */
           setMarketData(temp_marketData);
         } else {
           let temp_similarData = similarDateData;
@@ -716,7 +666,7 @@ function EdaInfo(props) {
             break;
           }
           let tempnews = res.data[tempday];
-          if(tempnews[0]!="" && tempnews[1]!=""){
+          if(tempnews[0]!=="" && tempnews[1]!==""){
             todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday]);
             newsLen += 1;
           }
@@ -751,7 +701,6 @@ function EdaInfo(props) {
     }
 
     useEffect(() => {
-      console.log("eda code changed");
       getSimilarDates();
       if(props.edaType === "sector"){
         let startDate = marketData.currentDate.split("~")[0];
@@ -1014,6 +963,9 @@ function EdaInfo(props) {
     const featureClick2 = (e) => {
       setSimilarSelectedFeature(e.target.outerText);
     }
+    const similarPointButtonClick = (e) => {
+      setSimilarPointButton(e.target.id);
+    }
 
   
     return (
@@ -1163,13 +1115,13 @@ function EdaInfo(props) {
                   </Grid>
                 </Box>
                 {/* 중간 분리선 */}
-                <Divider key={"22225"} variant="middle" sx={{mt:"20px", mb:"5px", fontSize:"larger"}}> 유사 시점 </Divider>
+                <Divider key={"22225"} variant="middle" sx={{mt:"20px", mb:"10px", fontSize:"larger"}}> 유사 시점 </Divider>
                 {/* 유사 시점 파트 */}
                 <Box key={"002020"} sx={{ width: '100%', mb:'80px' }}>
                   <Grid container key={"1234754"} style={{textAlign: "center"}}>
                     <Grid item key={"341234"} xs={6}> {/* 왼쪽 파트 */}
                       <Chip key={"512342"} color="default" label={"유사 시점 탐색 결과"} sx={{ fontSize: 20, width: 500, mt: 5, bgcolor: mainColor, color:'white', borderRadius:1 }}/>
-                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 250, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
+                      <Paper key={"612342"} style={{minHeight: 100, maxHeight: 350, maxWidth: 500, overflow: 'auto'}} sx={{ mx:'auto', mb: 2 }}>
 
                         <List key="929294">
                           {marketData.similarDates.map((value) => (
@@ -1189,10 +1141,28 @@ function EdaInfo(props) {
                         </List>
                       </Paper>
 
-                      {currentSimilarDateEnd==='none'?(
-                        <>
-                        </>
-                      ):(<>
+                    </Grid>
+                    <Grid item key={"6112344"} xs={6} sx={{textAlign: 'center', paddingTop:'5px'}}> {/* 오른쪽 파트 */}
+                    {/* {similarDateEDAReady===false?( */}
+                    <div style={{display:"flex", height:"20px", margin:"auto", marginTop:"-15px", marginBottom:"5px"}}>
+                      <div style={{display:"flex", margin:"auto", fontWeight:"bolder"}}>
+                        <Button id="button1" style={{backgroundColor:(similarPointButton==="button1"?"midnightblue":"white"), color:(similarPointButton==="button1"?"white":"black"), width:"160px"}} onClick={(e) => similarPointButtonClick(e)}>
+                          {(props.edaName==="전체 시장"?("KOSPI"):(props.edaName))}
+                        </Button>
+                        <Button id="button2" style={{backgroundColor:(similarPointButton==="button2"?"midnightblue":"white"), color:(similarPointButton==="button2"?"white":"black"), width:"160px"}} onClick={(e) => similarPointButtonClick(e)}>
+                          주요 지수
+                        </Button>
+                      </div>
+                    </div>
+                    {similarSelectedFeature==="none"?(
+                      <>
+                      <Typography gutterBottom key={"777777"} variant="h6" component="div" sx={{my:15}}>
+                        유사시점을 선택해주세요
+                      </Typography>
+                      </>
+                    ):(
+                      (similarPointButton==="button1"?
+                      <>
                         <Chip key={"1237"} label={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName)) + "  " + currentSimilarDateStart+"~"+currentSimilarDateEnd}  sx={{ fontSize: 20, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
                         <ShortSingleLine 
                           title={(props.edaName==="전체 시장"?("KOSPI"):
@@ -1355,64 +1325,54 @@ function EdaInfo(props) {
                             (props.edaName==="기타금융")?(marketData.finance):
                             (props.edaName==="식품")?(marketData.food):
                             (props.edaName==="무역회사와판매업체")?(marketData.trade):(marketData.tobacco) //담배
-                            ))}/>
-                        </>
-                      )}
-                      
-                    </Grid>
-                    <Grid item key={"6112344"} xs={6} sx={{textAlign: 'center', paddingTop:'5px'}}> {/* 오른쪽 파트 */}
-                    {/* {similarDateEDAReady===false?( */}
-                    {similarSelectedFeature==="none"?(
-                      <>
-                      <Typography gutterBottom key={"777777"} variant="h6" component="div" sx={{my:15}}>
-                        유사시점을 선택해주세요
-                      </Typography>
+                          ))}/>
                       </>
-                    ):(
+                      :
                       <>
-                      <Chip label={currentSimilarDateStart+"~"+currentSimilarDateEnd} key={"8765864"} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
-                      <Grid container key={"3214294"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                        <Grid item key={"99192"} sm={2} sx={{ border:0, width:'100%', height:'100%', bgcolor:'white', color:'black', borderRadius:0}}>
-                              주요 지수:
-                        </Grid>
-                        {featureSelection2.map((value) => (
-                          <>
-                          {(similarSelectedFeature===value)?
-                            <Grid item key={value} sm={2}><Button key={"button2"+{value}} onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
-                              {value}
-                            </Button></Grid>
-                          :
-                            <Grid item key={value} sm={2}><Button key={"button2"+{value}} onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
-                              {value}
-                            </Button></Grid>
-                          }
-                          </>
-                        ))}
-                      </Grid>
-                      
-                      <Box >
-                        {similarSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={similarDateData.kospi} />}
-                        {similarSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={similarDateData.kosdaq} />}
-                        {similarSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={similarDateData.brent} />}
-                        {similarSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={similarDateData.usdkrw} />}
-                        {similarSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={similarDateData.copper} />}
-                      </Box>
-
-                      <Box key={"6134444"}>
-                        <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                          <Grid item key={"grid000"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
-                            최근 주요 뉴스 키워드
-                          </NewsButton></Grid>
-                          {similarDateData.newsKeywords.map((value) => (
+                        <Chip label={currentSimilarDateStart+"~"+currentSimilarDateEnd} key={"8765864"} sx={{ borderRadius: 3, fontSize: 20, width: 400, mt: 2, mb: 1, bgcolor: "midnightblue", color:'white' }}/>
+                        <Grid container key={"3214294"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                          <Grid item key={"99192"} sm={2} sx={{ border:0, width:'100%', height:'100%', bgcolor:'white', color:'black', borderRadius:0}}>
+                                주요 지수:
+                          </Grid>
+                          {featureSelection2.map((value) => (
                             <>
-                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]} arrow ><NewsButton>
-                                {value[0]}
-                              </NewsButton></Tooltip></Grid>
+                            {(similarSelectedFeature===value)?
+                              <Grid item key={value} sm={2}><Button key={"button2"+{value}} onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%', bgcolor:'black', color:'white', borderColor:'black', borderRadius:0}}>
+                                {value}
+                              </Button></Grid>
+                            :
+                              <Grid item key={value} sm={2}><Button key={"button2"+{value}} onClick={(e) => featureClick2(e)} sx={{ border:0, width:'100%', height:'100%',  bgcolor:'white', color:'black', borderRadius:0}}>
+                                {value}
+                              </Button></Grid>
+                            }
                             </>
                           ))}
                         </Grid>
-                      </Box>
+                        
+                        <Box >
+                          {similarSelectedFeature==="KOSPI" && <ShortSingleLine title={"KOSPI"} data={similarDateData.kospi} />}
+                          {similarSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={similarDateData.kosdaq} />}
+                          {similarSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={similarDateData.brent} />}
+                          {similarSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={similarDateData.usdkrw} />}
+                          {similarSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={similarDateData.copper} />}
+                        </Box>
+  
+                        <Box key={"6134444"}>
+                          <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                            <Grid item key={"grid000"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
+                              시점 주요 뉴스 키워드
+                            </NewsButton></Grid>
+                            {similarDateData.newsKeywords.map((value) => (
+                              <>
+                                <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]} arrow ><NewsButton>
+                                  {value[0]}
+                                </NewsButton></Tooltip></Grid>
+                              </>
+                            ))}
+                          </Grid>
+                        </Box>
                       </>
+                      )
                     )}
                     </Grid>
                   </Grid>
