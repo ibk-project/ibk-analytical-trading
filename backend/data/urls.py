@@ -23,6 +23,7 @@ urlpatterns = [
     path('model/', include([
         path('market', views.get_market_model),
         path('sector/<int:sector_code>', views.get_sector_model),
-        path('news', views.get_news_feature)
+        path('news', views.get_news_feature),
+        path('distance', views.get_similarity_distance)
     ])),
 ]
