@@ -5,7 +5,7 @@ from numpy import empty
 from pkg_resources import empty_provider
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-
+import time
 from rest_framework.decorators import api_view
 
 import FinanceDataReader as fdr
@@ -662,15 +662,49 @@ def get_portfolio_output(request):
             stock = pd.DataFrame(stock)
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
         
+        
+        
         s12_port = Portfolio(s12_pct, "","")
 
-        
-        
         w1 = list(s12_port.MVP().x)
         w2 = list(s12_port.MVP_sharp().x)
         w3 = list(s12_port.MRC().x)
-        weight_list = [w1, w2, w3]
+           
+        print(s12_pct)
+ 
+        expect = user_dict['expect'][0]
+        loss = user_dict['loss'][0]
+        def obj_variance(weights, stock,covmat):
+            vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
+            ret = stock * weights
+            ret = ret.sum(axis=1)
+            ret = ret.fillna(ret.mean())
+            ret = ret.tolist()[-1] - 1
+            print(vol)
+            VaR_1 = 1 * vol**2 / 100 * (user_holding)**0.5 * 2.33
+            
+            if ( ret - expect > 0 )& (VaR_1 < loss):
+                return 0
+            elif( ret - expect > 0 ):
+                return (VaR_1 - loss)**2
+            elif(VaR_1 < loss):
+                return (ret-expect)**2
+            return (ret-expect)**2 + (VaR_1 - loss) ** 2
         
+        n_assets = len(s12_pct.columns)
+        #print("n_assets : " + str(n_assets))
+        weights = np.ones([n_assets]) / n_assets
+        ret_daily = s12_pct.pct_change() + 1
+        ret_daily = ret_daily.replace([np.inf,-np.inf], np.nan).cumprod()
+        
+        bnds = tuple( (0., 1.) for i in range(n_assets))
+        cons = ( {'type' : 'eq', 'fun': lambda w: np.sum(w)-1})
+        cov_daily = ret_daily.cov()
+        cov_annual = cov_daily * user_holding
+        res = minimize(obj_variance, weights,(ret_daily,cov_annual), method='SLSQP', bounds=bnds, constraints=cons, options = {'maxiter' : 100})
+        
+        
+        weight_list = [w1, w2, w3, list(res.x)]
         
         pf_ = s12_pct.pct_change()
         ks11 = fdr.DataReader('KS11', start='2021-10-01')
@@ -681,7 +715,7 @@ def get_portfolio_output(request):
         t_port['similar_date'] = silmilar
         t_port['stocks'] = r_name
         t_port['sector'] = r_sector
-        t_port['weight'] = [w1, w2, w3]
+        t_port['weight'] = weight_list
         result['result'] = t_port
         
         
@@ -699,13 +733,16 @@ def get_portfolio_output(request):
         #model_w = [w1,w2] #[[0.3,0.5,0.2],[0.2,0.8],[0.4,0.6]]
         now = today[0]
         #result_data = pd.DataFrame()
-        name = ['최대분산P','샤프P', '위험균형P']
+        name = ['최대분산P','샤프P', '위험균형P', 'testP']
         
         market_return[0] = 1.0
-        for i in range(3):
+        for i in range(len(name)):
             port1 = {}
             weight = weight_list[i]
-            result_data, mdd, dd = Backtest(stocks=stocks,period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+            
+            start = time.time()
+            result_data, mdd, dd = Backtest(stocks=stocks, period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+            print("time: ", time.time() - start)
             result_data = result_data.rename_axis('date').reset_index()
             result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
 
@@ -743,8 +780,7 @@ def get_portfolio_output(request):
             port1["data"] = result_data.to_dict('records')
             
             result[name[i]] = port1
-        
-        
+            
         print (result)
         return JsonResponse({'result' : result})
     
