@@ -24,9 +24,9 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-        host='3.38.41.9', # aws 재부팅 시마다 ip 주소 새로 변경
+        host='13.124.68.141', # 고정
         port = 27017,
-        username = 'IBK',
+        username = 'se',
         password = '1234'
     )
 
