@@ -5,7 +5,7 @@ from numpy import empty
 from pkg_resources import empty_provider
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-
+import time
 from rest_framework.decorators import api_view
 
 import FinanceDataReader as fdr
@@ -262,9 +262,6 @@ class Backtest:
                 Backtest.result_data.loc[indexs[i], 'portfolio 2'] = (Backtest.result_data.loc[indexs[i-1], 'portfolio 2'] + Backtest.result_data.loc[indexs[i+1], 'portfolio 2'])/2
 
         return Backtest.result_data, Backtest.MDD_return, Backtest.DD_return
-
-
-
 
 class Portfolio:
     def __init__(self, stock_all, start_date, stock_index) :
@@ -594,6 +591,23 @@ k2_result = os.path.join(os.path.dirname(__file__), 'K200_result.csv')
 k1_result = os.path.join(os.path.dirname(__file__), 'K100_result.csv')
 kq_result = os.path.join(os.path.dirname(__file__), 'KQ_result.csv')
 
+user_dict = {
+    'type' : ['안정형', ' 안정추구형', '위험중립형', ' 적극투자형', '공격추가형'],
+    'expect' : [0.1, 0.2, 0.3, 0.5, 1],
+    'loss' : [0.1, 0.2, 0.3, 0.5, 1],
+}
+
+def mediate_weight(weight, user_type, stock):
+    expect = user_dict['expect'][user_type]
+    loss = user_dict['loss'][user_type]
+    
+    
+    
+    return weight
+    
+
+
+
 dd = fdr.StockListing('KRX')
 d_set = {}
 for x , y in dd[['Code','Name']].values:
@@ -617,6 +631,8 @@ def get_portfolio_output(request):
         sector = request.GET['sector']
         ratio = request.GET['s_ratio']
         sector = sector.replace('[','').replace(']','').split(',')
+        user_holding = request.GET['holding_date']
+        user_holding = int(user_holding)
         
         s_result =''
         if market == 'KOSPI200':
@@ -636,7 +652,6 @@ def get_portfolio_output(request):
             d_name = d_set[x]
             r_name.append(d_name)
         
-        
         s12_pct = pd.DataFrame()
         for i in range(len(s12_result)):
             code = s12_result.iloc[i,0]
@@ -644,10 +659,9 @@ def get_portfolio_output(request):
             date = datetime.datetime.strptime(s_date,'%Y-%m-%d')
             e_date = str(date + datetime.timedelta(days=400))
             stock = fdr.DataReader(code, s_date, e_date)['Close']
-            print(len(stock.index))
             stock = pd.DataFrame(stock)
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
-
+        
         
         
         s12_port = Portfolio(s12_pct, "","")
@@ -655,19 +669,53 @@ def get_portfolio_output(request):
         w1 = list(s12_port.MVP().x)
         w2 = list(s12_port.MVP_sharp().x)
         w3 = list(s12_port.MRC().x)
+           
+        print(s12_pct)
+ 
+        expect = user_dict['expect'][0]
+        loss = user_dict['loss'][0]
+        def obj_variance(weights, stock,covmat):
+            vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
+            ret = stock * weights
+            ret = ret.sum(axis=1)
+            ret = ret.fillna(ret.mean())
+            ret = ret.tolist()[-1] - 1
+            print(vol)
+            VaR_1 = 1 * vol**2 / 100 * (user_holding)**0.5 * 2.33
+            
+            if ( ret - expect > 0 )& (VaR_1 < loss):
+                return 0
+            elif( ret - expect > 0 ):
+                return (VaR_1 - loss)**2
+            elif(VaR_1 < loss):
+                return (ret-expect)**2
+            return (ret-expect)**2 + (VaR_1 - loss) ** 2
         
+        n_assets = len(s12_pct.columns)
+        #print("n_assets : " + str(n_assets))
+        weights = np.ones([n_assets]) / n_assets
+        ret_daily = s12_pct.pct_change() + 1
+        ret_daily = ret_daily.replace([np.inf,-np.inf], np.nan).cumprod()
+        
+        bnds = tuple( (0., 1.) for i in range(n_assets))
+        cons = ( {'type' : 'eq', 'fun': lambda w: np.sum(w)-1})
+        cov_daily = ret_daily.cov()
+        cov_annual = cov_daily * user_holding
+        res = minimize(obj_variance, weights,(ret_daily,cov_annual), method='SLSQP', bounds=bnds, constraints=cons, options = {'maxiter' : 100})
+        
+        
+        weight_list = [w1, w2, w3, list(res.x)]
         
         pf_ = s12_pct.pct_change()
         ks11 = fdr.DataReader('KS11', start='2021-10-01')
-        ks11 = ks11.iloc[-252:]
-        market_return = ks11['Close'].pct_change().mean() * 252
-
-        
+        ks11 = ks11.iloc[-(user_holding+1):]
+        market_return = ks11['Close'].pct_change()+1
+                
         t_port = {}
         t_port['similar_date'] = silmilar
         t_port['stocks'] = r_name
         t_port['sector'] = r_sector
-        t_port['weight'] = [w1, w2, w3]
+        t_port['weight'] = weight_list
         result['result'] = t_port
         
         
@@ -685,97 +733,55 @@ def get_portfolio_output(request):
         #model_w = [w1,w2] #[[0.3,0.5,0.2],[0.2,0.8],[0.4,0.6]]
         now = today[0]
         #result_data = pd.DataFrame()
+        name = ['최대분산P','샤프P', '위험균형P', 'testP']
         
-        port1 = {}
-        result_data, mdd, dd = Backtest(stocks=stocks,period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = w1, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
-        #print(mdd)
-        result_data = result_data.rename_axis('date').reset_index()
-        result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-        port1["data"] = result_data.to_dict('records')
-        port1['mdd'] = mdd
-        port1['dd'] = dd
-        
-        
-        pf = pf_
-        pf1_var = np.dot(np.array(w1).T, np.dot(pf.cov(), np.array(w1))) 
-        pf1_vol = np.sqrt(pf1_var)
-        pf1_return = pf * w1
-        pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
-        pf1_return = pf1_return.sum(axis=1)
-        pf1_return = pf1_return.fillna(pf1_return.mean())
-        cov = np.cov(pf1_return.fillna(method = 'bfill').tolist(), ks11['Close'].pct_change().fillna(method = 'bfill').tolist())[0,1]
-        beta = cov/ks11['Close'].pct_change().var() 
-        sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
-        trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
-        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
-        
-        VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
-        VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
-        port1['VaR'] = [VaR_1, VaR_2]
-        port1['risk'] = [sharpe_1, trainer_1, zensen_1]
-        result['최대분산P'] = port1
-        
-        
-        
-        port2 = {}
-        result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period, today=today, user_input_s = w2, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
-        result_data = result_data.rename_axis('date').reset_index()
-        result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-        port2["data"] = result_data.to_dict('records')
-        port2['mdd'] = mdd
-        port2['dd'] = dd
-        
-        pf = pf_
-        pf1_var = np.dot(np.array(w2).T, np.dot(pf.cov(), np.array(w1))) 
-        pf1_vol = np.sqrt(pf1_var)
-        pf1_return = pf * w2
-        pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
-        pf1_return = pf1_return.sum(axis=1)
-        pf1_return = pf1_return.fillna(pf1_return.mean())
-        cov = np.cov(pf1_return.fillna(method = 'bfill').tolist(), ks11['Close'].pct_change().fillna(method = 'bfill').tolist())[0,1]
-        beta = cov/ks11['Close'].pct_change().var() 
-        sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
-        trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
-        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
-        port2['risk'] = [sharpe_1, trainer_1, zensen_1]
-        
-        
-        VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
-        VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
-        port2['VaR'] = [VaR_1, VaR_2]
-        
-        result['샤프P'] = port2
-        
-        #print(port2)
-        
-        port3 = {}
-        result_data, mdd, dd = Backtest(stocks=stocks,period = period, input_rebal_period = input_rebal_period,today=today, user_input_s = w3, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
-        result_data = result_data.rename_axis('date').reset_index()
-        result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-        port3["data"] = result_data.to_dict('records')
-        port3['mdd'] = mdd
-        port3['dd'] = dd
-        
-        pf = pf_
-        pf1_var = np.dot(np.array(w3).T, np.dot(pf.cov(), np.array(w1))) 
-        pf1_vol = np.sqrt(pf1_var)
-        pf1_return = pf * w3
-        pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
-        pf1_return = pf1_return.sum(axis=1)
-        pf1_return = pf1_return.fillna(pf1_return.mean())
-        cov = np.cov(pf1_return.fillna(method = 'bfill').tolist(), ks11['Close'].pct_change().fillna(method = 'bfill').tolist())[0,1]
-        beta = cov/ks11['Close'].pct_change().var() 
-        sharpe_1 = (pf1_return.mean() * 252 - market_return) / pf1_vol
-        trainer_1 = (pf1_return.mean() * 252 - market_return) / beta
-        zensen_1 = (pf1_return.mean() * 252 - ((market_return) + beta * (market_return - 0.01)))
-        port3['risk'] = [sharpe_1, trainer_1, zensen_1]
-        
-        VaR_1 = 100 * pf1_var/100 * (252/252) * 2.33
-        VaR_2 = 100 * pf1_var/100 * (252/252) * 1.65
-        port3['VaR'] = [VaR_1, VaR_2]
-        
-        result['위험균형P'] = port3
-        #print (result)
+        market_return[0] = 1.0
+        for i in range(len(name)):
+            port1 = {}
+            weight = weight_list[i]
+            
+            start = time.time()
+            result_data, mdd, dd = Backtest(stocks=stocks, period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+            print("time: ", time.time() - start)
+            result_data = result_data.rename_axis('date').reset_index()
+            result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
+
+            port1['mdd'] = mdd
+            port1['dd'] = dd
+            
+            pf = pf_.iloc[-user_holding:]
+            pf1_var = np.dot(np.array(weight).T, np.dot(pf.cov(), np.array(weight))) 
+            pf1_vol = np.sqrt(pf1_var)
+            pf1_return = pf + 1
+            pf1_return = pf1_return.replace([np.inf,-np.inf], np.nan)
+            pf1_return = pf1_return.cumprod() * weight
+            pf1_return = pf1_return.sum(axis=1)
+            pf1_return = pf1_return.fillna(pf1_return.mean())
+            pf1_return[0] = 1.0
+            
+            cov = np.cov(pf1_return.tolist(), market_return.tolist())[0,1]
+            
+            beta = cov/ks11['Close'].pct_change().var()
+            
+            sharpe_1 = (pf1_return.tolist()[-1] - market_return.tolist()[-1]) / pf1_vol
+            trainer_1 = (pf1_return.tolist()[-1] - market_return.tolist()[-1]) / beta
+            zensen_1 = (pf1_return.tolist()[-1]- ((market_return.tolist()[-1]) + beta * (market_return.tolist()[-1] - 0.01)))
+            
+            VaR_1 = 100 * pf1_var/100 * (user_holding)**0.5 * 2.33
+            VaR_2 = 100 * pf1_var/100 * (user_holding)**0.5 * 1.65
+            
+            port1['VaR'] = [VaR_1, VaR_2]
+            port1['risk'] = [sharpe_1, trainer_1, zensen_1]
+            
+            result_data['VaR1'] = 100
+            result_data['VaR1'] = result_data['VaR1'] * np.arange(1,len(result_data['VaR1']) +1 ) / len(result_data['VaR1'])  * (user_holding)**0.5 * pf1_var/100 * 2.33
+            result_data['VaR2'] = 100
+            result_data['VaR2'] = result_data['VaR1'] * np.arange(1,len(result_data['VaR1']) +1 ) / len(result_data['VaR1'])  * (user_holding)**0.5 * pf1_var/100 * 1.65
+            port1["data"] = result_data.to_dict('records')
+            
+            result[name[i]] = port1
+            
+        print (result)
         return JsonResponse({'result' : result})
     
     

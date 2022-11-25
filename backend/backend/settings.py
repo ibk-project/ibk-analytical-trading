@@ -99,7 +99,7 @@ DATABASES = {
         'HOST' : 'mongo',
         'PORT' : 27017,
         'CLIENT': {
-            'host': '3.38.41.9', # aws 재부팅 시마다 ip 주소 새로 변경
+            'host': '3.38.41.9',
             'port': 27017,
             'username': 'IBK',
             'password': '1234',

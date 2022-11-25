@@ -8,19 +8,19 @@ services:
       - ./frontend:/frontend
     command: ["yarn", "start"]
   
-  mongo:
-    image: mongo
-    container_name: mongo
-    hostname: mongo
-    expose:
-      - "27017"
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongo/data:/mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: "IBK"
-      MONGO_INITDB_ROOT_PASSWORD: "1234"
+  # mongo:
+  #   image: mongo
+  #   container_name: mongo
+  #   hostname: mongo
+  #   expose:
+  #     - "27017"
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - ./mongo/data:/mongo
+  #   environment:
+  #     MONGO_INITDB_ROOT_USERNAME: "IBK"
+  #     MONGO_INITDB_ROOT_PASSWORD: "1234"
 
   back:
     build: ./backend
@@ -29,8 +29,8 @@ services:
       - ./backend:/backend
     command: ["python3", "./manage.py", "runserver", "0.0.0.0:4000"]
     tty: true
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
 
   nginx:
     build: ./nginx
@@ -43,4 +43,4 @@ services:
     depends_on:
       - front
       - back
-      - mongo
+      # - mongo
