@@ -24,7 +24,7 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-        host='13.124.68.141', # 고정
+        host = '13.124.68.141', # 고정
         port = 27017,
         username = 'se',
         password = '1234'
@@ -2701,9 +2701,7 @@ def get_commodity(request):
 
 @api_view(['GET','POST'])
 def get_sector_avg(request):
-    print("it is here")
     if request.method == 'GET':
-        print("it is here")
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
