@@ -3074,11 +3074,14 @@ def get_news_feature(request):
 
 
 #Calculate Correlation-adjusted Distance
-@api_view(['GET'])
+@api_view(['POST'])
 def get_similarity_distance(request):
-    if request.method == 'GET':
-        period1 = request.GET['period1']
-        period2 = request.GET['period2']
+    if request.method == 'POST':
+        period1 = request.data['period1']
+        period2 = request.data['period2']
+        print("period1 is "+period1)
+        print("period2 is "+period2)
+
         adjustedCov = 0
         distance = 0
         pastList = []

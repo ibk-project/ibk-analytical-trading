@@ -33,13 +33,25 @@ function ShortSingleLine(props) {
     }
   });
 
+  // const getSimilarityDistance = async(period1, period2) => {
+  //   await axios.get('/api/data-management/model/distance', {
+  //     params: {
+  //       "period1": period1,
+  //       "period2": period2,
+  //     }
+  //   }).then(res => {
+  //     console.log("distance result is ", res);
+  //     setSimilarityDistance(res);
+  //   });
+  // }
+
   const getSimilarityDistance = async(period1, period2) => {
-    await axios.get('/api/data-management/model/distance', {
-      params: {
-        "period1": period1,
-        "period2": period2,
-      }
-    }).then(res => {
+    await axios.post('/api/data-management/model/distance', 
+    {
+      period1: period1,
+      period2: period2,
+    }
+    ).then(res => {
       console.log("distance result is ", res);
       setSimilarityDistance(res);
     });
