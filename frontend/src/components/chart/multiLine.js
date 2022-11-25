@@ -7,7 +7,6 @@ function MultiLine(props) {
   Accessibility(Highcharts)
   
   const n = props.num
-  console.log(props)
   //const propsData = props.props.data[n]//.data.map(p => {return parseFloat(parseFloat(p).toFixed(2))})
   const prop = props.props
   const initialOptions = {
@@ -27,7 +26,12 @@ function MultiLine(props) {
       title: {
         text: prop.xAxis.title
       },
-      categories: prop.xAxis.categories
+      categories: prop.xAxis.categories,
+      plotLines: [{
+        color: 'lightgray', // Red
+        width: 2,
+        value: 30 // set period
+    }]
     },
     yAxis: {
       title: {
@@ -42,16 +46,15 @@ function MultiLine(props) {
         enableMouseTracking: false
       }
     },
-    series: [props.props.data[n].data]
+    series: {data: [props.props.data[n].data]}
   }
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
     setOptions(()=>({
       ...initialOptions,
       title: { text: props.props.title },
-      series: props.props.data[props.num].data
+      series: { data: props.props.data[props.num].data }
     }))
-    console.log(options)
   },[props.props.title, props.props.data])
 
   return (

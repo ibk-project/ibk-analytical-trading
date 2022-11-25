@@ -2,10 +2,15 @@
   font-family: KoreanTITGD3, Manrope-SemiBold;
   display: grid;
   grid-template-columns: 30rem 40rem;
-  grid-template-areas: "options portfolio";
+  grid-template-areas: 
+  "option sector" 
+  "portfolio";
   padding: 3rem calc((100% - 70rem) / 2);
-  grid-gap: 10px;
+  grid-gap: 3rem;
   width: 70rem;
+}
+* {
+  font-family: KoreanTITGD3, Manrope-SemiBold;
 }
 .title {
   font-size: x-large;
@@ -24,8 +29,13 @@
   padding: 15px 25px 15px 20px;
 }
 .options {
-  grid-area: "options";
+  grid-area: "option";
   margin-top: 30px;
+  margin-bottom: 5px;
+}
+.sector-market {
+  grid-area: "sector";
+  margin-top: 75px;
   margin-bottom: 5px;
 }
 .portfolio {
@@ -33,14 +43,13 @@
   padding: 15px 25px 10px 20px;
 }
 .backtest {
-  padding: 0px 25px 10px 20px;
-  display: inline-block;
+  padding: 0px 25px 10px 0px; 
 }
 button {
   font-family: KoreanTITGD3, Manrope-SemiBold;
   border: solid 1px;
   background: white;
   cursor: pointer;
-  border-radius: 4px;
-  margin-bottom: 10px;
+  border-radius: 1rem;
+  float: right;
 }
