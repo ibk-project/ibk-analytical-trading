@@ -2701,9 +2701,7 @@ def get_commodity(request):
 
 @api_view(['GET','POST'])
 def get_sector_avg(request):
-    print("it is here")
     if request.method == 'GET':
-        print("it is here")
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
@@ -3074,11 +3072,14 @@ def get_news_feature(request):
 
 
 #Calculate Correlation-adjusted Distance
-@api_view(['GET'])
+@api_view(['POST'])
 def get_similarity_distance(request):
-    if request.method == 'GET':
-        period1 = request.GET['period1']
-        period2 = request.GET['period2']
+    if request.method == 'POST':
+        period1 = request.data['period1']
+        period2 = request.data['period2']
+        print("period1 is "+period1)
+        print("period2 is "+period2)
+
         adjustedCov = 0
         distance = 0
         pastList = []
