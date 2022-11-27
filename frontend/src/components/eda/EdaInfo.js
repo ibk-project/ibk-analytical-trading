@@ -48,7 +48,12 @@ function EdaInfo(props) {
       currentDate: '2022-06-08~2022-07-08',
       // similarDates: ['2021-05-21~2021-06-19','2021-05-28~2021-06-26','2020-10-08~2020-11-06','2019-03-02~2019-03-31','2019-01-21~2019-02-19','2019-01-13~2019-02-11','2017-06-08~2017-07-07'],
       similarDates: ['2021-06-19','2021-06-26','2020-11-06','2019-03-31','2019-02-19','2019-02-11','2017-07-07'],
-      newsKeywords: [["아베 피습", "2022-07-08"], ["코스피 상승", "2022-07-07"], ["바이던 음주", "2022-07-06"], ["옥수수 수염차", "2022-07-05"], ["일석 이조", "2022-07-04"]],
+      newsKeywords: [
+        ["아베 피습", "2022-07-08", "아베 연설 중 정체불명의 괴한에게 피습 돼..."], 
+        ["코스피 상승", "2022-07-07", "코스피 이틀 간 끝없이 상승해 불안"], 
+        ["바이던 음주", "2022-07-06", "바이던 내한 중 막걸리와 사랑에 빠져.. 음주 후 귀국"], 
+        ["옥수수 수염차", "2022-07-05"], "옥수수로 만든 수염차가 인기", 
+        ["일석 이조", "2022-07-04", "일석은 이조다... 박지윤의 명언 되찾아..."]],
       kospi: [],
       kosdaq: [],
       brent: [],
@@ -1104,7 +1109,7 @@ function EdaInfo(props) {
                           </NewsButton></Grid>
                           {marketData.newsKeywords.map((value) => (
                             <>
-                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1234123"+value[0]} title={value[1]} arrow><NewsButton key={"1234532"+value[0]}>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1234123"+value[0]} title={value[1]+"\n"+value[2]} arrow><NewsButton key={"1234532"+value[0]}>
                                 {value[0]}
                               </NewsButton></Tooltip></Grid>
                             </>
@@ -1364,7 +1369,7 @@ function EdaInfo(props) {
                             </NewsButton></Grid>
                             {similarDateData.newsKeywords.map((value) => (
                               <>
-                                <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]} arrow ><NewsButton>
+                                <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]+"\n"+value[2]} arrow ><NewsButton>
                                   {value[0]}
                                 </NewsButton></Tooltip></Grid>
                               </>
