@@ -99,9 +99,9 @@ DATABASES = {
         'HOST' : 'mongo',
         'PORT' : 27017,
         'CLIENT': {
-            'host': '3.38.41.9',
+            'host': '13.125.96.85',
             'port': 27017,
-            'username': 'IBK',
+            'username': 'se',
             'password': '1234',
             'authSource': 'admin',
             'authMechanism': 'SCRAM-SHA-1'
