@@ -5,9 +5,8 @@ import Accessibility from "highcharts/modules/accessibility";
 
 function MultiLine(props) {
   Accessibility(Highcharts)
-  
+  console.log(props)
   const n = props.num
-  //const propsData = props.props.data[n]//.data.map(p => {return parseFloat(parseFloat(p).toFixed(2))})
   const prop = props.props
   const initialOptions = {
     chart: {
@@ -26,7 +25,7 @@ function MultiLine(props) {
       title: {
         text: prop.xAxis.title
       },
-      categories: prop.xAxis.categories,
+      categories: [...Array(props.props.data[props.num].data.length).keys()].map( x => x+1 ),
       plotLines: [{
         color: 'lightgray', // Red
         width: 2,
@@ -46,14 +45,14 @@ function MultiLine(props) {
         enableMouseTracking: false
       }
     },
-    series: {data: [props.props.data[n].data]}
+    series: props.props.data[props.num]
   }
   const [options, setOptions] = useState(initialOptions)
   useEffect(()=>{
     setOptions(()=>({
       ...initialOptions,
       title: { text: props.props.title },
-      series: { data: props.props.data[props.num].data }
+      series: props.props.data[props.num]
     }))
   },[props.props.title, props.props.data])
 
