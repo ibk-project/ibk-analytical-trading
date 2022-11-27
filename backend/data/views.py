@@ -24,7 +24,7 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-        host='13.124.68.141', # aws 재부팅 시마다 ip 주소 새로 변경
+        host='13.125.96.85', # aws 재부팅 시마다 ip 주소 새로 변경
         port = 27017,
         username = 'se',
         password = '1234'
@@ -2605,7 +2605,7 @@ def get_index_front(request):
             end_date = str(datetime.today())
 
         if chart_type == 'line':
-            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
+            id = index_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 })
             result = list(id)
             if result == []:
                 return JsonResponse({ "Result" : "None"})
@@ -2613,7 +2613,7 @@ def get_index_front(request):
                 return JsonResponse({"data":result})
             
         elif chart_type == "line_volume":
-            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1})
+            id = index_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1})
             print(id)
             result = list(id)
             if result == []:
@@ -2622,7 +2622,7 @@ def get_index_front(request):
                 return JsonResponse({"data":result})
         
         elif chart_type == "candle":
-            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Open" : 1, "High" : 1, "Low" : 1,  "Close" : 1, "Date": 1})
+            id = index_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Open" : 1, "High" : 1, "Low" : 1,  "Close" : 1, "Date": 1})
             result = list(id)
             if result == []:
                 return JsonResponse({ "Result" : "None"})
@@ -2748,7 +2748,7 @@ def get_stock(request):
     if request.method == 'GET':
         db = client.newDB 
         stock_collection = db.data_stock
-        start_date = "2012-08-10"
+        start_date = "2015-01-01"
         
         krx = fdr.StockListing('KRX')
         stock = krx[["Code","Name"]].values.tolist()
