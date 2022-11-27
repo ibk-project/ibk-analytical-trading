@@ -24,9 +24,9 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-        host='3.38.41.9', # aws 재부팅 시마다 ip 주소 새로 변경
+        host='13.124.68.141', # aws 재부팅 시마다 ip 주소 새로 변경
         port = 27017,
-        username = 'IBK',
+        username = 'se',
         password = '1234'
     )
 
@@ -2666,8 +2666,6 @@ def get_commodity_front(request):
         return JsonResponse(js, safe=False)    
 
 
-
-
 @api_view(['GET','POST'])
 def get_commodity(request):
     if request.method == 'GET':
@@ -2675,9 +2673,11 @@ def get_commodity(request):
         commodity_collection = db.data_commodity   
         comm = [
                 ('WTI','CL'), ('Brent','LCO'), ('NG','NG'), ##Energy
-                ('Corn','ZC'), ('Wheat', 'ZW'), ('Soybean', 'ZS'), ## 농산물
+                ('Corn','ZC'), ('Wheat', 'ZWRK'), ('Soybean', 'ZS'), ## 농산물
                 ('Gold', 'ZG'), ('Silver', 'ZI'), ## 비금속
-                ('Copper', 'HG'),('Lead', 'MPB3'), ('Nickel', 'NICKEL'), ('Zinc', 'MZN'), ('Aluminum', 'MAL'), ('Tin', 'TIN') ## 비철금속
+                ('Copper', '138910'),
+                #('Lead', 'MPB3'), ('Nickel', 'NICKEL'), 
+                ('Zinc', 'MZN'), ('Aluminum', 'MAL'), ('Tin', 'TIN') ## 비철금속
                 ]
         empty = []
         for name, code in comm:
@@ -2750,10 +2750,10 @@ def get_stock(request):
     if request.method == 'GET':
         db = client.newDB 
         stock_collection = db.data_stock
-        start_date = "2022-08-10"
+        start_date = "2012-08-10"
         
         krx = fdr.StockListing('KRX')
-        stock = krx[["Symbol","Name"]].values.tolist()
+        stock = krx[["Code","Name"]].values.tolist()
         #kr_etf = fdr.StockListing('ETF/KR')
         #etf = kr_etf[["Symbol","Name"]].values.tolist()
         empty_stock = []
@@ -2789,10 +2789,10 @@ def get_stock(request):
 @api_view(['GET'])
 def get_index_name(request):
     if request.method == 'GET':
-        INDEXS_CODE = ['KS11', 'KQ11', 'DJI', 'JP225', 'HK50', 'CSI300', 'DAX']
-        INDEXS_NAME = ['KOSPI', 'KOSDAQ', 'Dow Jones', 'Nikkei', 'HONG KONG', 'CSI', 'DAX']
-        EMPTY_INDEX = ['IXIC']
-        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "AUD/USD", "EUR/JPY", "USD/RUB"]
+        INDEXS_CODE = ['KS11', 'KQ11', 'DJI', 'TSE', 'HKEX',  'DAX']
+        INDEXS_NAME = ['KOSPI', 'KOSDAQ', 'Dow Jones', 'Nikkei', 'HONG KONG', 'DAX']
+        EMPTY_INDEX = ['CSI300']
+        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "USD/AUD", "EUR/JPY", "USD/RUB"]
         
         return JsonResponse({"Index_Code" : INDEXS_CODE , "Index_Name" : INDEXS_NAME})
     
@@ -2805,9 +2805,9 @@ def get_index(request):
         index_collection = db.data_index
         
         #없는 것은 안들어감
-        INDEXS_NAME = ['KS11', 'KQ11', 'DJI', 'JP225', 'HK50', 'CSI300', 'DAX']
-        EMPTY_INDEX = ['IXIC']
-        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "AUD/USD", "EUR/JPY", "USD/RUB"]
+        INDEXS_NAME = ['KS11', 'KQ11', 'DJI', 'TSE', 'HKEX',  'DAX']
+        EMPTY_INDEX = ['IXIC','CSI300']
+        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "USD/AUD", "EUR/JPY", "USD/RUB"]
         start_date = "2022-07-05"
         empty = []
         
@@ -2862,7 +2862,7 @@ def get_one_index(request):
         id = index_collection.find({"Name" : name, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0})
         result = list(id)
         return JsonResponse({"Result" : result})
-    
+    토
 @api_view(['GET'])
 def get_stocks(request):
     if request.method == 'GET':
