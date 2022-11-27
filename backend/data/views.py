@@ -24,9 +24,13 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
+<<<<<<< HEAD
         host='3.38.41.9',
+=======
+        host='43.201.96.58', # aws 재부팅 시마다 ip 주소 새로 변경
+>>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
         port = 27017,
-        username = 'IBK',
+        username = 'se',
         password = '1234'
     )
 
@@ -2579,6 +2583,9 @@ sector_data = {'반도체와반도체장비': [{'code': '142210', 'name': '유�
 }
 # 반도체와반도체장비, 은행, 석유와가스, 화학, 양방향미디어와서비스, 복합기업, 자동차, 제약, 비철금속, 화장품, 부동산, 우주항공과국방, 항공사, 레저용장비와제품, 항공화물운송과물류, 백화점과일반상점, 손해보험, 다각화된통신서비스, 무선통신서비스, 운송인프라, 생명보험, 도로와철도운송, 무역회사와판매업체, 문구류, (호텔,레스토랑,레저), 가스유틸리티, 건강관리업체및서비스, 종이와목재, 디스플레이패널, 가정용품, 교육서비스, 출판, 전문소매, 해운사, 에너지장비및서비스, 건축제품, 건강관리장비와용품, 식품, (섬유,의류,신발,호화품), 식품과기본식료품소매, 건강관리기술, 음료, 포장재, 가구, 광고, 기타금융, 사무용전자제품, 카드, 담배, 기계, 건설, 포장재, 전기장비, 전기제품, 소프트웨어, 자동차부품, 생명과학도구및서비스, 상업서비스와공급품, 철강, 건축자재, 디스플레이장비및부품, 증권, 생물공학, 컴퓨터와주변기기, 게임엔터테인먼트, IT서비스, 가정용기기와용품, 핸드셋, 방송과엔터테인먼트, 전자제품, 창업투자, 전자장비와기기, 복합유틸리티, 인터넷과카탈로그소매, 다각화된소비자서비스, 판매업체, 조선, 통신장비, 전기유틸리티 : 총 2548개
   
+krx = fdr.StockListing('KRX')
+krx = krx[krx['Marcap']>1000000000000]
+krx_code = krx[['Code']].values.tolist()
 
 # front에서 code, date보내주기
 @api_view(['GET', 'POST'])
@@ -2665,9 +2672,6 @@ def get_commodity_front(request):
         js = {"data" : "1212"}
         return JsonResponse(js, safe=False)    
 
-
-
-
 @api_view(['GET','POST'])
 def get_commodity(request):
     if request.method == 'GET':
@@ -2675,9 +2679,11 @@ def get_commodity(request):
         commodity_collection = db.data_commodity   
         comm = [
                 ('WTI','CL'), ('Brent','LCO'), ('NG','NG'), ##Energy
-                ('Corn','ZC'), ('Wheat', 'ZW'), ('Soybean', 'ZS'), ## 농산물
+                ('Corn','ZC'), ('Wheat', 'ZWRK'), ('Soybean', 'ZS'), ## 농산물
                 ('Gold', 'ZG'), ('Silver', 'ZI'), ## 비금속
-                ('Copper', 'HG'),('Lead', 'MPB3'), ('Nickel', 'NICKEL'), ('Zinc', 'MZN'), ('Aluminum', 'MAL'), ('Tin', 'TIN') ## 비철금속
+                ('Copper', '138910'),
+                #('Lead', 'MPB3'), ('Nickel', 'NICKEL'), 
+                ('Zinc', 'MZN'), ('Aluminum', 'MAL'), ('Tin', 'TIN') ## 비철금속
                 ]
         empty = []
         for name, code in comm:
@@ -2701,9 +2707,13 @@ def get_commodity(request):
 
 @api_view(['GET','POST'])
 def get_sector_avg(request):
+<<<<<<< HEAD
     #print("it is here")
     if request.method == 'GET':
         #print("it is here")
+=======
+    if request.method == 'GET':
+>>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
@@ -2750,10 +2760,9 @@ def get_stock(request):
     if request.method == 'GET':
         db = client.newDB 
         stock_collection = db.data_stock
-        start_date = "2022-08-10"
+        start_date = "2015-01-01"
         
-        krx = fdr.StockListing('KRX')
-        stock = krx[["Symbol","Name"]].values.tolist()
+        stock = krx[["Code","Name"]].values.tolist()
         #kr_etf = fdr.StockListing('ETF/KR')
         #etf = kr_etf[["Symbol","Name"]].values.tolist()
         empty_stock = []
@@ -2789,10 +2798,10 @@ def get_stock(request):
 @api_view(['GET'])
 def get_index_name(request):
     if request.method == 'GET':
-        INDEXS_CODE = ['KS11', 'KQ11', 'DJI', 'JP225', 'HK50', 'CSI300', 'DAX']
-        INDEXS_NAME = ['KOSPI', 'KOSDAQ', 'Dow Jones', 'Nikkei', 'HONG KONG', 'CSI', 'DAX']
-        EMPTY_INDEX = ['IXIC']
-        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "AUD/USD", "EUR/JPY", "USD/RUB"]
+        INDEXS_CODE = ['KS11', 'KQ11', 'DJI', 'TSE', 'HKEX',  'DAX']
+        INDEXS_NAME = ['KOSPI', 'KOSDAQ', 'Dow Jones', 'Nikkei', 'HONG KONG', 'DAX']
+        EMPTY_INDEX = ['CSI300']
+        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "USD/AUD", "EUR/JPY", "USD/RUB"]
         
         return JsonResponse({"Index_Code" : INDEXS_CODE , "Index_Name" : INDEXS_NAME})
     
@@ -2805,9 +2814,9 @@ def get_index(request):
         index_collection = db.data_index
         
         #없는 것은 안들어감
-        INDEXS_NAME = ['KS11', 'KQ11', 'DJI', 'JP225', 'HK50', 'CSI300', 'DAX']
-        EMPTY_INDEX = ['IXIC']
-        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "AUD/USD", "EUR/JPY", "USD/RUB"]
+        INDEXS_NAME = ['KS11', 'KQ11', 'DJI', 'TSE', 'HKEX',  'DAX']
+        EMPTY_INDEX = ['IXIC','CSI300']
+        EX_RATE_LIST = ["USD/KRW", "USD/EUR", "USD/JPY", "CNY/KRW", "EUR/USD", "USD/JPY", "JPY/KRW", "USD/AUD", "EUR/JPY", "USD/RUB"]
         start_date = "2022-07-05"
         empty = []
         
@@ -2862,7 +2871,8 @@ def get_one_index(request):
         id = index_collection.find({"Name" : name, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0})
         result = list(id)
         return JsonResponse({"Result" : result})
-    
+    토
+
 @api_view(['GET'])
 def get_stocks(request):
     if request.method == 'GET':
@@ -2899,7 +2909,7 @@ def get_sector_stock(request):
         sector_list = sector_data[sector_name]
         
         if start_date == "":
-            start_date = "2012-01-01"
+            start_date = "2015-01-01"
         
         if end_date == "":
             end_date = str(datetime.today())
@@ -2907,7 +2917,11 @@ def get_sector_stock(request):
         result = []
         for sector in sector_list:
             code = sector["code"]
+            if code not in krx_code:
+                continue
+            
             name = sector['name']
+            print('name: ', name )
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0 })
             sector_d = {}
             sector_d['name'] = name
@@ -2923,16 +2937,22 @@ def get_sector_stock(request):
 @api_view(['GET'])
 def get_sector_list(request):
     if request.method == 'GET':
-        db = client.newDB
-        stock_collection = db.data_stock
-
         keys = sector_data.keys()
         result = []
         
         for key in keys:
             tmp = {}
             tmp["sector_name"] = key
-            tmp["sector_stocks"] = sector_data[key]
+            sector = sector_data[key]
+            sector_tmp = sector
+            print(key)
+            #print(sector)
+            for stock  in sector:
+                if [stock['code']] not in krx_code:
+                    print(stock['code'])
+                    sector_tmp.remove(stock)
+            print(sector_tmp)
+            tmp["sector_stocks"] = sector_tmp
             
             result.append(tmp)
             
@@ -3074,8 +3094,9 @@ def get_news_feature(request):
 
 
 #Calculate Correlation-adjusted Distance
-@api_view(['GET'])
+@api_view(['POST'])
 def get_similarity_distance(request):
+<<<<<<< HEAD
     print('ok')
     if request.method == 'GET':
         print('ok')
@@ -3085,6 +3106,14 @@ def get_similarity_distance(request):
         print('ok')
         print(period1)
         print(period2)
+=======
+    if request.method == 'POST':
+        period1 = request.data['period1']
+        period2 = request.data['period2']
+        print("period1 is "+period1)
+        print("period2 is "+period2)
+
+>>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
         adjustedCov = 0
         distance = 0
         pastList = []

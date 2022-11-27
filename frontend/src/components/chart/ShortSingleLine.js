@@ -33,13 +33,25 @@ function ShortSingleLine(props) {
     }
   });
 
+  // const getSimilarityDistance = async(period1, period2) => {
+  //   await axios.get('/api/data-management/model/distance', {
+  //     params: {
+  //       "period1": period1,
+  //       "period2": period2,
+  //     }
+  //   }).then(res => {
+  //     console.log("distance result is ", res);
+  //     setSimilarityDistance(res);
+  //   });
+  // }
+
   const getSimilarityDistance = async(period1, period2) => {
-    await axios.get('/api/data-management/model/distance', {
-      params: {
-        "period1": period1,
-        "period2": period2,
-      }
-    }).then(res => {
+    await axios.post('/api/data-management/model/distance', 
+    {
+      period1: period1,
+      period2: period2,
+    }
+    ).then(res => {
       console.log("distance result is ", res);
       setSimilarityDistance(res);
     });
@@ -48,9 +60,12 @@ function ShortSingleLine(props) {
   useEffect(() => {
     let data = [];
     // let closeOnly = [];
-    for(let i = 0; i < props.data.length; i++) {
+
+    if(props.data.length !== undefined){
+      for(let i = 0; i < props.data.length; i++) {
         data.push([Date.parse(props.data[i]['Date']), props.data[i]['Close']]);
         // closeOnly.push(props.data[i]['Close']);
+      }
     }
 
     (props.place==="left"?(
