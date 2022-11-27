@@ -2701,13 +2701,13 @@ def get_commodity(request):
 
 @api_view(['GET','POST'])
 def get_sector_avg(request):
-    print("it is here")
+    #print("it is here")
     if request.method == 'GET':
-        print("it is here")
+        #print("it is here")
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
-        print(sector_name)
+        #print(sector_name)
         db = client.newDB
         stock_collection = db.data_stock
         
@@ -2724,7 +2724,7 @@ def get_sector_avg(request):
         df['Date'] = date_list
         df = df.set_index('Date')
         for stock  in sector_data[sector_name]:
-            print(stock)
+            #print(stock)
             code = stock["code"]
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
             tmp = pd.DataFrame(list(id))
@@ -3076,9 +3076,15 @@ def get_news_feature(request):
 #Calculate Correlation-adjusted Distance
 @api_view(['GET'])
 def get_similarity_distance(request):
+    print('ok')
     if request.method == 'GET':
-        period1 = request.GET['period1']
+        print('ok')
+        #period1 = request.GET['period1']
+        period1 = request.GET.getlist("period1", None)
         period2 = request.GET['period2']
+        print('ok')
+        print(period1)
+        print(period2)
         adjustedCov = 0
         distance = 0
         pastList = []
