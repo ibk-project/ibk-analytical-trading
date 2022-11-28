@@ -1499,7 +1499,6 @@ client = MongoClient(
   
 krx = fdr.StockListing('KRX')
 krx = krx[krx['Marcap']>1000000000000]
-krx_code = krx[['Code']].values.tolist()
 
 # front에서 code, date보내주기
 @api_view(['GET', 'POST'])
@@ -1534,7 +1533,7 @@ def get_index_front(request):
                 return JsonResponse({"data":result})
             
         elif chart_type == "line_volume":
-            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1})
+            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1,})
             print(id)
             result = list(id)
             if result == []:
@@ -1779,7 +1778,7 @@ def get_one_index(request):
         id = index_collection.find({"Name" : name, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0})
         result = list(id)
         return JsonResponse({"Result" : result})
-    토
+
 
 @api_view(['GET'])
 def get_stocks(request):
@@ -1813,9 +1812,8 @@ def get_sector_stock(request):
         end_date = request.GET['end_date']
         db = client.newDB
         stock_collection = db.data_stock
-        
-        sector_list = sector_data[sector_name]
-        
+        sector_list = sector_data[sector_name].copy()
+        krx_code = krx['Code'].tolist()
         if start_date == "":
             start_date = "2015-01-01"
         
@@ -1829,12 +1827,18 @@ def get_sector_stock(request):
                 continue
             
             name = sector['name']
-            print('name: ', name )
-            id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0 })
+            id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0 , 'Change' : 0})
             sector_d = {}
+            tmp = list(id)
+            print(tmp)
+            if len(tmp) == 0:
+                print(name)
+                print(tmp)
+                #print(list(id))
+                continue 
             sector_d['name'] = name
             sector_d['code'] = code
-            sector_d['stock_data'] = list(id)
+            sector_d['stock_data'] = tmp
             result.append(sector_d) 
             
         if result == []:
@@ -1847,23 +1851,22 @@ def get_sector_list(request):
     if request.method == 'GET':
         keys = sector_data.keys()
         result = []
-        
+        krx1 = krx[krx['Marcap']>1000000000000]
+        krx_code = krx1['Code'].tolist()
         for key in keys:
             tmp = {}
             tmp["sector_name"] = key
-            sector = sector_data[key]
-            sector_tmp = sector
-            print(key)
-            #print(sector)
-            for stock  in sector:
-                if [stock['code']] not in krx_code:
-                    print(stock['code'])
+            sector = None
+            sector = sector_data[key].copy()
+            sector_tmp = sector.copy()
+            for stock in sector:
+                if krx_code.__contains__(stock['code']) == False:
                     sector_tmp.remove(stock)
-            print(sector_tmp)
-            tmp["sector_stocks"] = sector_tmp
-            
+            if sector_tmp:
+                tmp["sector_stocks"] = sector_tmp
+            else:
+                continue
             result.append(tmp)
-            
         if result == []:
             return JsonResponse({ "data" : "Wrong"})
         else:

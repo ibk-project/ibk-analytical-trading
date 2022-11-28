@@ -58,7 +58,7 @@ function CandleVolume(props) {
     let ohlc = [];
     let volume = [];
     const groupingUnits = [[
-      'week',             // unit name
+      'day',             // unit name
       [1]               // allowed multiples
     ], [
       'month',
