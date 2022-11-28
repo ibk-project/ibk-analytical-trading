@@ -111,7 +111,7 @@ function EDA() {
   const onEdaClick = (e) => {
     let code = e.target.href.split("/")[4];
     setEdaName(e.target.innerHTML)
-    console.log("new sector Clicked, name is ", e.target.innerHTML);
+    console.log("eda name changed to ",e.target.innerHTML);
     setEdaCode(code)
     if (marketData.find(o => o.code === code)) {
         setEdaType("market");

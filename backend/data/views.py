@@ -31,7 +31,7 @@ client = MongoClient(
     )
 
 # 반도체와반도체장비, 은행, 석유와가스, 화학, 양방향미디어와서비스, 복합기업, 자동차, 제약, 비철금속, 화장품, 부동산, 우주항공과국방, 항공사, 레저용장비와제품, 항공화물운송과물류, 백화점과일반상점, 손해보험, 다각화된통신서비스, 무선통신서비스, 운송인프라, 생명보험, 도로와철도운송, 무역회사와판매업체, 문구류, (호텔,레스토랑,레저), 가스유틸리티, 건강관리업체및서비스, 종이와목재, 디스플레이패널, 가정용품, 교육서비스, 출판, 전문소매, 해운사, 에너지장비및서비스, 건축제품, 건강관리장비와용품, 식품, (섬유,의류,신발,호화품), 식품과기본식료품소매, 건강관리기술, 음료, 포장재, 가구, 광고, 기타금융, 사무용전자제품, 카드, 담배, 기계, 건설, 포장재, 전기장비, 전기제품, 소프트웨어, 자동차부품, 생명과학도구및서비스, 상업서비스와공급품, 철강, 건축자재, 디스플레이장비및부품, 증권, 생물공학, 컴퓨터와주변기기, 게임엔터테인먼트, IT서비스, 가정용기기와용품, 핸드셋, 방송과엔터테인먼트, 전자제품, 창업투자, 전자장비와기기, 복합유틸리티, 인터넷과카탈로그소매, 다각화된소비자서비스, 판매업체, 조선, 통신장비, 전기유틸리티 : 총 1464개
-{'반도체와반도체장비': [{'code': '365590', 'name': '하이딥'},
+sector_data = {'반도체와반도체장비': [{'code': '365590', 'name': '하이딥'},
 	 {'code': '112290', 'name': '영창케미칼'},
 	 {'code': '311320', 'name': '지오엘리먼트'},
 	 {'code': '119830', 'name': '아이텍'},
@@ -1624,13 +1624,13 @@ def get_sector_avg(request):
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
-        print(sector_name)
+        #print(sector_name)
         db = client.newDB
         stock_collection = db.data_stock
         sector_collection = db.data_sector
         
         if start_date == "":
-            start_date = "2012-01-01"
+            start_date = "2014-01-01"
         
         if end_date == "":
             end_date = str(datetime.today())
@@ -1641,8 +1641,8 @@ def get_sector_avg(request):
         date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
         df['Date'] = date_list
         df = df.set_index('Date')
-        for stock  in sector_data[sector_name]:
-            print(stock)
+        for stock in sector_data[sector_name]:
+            #print(stock)
             code = stock["code"]
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
             tmp = pd.DataFrame(list(id))
@@ -2030,7 +2030,12 @@ def get_comm_data(name, code):
 @api_view(['GET'])
 def get_market_model(request):
     if request.method == 'GET':
-        model_data = os.path.join(os.path.dirname(__file__),'files/', '2015-01-01_2022-08-12_100.json')
+        model_data = os.path.join(os.getcwd(),'/backend/model/market/result/', '2015-01-01_2022-11-25_100.json')
+        print(model_data)
+
+        with open(model_data) as f:
+            json_data = json.load(f)
+        return JsonResponse({"Result" : json_data})
         try:
             with open(model_data) as f:
                 json_data = json.load(f)
@@ -2043,7 +2048,7 @@ def get_market_model(request):
 def get_sector_model(request, sector_code):
     if request.method == 'GET':
 
-        sector_data = os.path.join(os.path.dirname(__file__), 'files/', str(sector_code) + '_result.csv')
+        sector_data = os.path.join(os.getcwd(), '/backend/model/sector/result/', str(sector_code) + '_result.csv')
 
         try:
             model_data = pd.read_csv(sector_data, header=0, index_col=0)
@@ -2070,17 +2075,23 @@ def get_news_feature(request):
 @api_view(['POST'])
 def get_similarity_distance(request):
     if request.method == 'POST':
+        
+        print(request.data)
         period1 = request.data['period1']
         period2 = request.data['period2']
-        print("period1 is "+period1)
-        print("period2 is "+period2)
 
         adjustedCov = 0
         distance = 0
         pastList = []
         currentList = []
+        print(period1)
+        print("hihi")
+        print(len(period1))
+        print("hey")
+        print(len(period2))
 
         if(len(period1)>60 and len(period2)>60):
+            print("many")
             # 단순 Distance 산식
             for i in range(1, 60):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
@@ -2105,17 +2116,21 @@ def get_similarity_distance(request):
             # adjustedCov = distance + 1 - corr
             adjustedCov = distance
 
-        elif(len(period1)>10 and len(period2)>10): # data가 60개 이하일 때
+        elif(len(period1)>5 and len(period2)>5): # data가 60개 이하일 때
+            print("inside here")
             num = len(period1)
             if(len(period1)>len(period2)): 
                 num = len(period2)
             
+            print("upto here")
             for i in range(1,num):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
                 difference = difference * difference / num
                 distance = distance + difference
                 pastList.append(period1[0-i]['Close'])
                 currentList.append(period2[0-i]['Close'])
+
+            print("now here")
             distance = math.sqrt(distance/num)
             
             a = statistics.stdev(pastList)
@@ -2132,12 +2147,12 @@ def get_similarity_distance(request):
 
             
         try:
-            with open(adjustedCov, encoding='UTF-8-sig') as f:
-                json_data = json.load(f)
-                json_data = json.dumps(json_data, ensure_ascii = False)
+            #with open(adjustedCov, encoding='UTF-8-sig') as f:
+            #    json_data = json.load(f)
+            #    json_data = json.dumps(json_data, ensure_ascii = False)
             return HttpResponse(json_data)
         except:
-            return JsonResponse({"None"})
+            return JsonResponse({"result" : "None"})
         
 
 
