@@ -706,7 +706,7 @@ function Portfolio() {
   }
 
   const makeChartData = (r) => {
-    setPNum(()=>r['샤프P'].pNum);
+    setPNum(()=>r['샤프P'].p_num);
     setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk, r['testP'].risk])
     setPort({
       stocks: r.result.stocks,
