@@ -752,7 +752,7 @@ def get_portfolio_output(request):
             print("time: ", time.time() - start)
             result_data = result_data.rename_axis('date').reset_index()
             result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-
+            port1['p_num'] = period_num
             port1['mdd'] = mdd
             port1['dd'] = dd
             
