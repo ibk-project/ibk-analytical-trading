@@ -33,7 +33,7 @@ unemploycsv = os.path.join(os.path.dirname(__file__), 'unemploy.csv')
 class Backtest:
     now = '0000-00-00'
     result_data = pd.DataFrame()
-    stock_bond = [0.6,0.4]
+    stock_bond = []
     nn = 0
     MDD_return = []
     DD_return = [] 
@@ -42,9 +42,11 @@ class Backtest:
     risk = 0
     draw_start = 0
     finish_early = False
+    period_num = 0
 
     def __init__(self, stocks, today, period=30, stock_bond=[0.6,0.4], input_rebal_period='week', user_w=0, user_input_sb=[], user_input_s=[], risk=0):
         self.PrintInfo = self.PrintInfo
+        #self.WeighSpecified = self.WeighSpecified
         Backtest.now = today[0]
         Backtest.nn = len(stocks)
         self.stocks = stocks
@@ -58,8 +60,8 @@ class Backtest:
         Backtest.risk = risk
 
     def addDate(self, date, r):    
-        return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
-    # __call__ 에서 안쓰면 cummax, drawdown 삭제
+        return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+    
     def cummax(self, nums):
         cum = []
         n_max = 0
@@ -76,9 +78,11 @@ class Backtest:
             self.fmt_string = fmt_string
 
         def addDate(self, date, r):
-            return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+            return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
 
         def __call__(self, target):
+            #print(self.fmt_string.format(**target.__dict__))
+            #print(target.__dict__['now'])
             if Backtest.finish_early:
                 return True
             Backtest.result_data.loc[self.addDate(Backtest.now,1),target.__dict__['name']] = target.__dict__['_price']
@@ -102,6 +106,7 @@ class Backtest:
         
         def drawdown(self):
             Backtest.cnt += 1
+            
             close_list = Backtest.result_data['portfolio 2'].to_list()[Backtest.draw_start:]
             drawdown = [x-y for x, y in zip(close_list, self.cummax(close_list))]
             Backtest.DD_return.extend([x/y * 100 for x, y in zip(drawdown, self.cummax(close_list))])
@@ -115,7 +120,7 @@ class Backtest:
         def __call__(self, target):
             if Backtest.finish_early:
                 return True
-            print("target")
+
             self.drawdown()
             # added copy to make sure these are not overwritten
             print("start")
@@ -163,10 +168,11 @@ class Backtest:
 
         exchange = yf.download('USDKRW=X', start='2015-01-01', end='2022-07-15')['Close']
         tlt = yf.download('TLT', start = '2015-01-01', end = '2022-07-15')['Close']
-
+        
         unemploy_roll = unemploy.rolling(12).mean()[12:]
         unemploy_roll.columns = ['unemploy_roll']
         unemploy = unemploy[12:]
+        
         # 실업률 데이터 일별로 증폭
         unem = pd.DataFrame(index=df.index,columns=['unemploy'])
         unem_roll = pd.DataFrame(index=df.index,columns=['unemploy_roll'])
@@ -199,6 +205,7 @@ class Backtest:
         # 주가
         for i in range(len(self.today)):
             neww = df.loc[self.today[i]:self.addDate(self.today[i],self.period), self.stocks[i]]
+            Backtest.period_num = neww.index.size
             d[self.stocks[i]] = neww.reset_index(drop=True)
 
         # 주가 200 rolling
@@ -243,7 +250,7 @@ class Backtest:
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
 
-        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
+        d.index = list(map(lambda x: datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
         d.dropna(inplace=True)
         
         backtest_p2 = bt.Backtest(p2, d[Backtest.new_w.index])
@@ -251,17 +258,17 @@ class Backtest:
 
         Backtest.result_data.drop(Backtest.result_data.index[-1],inplace=True)
         stock = Backtest.result_data.fillna(method = 'bfill')
-
         indexs = Backtest.result_data.index
         for i in range(len(Backtest.result_data.index)):
             if i == 0:
                 continue
             if indexs[i] == indexs[-1]:
                 Backtest.result_data.drop(Backtest.result_data.tail(1).index, inplace=True)
+                #Backtest.DD_return = [Backtest.DD_return[0][:-1]]
             elif Backtest.result_data.loc[indexs[i], 'portfolio 2'] == 100:
                 Backtest.result_data.loc[indexs[i], 'portfolio 2'] = (Backtest.result_data.loc[indexs[i-1], 'portfolio 2'] + Backtest.result_data.loc[indexs[i+1], 'portfolio 2'])/2
 
-        return Backtest.result_data, Backtest.MDD_return, Backtest.DD_return
+        return Backtest.result_data, Backtest.MDD_return, Backtest.DD_return, Backtest.period_num
 
 class Portfolio:
     def __init__(self, stock_all, start_date, stock_index) :
@@ -741,7 +748,7 @@ def get_portfolio_output(request):
             weight = weight_list[i]
             
             start = time.time()
-            result_data, mdd, dd = Backtest(stocks=stocks, period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+            result_data, mdd, dd, period_num = Backtest(stocks=stocks, period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
             print("time: ", time.time() - start)
             result_data = result_data.rename_axis('date').reset_index()
             result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
