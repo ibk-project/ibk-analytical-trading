@@ -1627,6 +1627,7 @@ def get_sector_avg(request):
         print(sector_name)
         db = client.newDB
         stock_collection = db.data_stock
+        sector_collection = db.data_sector
         
         if start_date == "":
             start_date = "2012-01-01"
@@ -1654,13 +1655,74 @@ def get_sector_avg(request):
         t_tmp = pd.DataFrame()
         t_tmp["Date"] = df.index.values
         t_tmp["Close"] = df['sum'].values.tolist()
-        #t_tmp.index = list(df.index.values)
-        #result[sector_name] = t_tmp.to_dict('records')
         
         if result == []:
             return JsonResponse({ "Result" : "None"})
         else:
             return JsonResponse({ 'data' : t_tmp.to_dict('records')})
+
+@api_view(['GET','POST'])
+def make_sector_avg(request):
+    if request.method == 'GET':
+        start_date = request.GET['start_date']
+        end_date = request.GET['end_date']
+        db = client.newDB
+        stock_collection = db.data_stock
+        db.data_sector.drop()
+        sector_collection = db.data_sector
+        
+        if start_date == "":
+            start_date = "2014-01-01"
+        
+        if end_date == "":
+            end_date = str(datetime.today())
+        
+        result = {}
+        keys = sector_data.keys()
+        
+        for key  in keys:
+            df = pd.DataFrame()
+            date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
+            df['Date'] = date_list
+            df = df.set_index('Date')
+            k = 1
+            for stock in sector_data[key]:
+                code = stock["code"]
+                stock_name = stock['name']
+                id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
+                stock_ = list(id).copy()
+                if stock_ == [] :
+                    k=0
+                    continue
+                tmp = pd.DataFrame(stock_)
+                tmp.rename(columns = {'Close' : stock_name}, inplace=True)
+                tmp = tmp.set_index('Date')
+                df = df.join(tmp)
+            if k == 0 :
+                continue
+            df = df.fillna(method='bfill')
+            df = df.pct_change(fill_method='bfill')
+            df['sector_sum'] = df.sum(axis = 1) / len(df.columns) * 100
+            df = df.dropna(how = 'all')
+            
+            print(df)
+            data = pd.DataFrame()
+            data['Date'] = df.index
+            data['Name'] = key 
+            data['avg'] = df['sector_sum'].tolist()
+            print(data)
+            data = data.to_dict('records')
+
+            sector_collection.insert_many(data)            
+            result[key] = df.to_json()
+
+        
+        if result == []:
+            return JsonResponse({ "Result" : "None"})
+        else:
+            return JsonResponse({ 'data' : 'done'})
+
+
         
 @api_view(['GET','POST'])
 def get_stock(request):

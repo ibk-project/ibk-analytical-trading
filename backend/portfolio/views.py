@@ -23,12 +23,18 @@ from urllib import parse
 import os
 import bt
 import matplotlib.pyplot as plt
+from pymongo import MongoClient
 
+client = MongoClient(
+        host='43.201.96.58', # aws 재부팅 시마다 ip 주소 새로 변경
+        port = 27017,
+        username = 'se',
+        password = '1234'
+    )
 
 kscsv = os.path.join(os.path.dirname(__file__), 'kospi-1.csv')
 kqcsv = os.path.join(os.path.dirname(__file__), 'kosdaq-1.csv')
 unemploycsv = os.path.join(os.path.dirname(__file__), 'unemploy.csv')
-#d = pd.DataFrame()
 
 class Backtest:
     now = '0000-00-00'
