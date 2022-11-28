@@ -752,7 +752,7 @@ def get_portfolio_output(request):
             print("time: ", time.time() - start)
             result_data = result_data.rename_axis('date').reset_index()
             result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
-
+            port1['p_num'] = period_num
             port1['mdd'] = mdd
             port1['dd'] = dd
             
@@ -780,10 +780,25 @@ def get_portfolio_output(request):
             port1['VaR'] = [VaR_1, VaR_2]
             port1['risk'] = [sharpe_1, trainer_1, zensen_1]
             
+            # -holding_date 를 바꾸워서 다시 하기
+            
+            # 젠센 및 다른 내용 확인
+             
             result_data['VaR1'] = 100
             result_data['VaR1'] = result_data['VaR1'] * np.arange(1,len(result_data['VaR1']) +1 ) / len(result_data['VaR1'])  * (user_holding)**0.5 * pf1_var/100 * 2.33
             result_data['VaR2'] = 100
-            result_data['VaR2'] = result_data['VaR1'] * np.arange(1,len(result_data['VaR1']) +1 ) / len(result_data['VaR1'])  * (user_holding)**0.5 * pf1_var/100 * 1.65
+            result_data['VaR2'] = result_data['VaR2'] * np.arange(1,len(result_data['VaR2']) +1 ) / len(result_data['VaR2'])  * (user_holding)**0.5 * pf1_var/100 * 1.65
+            
+            start = time.time()
+            result_data, mdd, dd = Backtest(stocks=stocks, period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+            print("time: ", time.time() - start)
+            result_data = result_data.rename_axis('date').reset_index()
+            result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
+
+            port1['mdd'] = mdd
+            port1['dd'] = dd
+            
+            
             port1["data"] = result_data.to_dict('records')
             
             result[name[i]] = port1
