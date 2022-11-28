@@ -757,7 +757,7 @@ function Portfolio() {
             console.log(p, r[p])
             return ({
               name: p,
-              data: r[p].data.map(d => parseFloat(d.price).toFixed(2))//.map(Number)
+              data: r[p].data.map(d => parseFloat(d.price).toFixed(2)).map(Number)
             })
           })
       },
@@ -1117,7 +1117,7 @@ function Portfolio() {
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
                 {/* <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span> */}
-                <span style={{marginLeft: '20px'}}>{loaded ? '예상 수익:' : '' }{loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}{loaded ? '%' : ''}</span>
+                <span style={{marginLeft: '20px'}}>{loaded ? '예상 수익: ' : '' }{loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}{loaded ? '%' : ''}</span>
               </AccordionSummary>
               <AccordionDetails key={chartData.line.data}>
                 <div className="stock-risk" style={{display: 'flex'}}>

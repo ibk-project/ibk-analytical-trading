@@ -59,8 +59,8 @@ class Backtest:
         Backtest.stock_bond = stock_bond
         Backtest.risk = risk
 
-    def addDate(self, date, r):    
-        return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+    def addDate(self, date, r):  
+        return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
     
     def cummax(self, nums):
         cum = []
@@ -78,7 +78,7 @@ class Backtest:
             self.fmt_string = fmt_string
 
         def addDate(self, date, r):
-            return (datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
+            return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
 
         def __call__(self, target):
             #print(self.fmt_string.format(**target.__dict__))
@@ -203,11 +203,12 @@ class Backtest:
         d = pd.DataFrame()
 
         # 주가
+        print(len(self.today))
         for i in range(len(self.today)):
             neww = df.loc[self.today[i]:self.addDate(self.today[i],self.period), self.stocks[i]]
             Backtest.period_num = neww.index.size
             d[self.stocks[i]] = neww.reset_index(drop=True)
-
+        
         # 주가 200 rolling
         for i in range(len(self.today)):
             neww = df_rolling.loc[self.today[i]:self.addDate(self.today[i],self.period), self.stocks[i]]
@@ -224,7 +225,6 @@ class Backtest:
             if np.isnan(b[len(b)-1]): 
                 b[len(b)-1] = b[len(b)-2]
             d['bond'+self.stocks[i]] = b 
-
         # 가중치 설정
         w = Backtest.user_input_s
         if len(Backtest.user_input_sb) != 0:
@@ -239,7 +239,7 @@ class Backtest:
 
         Backtest.new_w[:Backtest.nn] = (np.array(w)*Backtest.stock_bond[0]).tolist()
         Backtest.new_w[Backtest.nn:] = (np.array(w)*Backtest.stock_bond[1]).tolist()
-
+        
         weight2 = Backtest.new_w.copy()
         portfolio_2 = bt.AlgoStack(
                             rebal_period['month'],
@@ -250,7 +250,7 @@ class Backtest:
                         )
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
 
-        d.index = list(map(lambda x: datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
+        d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
         d.dropna(inplace=True)
         
         backtest_p2 = bt.Backtest(p2, d[Backtest.new_w.index])
@@ -748,7 +748,7 @@ def get_portfolio_output(request):
             weight = weight_list[i]
             
             start = time.time()
-            result_data, mdd, dd, period_num = Backtest(stocks=stocks, period=period, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
+            result_data, mdd, dd, period_num = Backtest(stocks=stocks, period=user_holding, input_rebal_period = input_rebal_period,today=today, user_input_s = weight, user_input_sb=user_input_sb)() # 필수 매개변수: 종목명, 날짜
             print("time: ", time.time() - start)
             result_data = result_data.rename_axis('date').reset_index()
             result_data.rename(columns = {'portfolio 2': 'price'}, inplace = True )
