@@ -15,6 +15,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
+import Tabs from '@mui/material/Tabs';
 import TabPanel from '@mui/lab/TabPanel';
 import Popover from '@mui/material/Popover';
 
@@ -74,6 +75,8 @@ function Portfolio() {
   })
   const [currentMarket, setMarket] = useState('')
   const [tabValue, setTab] = useState('1')
+  const [portTabValue, setPortTab] = useState('1')
+  const [portTabDetail, setPortDetail] = useState('15')
   const [anchorEl, setAnchorEl] = useState(null)
   const expect = [0.1, 0.2, 0.3, 0.5, 1]
   const loss = [0.1, 0.2, 0.3, 0.5, 1]
@@ -130,10 +133,9 @@ function Portfolio() {
   //     }
   //   }
   // });
-  const portName = ['최대분산P','샤프P','위험균형P']
+  const portName = ['최대분산P','샤프P','위험균형P', 'testP']
   const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
   let initBool = new Array(temp.length).fill(false)
-  //[false, false, false, false, false, false, false, false, false, false, false, false]
   let initSectorClicked = {
     'KOSPI 100': [...initBool],
     'KOSPI 200': [...initBool],
@@ -143,7 +145,7 @@ function Portfolio() {
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
   const [sortPort, setSort] = useState([0,1,2])
-  const [risk, setRisk] = useState([[0,0,0],[0,0,0],[0,0,0]])
+  const [risk, setRisk] = useState([[0,0,0],[0,0,0],[0,0,0],[0,0,0]])
   const [userClass, setUserClass] = useState(-1)
   const userClassText = ['안정형', ' 안정추구형', '위험중립형', ' 적극투자형', '공격투자형']
   const pieData = {
@@ -560,84 +562,7 @@ function Portfolio() {
   const getPortfolio = async() => {
     setLoaded(false)
     setLoading(true)
-    const makeChartData = (r) => {
-      setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk])
-      setPort({
-        stocks: r.result.stocks,
-        similarDate: r.result.similar_date,
-        weight: r.result.weight
-      })
-      let w = [];
-      let ww = []
-      for(let j=0; j<r.result.weight.length; j++){
-        w = []
-        for(let i=0; i<r.result.stocks.length; i++){
-          w.push({
-            name: r.result.stocks[i],
-            y: r.result.weight[j][i],
-          })
-        }
-        ww.push(w)
-      }
-      //setYield([r['샤프 P'].data[-1],r.port2.data[-1]])
-      setChartOption({
-        pie: {
-          title: 'stocks weight',
-          data: ww
-        },
-        line: {
-          title: 'predicted yield',
-          xAxis: {
-            title: 'Days Elapsed',
-            categories: [...Array(30).keys()].map( x => x+1 )
-          },
-          yAxis: {
-            title: 'yield'
-          },
-          data: 
-            portName.map( p => {
-              return ({
-                name: p,
-                data: r[p].data.map(d => parseFloat(d.price).toFixed(2))
-              })
-            })
-        },
-        mdd: {
-          title: 'DD',
-          xAxis: {
-            title: 'Days Elapsed',
-            categories: [...Array(30).keys()].map( x => x+1 )
-          },
-          yAxis: {
-            title: ''
-          },
-          data: 
-            portName.map( p => {
-              return ({
-                name: p+' DD',
-                data: r[p].dd.map(i => parseFloat(i).toFixed(2)) // dd 안되면 여기 보기!!
-              })
-            })
-        },
-        var: {
-          title: 'Risk',
-          xAxis: {
-            title: 'Days Elapsed',
-            categories: [...Array(totalPeriod).keys()].map( x => x+1 )
-          },
-          yAxis: {
-            title: ''
-          },
-          data: 
-            portName.map( p => {
-              return ({
-                name: p+' Risk',
-                data: r[p].VaR.map(i => parseFloat(i).toFixed(2)) // dd 안되면 여기 보기!!
-              })
-            })
-        }
-      })
-    }
+
     let m, ms = '', mar = ''
     if(currentMarket.includes('KOSPI')) {
       m = KOSPI
@@ -658,15 +583,100 @@ function Portfolio() {
     console.log({
       "market": mar,
       "sector": ms,
-      "s_ratio": stockBond/100
+      "s_ratio": stockBond/100,
+      "holding_date": totalPeriod
     })
     await axios.get('/api/portfolio/result', {
       params: {
         "market": mar,
         "sector": ms,
-        "s_ratio": stockBond/100
+        "s_ratio": stockBond/100,
+        "holding_date": totalPeriod
       }
     }).then(res => {console.log(res.data.result); makeChartData(res.data.result);});
+  }
+
+  const makeChartData = (r) => {
+    setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk, r['testP'].risk])
+    setPort({
+      stocks: r.result.stocks,
+      similarDate: r.result.similar_date,
+      weight: r.result.weight
+    })
+    let w = [];
+    let ww = []
+    for(let j=0; j<r.result.weight.length; j++){
+      w = []
+      for(let i=0; i<r.result.stocks.length; i++){
+        w.push({
+          name: r.result.stocks[i],
+          y: r.result.weight[j][i],
+        })
+      }
+      ww.push(w)
+    }
+    //setYield([r['샤프 P'].data[-1],r.port2.data[-1]])
+    setChartOption({
+      pie: {
+        title: 'stocks weight',
+        data: ww
+      },
+      line: {
+        title: 'predicted yield',
+        xAxis: {
+          title: 'Days Elapsed',
+          categories: [...Array(totalPeriod).keys()].map( x => x+1 )
+        },
+        yAxis: {
+          title: 'yield'
+        },
+        data: 
+          portName.map( p => {
+            console.log(p, r[p])
+            return ({
+              name: p,
+              data: r[p].data.map(d => parseFloat(d.price).toFixed(2))//.map(Number)
+            })
+          })
+      },
+      mdd: {
+        title: 'DD',
+        xAxis: {
+          title: 'Days Elapsed',
+          categories: [...Array(totalPeriod).keys()].map( x => x+1 )
+        },
+        yAxis: {
+          title: ''
+        },
+        data: 
+          portName.map( p => {
+            return ({
+              name: p+' DD',
+              data: r[p].dd.map(i => parseFloat(i).toFixed(2)).map(Number) // dd 안되면 여기 보기!!
+            })
+          })
+      },
+      var: {
+        title: 'VaR',
+        xAxis: {
+          title: 'Days Elapsed',
+          categories: [...Array(totalPeriod).keys()].map( x => x+1 )
+        },
+        yAxis: {
+          title: ''
+        },
+        data:
+          portName.map( p => {
+            return ({
+              name: p+' VaR 99%',
+              data: r[p].data.map(d => parseFloat(d.VaR1).toFixed(2)).map(Number)
+            },{
+              name: p+' VaR 95%',
+              data: r[p].data.map(d => parseFloat(d.VaR2).toFixed(2)).map(Number)
+            })
+          })
+      }
+    })
   }
   let sectors = []
   const getSectors = (market) => {
@@ -742,7 +752,7 @@ function Portfolio() {
     setSort(()=>[...sort])
   },[chartData])
   useEffect(()=>{
-    //recommend()
+    recommend()
     //getSortedSector()
   },[])
 
@@ -852,15 +862,20 @@ function Portfolio() {
                     currentMarket && 
                     <div key={currentMarket}>
                       <TabPanel value="1" style={TabPanelStyle}>
-                        <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
+                        <Box sx={{fontSize: 'middle'}} style={{height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
                           selectedSector.recent[currentMarket].map((s, value) => 
-                              <Button 
+                            <div style={{height: '2rem', display: 'flex'}}>
+                              <Checkbox 
                                 key={value}
                                 value={value}
                                 onClick={selectSector} 
-                                style={{border: "1px solid black", fontSize: "0.8rem", color: "black", borderRadius: "10px", height: '2rem', width: '48%', margin: "10px 0 0 0" ,backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
-                              >{s}</Button>)
+                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                              />
+                              <div style={{minWidth: '162px'}}>{s}</div>
+                              <div style={{width: '100px'}}>여기는 숫자</div>
+                            </div>
+                            )
                           }
                         </Box>
                       </TabPanel>
@@ -868,13 +883,18 @@ function Portfolio() {
                       <TabPanel value="2" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                          selectedSector.up[currentMarket].map((s, value) => 
-                              <Button 
-                                key={value} 
-                                value={value} 
+                            selectedSector.recent[currentMarket].map((s, value) => 
+                            <div style={{height: '2rem', display: 'flex'}}>
+                              <Checkbox 
+                                key={value}
+                                value={value}
                                 onClick={selectSector} 
-                                style={{border: "1px solid black", fontSize: "0.8rem", color: "black", borderRadius: "10px", height: '2rem', width: '48%', margin: "10px 0 0 0" ,backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
-                              >{s}</Button>)
+                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                              />
+                              <div style={{minWidth: '162px'}}>{s}</div>
+                              <div style={{width: '100px'}}>여기는 숫자</div>
+                            </div>
+                            )
                           }
                         </Box>
                       </TabPanel>
@@ -882,13 +902,18 @@ function Portfolio() {
                       <TabPanel value="3" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                          selectedSector.down[currentMarket].map((s, value) => 
-                              <Button 
-                                key={value} 
-                                value={value} 
+                            selectedSector.recent[currentMarket].map((s, value) => 
+                            <div style={{height: '2rem', display: 'flex'}}>
+                              <Checkbox 
+                                key={value}
+                                value={value}
                                 onClick={selectSector} 
-                                style={{border: "1px solid black", fontSize: "0.8rem", color: "black", borderRadius: "10px", height: '2rem', width: '48%', margin: "10px 0 0 0" ,backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
-                              >{s}</Button>)
+                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                              />
+                              <div style={{minWidth: '162px'}}>{s}</div>
+                              <div style={{width: '100px'}}>여기는 숫자</div>
+                            </div>
+                            )
                           }
                         </Box>
                       </TabPanel> 
@@ -896,13 +921,18 @@ function Portfolio() {
                       <TabPanel value="4" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                          selectedSector.category[currentMarket].map((s, value) => 
-                              <Button 
-                                key={value} 
-                                value={value} 
+                            selectedSector.recent[currentMarket].map((s, value) => 
+                            <div style={{height: '2rem', display: 'flex'}}>
+                              <Checkbox 
+                                key={value}
+                                value={value}
                                 onClick={selectSector} 
-                                style={{border: "1px solid black", fontSize: "0.8rem", color: "black", borderRadius: "10px", height: '2rem', width: '48%', margin: "10px 0 0 0" ,backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
-                              >{s}</Button>)
+                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                              />
+                              <div style={{minWidth: '162px'}}>{s}</div>
+                              <div style={{width: '100px'}}>여기는 숫자</div>
+                            </div>
+                            )
                           }
                         </Box>
                       </TabPanel>
@@ -925,12 +955,22 @@ function Portfolio() {
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
                   <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                     {pick.slice(0,5).map((ss, value) =>
-                      <Button key={value} value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>
+                      <Button 
+                        key={value}   
+                        value={value} 
+                        onClick={selectSector} 
+                        style={{backgroundColor: sectorClicked['KOSPI 200'][value] ? 'lightgray':null}}
+                      >{ss}</Button>
                     )}
                   </ButtonGroup>
                   <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                     {pick.slice(5,pick.length).map((ss, value) =>
-                      <Button key={value} value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>
+                      <Button 
+                        key={value} 
+                        value={value}
+                        onClick={selectSector} 
+                        style={{backgroundColor: sectorClicked['KOSPI 200'][value] ? 'lightgray':null}}
+                      >{ss}</Button>
                     )}
                   </ButtonGroup>
                 </div>
@@ -950,7 +990,7 @@ function Portfolio() {
 
         {
           //loaded 
-          loaded && sortPort.map((n, index) => {
+          isMounted && sortPort.map((n, index) => {
             return(
             <Accordion style={{marginTop:'15px', width: "900px"}} key={n}>
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
@@ -970,7 +1010,7 @@ function Portfolio() {
                   <div className="chart" style={{width: '850px'}}>
                     <div className="title1">Backtest</div>
                     <span style={{width: '400px', verticalAlign: 'top'}}>
-                      <MultiLine props={chartData.line} num={n}/>
+                      <MultiLine props={chartData.line} num={n} period={totalPeriod} />
                     </span>
                   </div>
                 </div>
@@ -978,21 +1018,93 @@ function Portfolio() {
                 <div className="risk" style={{minWidth: '900px', verticalAlign: 'top'}} key={chartData}>
                   <div className="title1">Risk</div>
                   <span style={{display: 'flex', verticalAlign: 'top', gap: '20px'}}>
-                    <div>sharpe: {risk[n][0]} </div>
-                    <div>trainer: {risk[n][1]} </div>
-                    <div>zensen: {risk[n][2]} </div> 
+                    <div>sharpe: {risk[n][0].toFixed(2)} </div>
+                    <div>trainer: {risk[n][1].toFixed(2)} </div>
+                    <div>zensen: {risk[n][2].toFixed(2)} </div> 
                   </span>
                   <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                    <MultiLine props={chartData.mdd} num={n}/>
+                    <MultiLine props={chartData.mdd} num={n} period={totalPeriod} />
                   </span>
                   <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                    <MultiLine props={chartData.var} num={n}/>
+                    <MultiLine props={chartData.var} num={n} period={totalPeriod} />
                   </span>
                 </div>
               </AccordionDetails>
             </Accordion>)
           })
         }
+        {/* { isMounted && portTabValue && 
+          <Box sx={{ width: '900px', display: 'grid', flexGrow: 1, gridTemplateColumns: '200px 700px' }}>
+            <TabContext value={portTabValue}>
+              <Box sx={{borderBottom: 1, borderRight: 1, borderColor: 'divider', gridRow: '1/2', gridCol: '1/2'}} />
+              <Box sx={{borderBottom: 1, borderRight: 1, borderColor: 'divider', gridRow: '2/3', gridCol: '1/2'}}>
+                <Tabs orientation="vertical" onChange={(e, value) => setPortTab(value)}>
+                  <Tab label={portName[0]} value={1} style={tabStyle} />
+                  <Tab label={portName[1]} value={2} style={tabStyle} />
+                  <Tab label={portName[2]} value={3} style={tabStyle} />
+                  <Tab label={portName[3]} value={4} style={tabStyle} />
+                </Tabs>
+              </Box>
+
+
+              {
+                currentMarket && portTabValue && 
+                // [1,2,3,4].map((portIndex) => {
+                //   console.log(portIndex)
+                //   return( 
+                  <>
+                    <TabPanel value={portTabValue} index={portTabValue} style={{...TabPanelStyle, gridRow: '1/3', gridCol: '2/3'}}>    
+                      <TabContext value={portTabDetail}>
+                        <Box sx={{borderBottom: 1, borderColor: 'divider', gridRow: '1/2', gridCol: '2/3'}}>
+                          <Tabs onChange={(e, value) => setPortDetail(value)}>
+                            <Tab label="Stocks Weight" value={portTabValue*10 + 5} style={{...tabStyle, minWidth: '25%'}} />
+                            <Tab label="Backtest" value={portTabValue*10 + 6} style={{...tabStyle, minWidth: '25%'}} />
+                            <Tab label="Risk(DD)" value={portTabValue*10 + 7} style={{...tabStyle, minWidth: '25%'}} />
+                            <Tab label="Risk(VaR)" value={portTabValue*10 + 8} style={{...tabStyle, minWidth: '25%'}} />
+                          </Tabs>
+                        </Box>
+                      
+
+                        <TabPanel value={portTabDetail} index={portTabValue*10 + 5} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>
+                          <div className="stock-risk" style={{display: 'flex'}}>
+                            <div style={{minWidth: '400px', verticalAlign: 'top'}} key={chartData}>
+                              <div className="title1" style={{marginBottom: '15px'}}>Stocks Weight</div>
+                              <Pie title={chartData.pie.title} data={chartData.pie.data[portTabValue]} style={{verticalAlign: 'top'}}/>
+                            </div>
+                          </div>
+                        </TabPanel>
+
+                        <TabPanel value={portTabDetail} index={portTabValue*10 + 6} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>    
+                          <div className="backtest">
+                            <div className="chart" style={{width: '850px'}}>
+                              <div className="title1">Backtest</div>
+                              <span style={{width: '400px', verticalAlign: 'top'}}>
+                                <MultiLine props={chartData.line} num={portTabValue} period={totalPeriod} />
+                              </span>
+                            </div>
+                          </div>
+                        </TabPanel>
+
+                        <TabPanel value={portTabDetail} index={portTabValue*10 + 7} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>    
+                          <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
+                            <MultiLine props={chartData.mdd} num={portTabValue} period={totalPeriod} />
+                          </span>
+                        </TabPanel>
+
+                        <TabPanel value={portTabDetail} index={portTabValue*10 + 8} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>    
+                          <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
+                            <MultiLine props={chartData.var} num={portTabValue} period={totalPeriod} />
+                          </span>
+                        </TabPanel>
+                      </TabContext>
+                    </TabPanel>
+                  </>
+                //   )
+                // })
+              }
+            </TabContext>
+          </Box>
+        } */}
         {
           isLoading && 
           <div style={{textAlign: "center", margin: "30px"}}>
