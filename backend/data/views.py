@@ -24,11 +24,7 @@ from pymongo import MongoClient
 from datetime import date, datetime
 
 client = MongoClient(
-<<<<<<< HEAD
-        host='3.38.41.9',
-=======
         host='43.201.96.58', # aws 재부팅 시마다 ip 주소 새로 변경
->>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
         port = 27017,
         username = 'se',
         password = '1234'
@@ -2707,13 +2703,7 @@ def get_commodity(request):
 
 @api_view(['GET','POST'])
 def get_sector_avg(request):
-<<<<<<< HEAD
-    #print("it is here")
     if request.method == 'GET':
-        #print("it is here")
-=======
-    if request.method == 'GET':
->>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
@@ -3057,7 +3047,12 @@ def get_comm_data(name, code):
 @api_view(['GET'])
 def get_market_model(request):
     if request.method == 'GET':
-        model_data = os.path.join(os.path.dirname(__file__),'files/', '2015-01-01_2022-08-12_100.json')
+        model_data = os.path.join(os.getcwd(),'/backend/model/market/result/', '2015-01-01_2022-11-25_100.json')
+        print(model_data)
+
+        with open(model_data) as f:
+            json_data = json.load(f)
+        return JsonResponse({"Result" : json_data})
         try:
             with open(model_data) as f:
                 json_data = json.load(f)
@@ -3070,7 +3065,7 @@ def get_market_model(request):
 def get_sector_model(request, sector_code):
     if request.method == 'GET':
 
-        sector_data = os.path.join(os.path.dirname(__file__), 'files/', str(sector_code) + '_result.csv')
+        sector_data = os.path.join(os.getcwd(), '/backend/model/sector/result/', str(sector_code) + '_result.csv')
 
         try:
             model_data = pd.read_csv(sector_data, header=0, index_col=0)
@@ -3096,24 +3091,12 @@ def get_news_feature(request):
 #Calculate Correlation-adjusted Distance
 @api_view(['POST'])
 def get_similarity_distance(request):
-<<<<<<< HEAD
-    print('ok')
-    if request.method == 'GET':
-        print('ok')
-        #period1 = request.GET['period1']
-        period1 = request.GET.getlist("period1", None)
-        period2 = request.GET['period2']
-        print('ok')
-        print(period1)
-        print(period2)
-=======
     if request.method == 'POST':
         period1 = request.data['period1']
         period2 = request.data['period2']
         print("period1 is "+period1)
         print("period2 is "+period2)
 
->>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
         adjustedCov = 0
         distance = 0
         pastList = []

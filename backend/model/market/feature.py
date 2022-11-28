@@ -13,7 +13,7 @@ import time
 from dateutil.relativedelta import relativedelta
 import itertools
 from functools import reduce
-from tqdm.notebook import tqdm
+
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, MaxAbsScaler
 from sklearn.metrics import roc_curve, roc_auc_score
 
@@ -107,7 +107,7 @@ class FeatureGenerator():
         self.raw_data_df.to_csv(self.range + '.csv')
     
     def make_feature(self):
-        for point in tqdm(range(TRAIN_LENGTH, self.raw_data_df.shape[0]-PREDICT_LENGTH)):
+        for point in range(TRAIN_LENGTH, self.raw_data_df.shape[0]-PREDICT_LENGTH):
             period = self.raw_data_df.index[point]
             last = self.raw_data_df.iloc[point-TRAIN_LENGTH:point]
             next = self.raw_data_df.iloc[point:point + PREDICT_LENGTH]
@@ -126,7 +126,7 @@ class FeatureGenerator():
             self.feature_df.loc[period, 'US10YT-3MT'] = last['FRED:T10Y3MT10Y3M'].mean()
             self.feature_df.loc[period, 'US10YT-2YT'] = last['FRED:T10Y2YT10Y2Y'].mean()
             self.feature_df.loc[period, 'CPIAUCSL'] = last['CPIAUCSL'].mean()
-            self.feature_df.loc[period, 'DollarMA'] = last['DollarDTWEXBGS'].mean() 
+            self.feature_df.loc[period, 'DollarMA'] = last['DTWEXBGS'].mean() 
             # self.feature_df.loc[period, 'KoreaVIX'] = last['KoreaVIXClose'][-1] - last['KoreaVIXClose'][:].mean()
             self.feature_df.loc[period, 'USVIX'] = last['USVIXClose'][-1] - last['USVIXClose'][:].mean()
 
