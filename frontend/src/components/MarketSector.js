@@ -101,7 +101,7 @@ function MarketSector(props) {
         params: {
           "sector_name": currSector[1],
           "start_date": "2020-01-01",
-          "end_date": "2022-11-26"
+          "end_date": "2022-11-25"
         }
       }).then(res => {
         setSectorStockData(res.data.data);
@@ -150,7 +150,7 @@ function MarketSector(props) {
         params: {
           "code": 'KS11',
           "date": "2020-01-01",
-          "end_date": "2022-11-26",
+          "end_date": "2022-11-25",
           "type": "candle"
         }
       }).then(res => {
