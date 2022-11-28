@@ -58,7 +58,7 @@ function CandleVolume(props) {
     let ohlc = [];
     let volume = [];
     const groupingUnits = [[
-      'week',             // unit name
+      'day',             // unit name
       [1]               // allowed multiples
     ], [
       'month',
@@ -76,6 +76,7 @@ function CandleVolume(props) {
         Date.parse(props.data[i]['Date']), // the date
         props.data[i]['Volume'] // the volume
       ]);
+      console.log(props.data[i]['Date'], props.data[i]['Volume'])
     }
     setOptions({
       chart: {

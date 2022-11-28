@@ -31,7 +31,8 @@ client = MongoClient(
     )
 
 # 반도체와반도체장비, 은행, 석유와가스, 화학, 양방향미디어와서비스, 복합기업, 자동차, 제약, 비철금속, 화장품, 부동산, 우주항공과국방, 항공사, 레저용장비와제품, 항공화물운송과물류, 백화점과일반상점, 손해보험, 다각화된통신서비스, 무선통신서비스, 운송인프라, 생명보험, 도로와철도운송, 무역회사와판매업체, 문구류, (호텔,레스토랑,레저), 가스유틸리티, 건강관리업체및서비스, 종이와목재, 디스플레이패널, 가정용품, 교육서비스, 출판, 전문소매, 해운사, 에너지장비및서비스, 건축제품, 건강관리장비와용품, 식품, (섬유,의류,신발,호화품), 식품과기본식료품소매, 건강관리기술, 음료, 포장재, 가구, 광고, 기타금융, 사무용전자제품, 카드, 담배, 기계, 건설, 포장재, 전기장비, 전기제품, 소프트웨어, 자동차부품, 생명과학도구및서비스, 상업서비스와공급품, 철강, 건축자재, 디스플레이장비및부품, 증권, 생물공학, 컴퓨터와주변기기, 게임엔터테인먼트, IT서비스, 가정용기기와용품, 핸드셋, 방송과엔터테인먼트, 전자제품, 창업투자, 전자장비와기기, 복합유틸리티, 인터넷과카탈로그소매, 다각화된소비자서비스, 판매업체, 조선, 통신장비, 전기유틸리티 : 총 2545개
-sector_data = {'반도체와반도체장비': [{'code': '142210', 'name': '유니트론텍'},
+sector_data = {
+    '반도체와반도체장비': [{'code': '142210', 'name': '유니트론텍'},
     {'code': '382800', 'name': '지앤비에스엔지니어링'},
     {'code': '217190', 'name': '제너셈'},
     {'code': '222160', 'name': '바이옵트로'},
@@ -2581,7 +2582,6 @@ sector_data = {'반도체와반도체장비': [{'code': '142210', 'name': '유�
   
 krx = fdr.StockListing('KRX')
 krx = krx[krx['Marcap']>1000000000000]
-krx_code = krx[['Code']].values.tolist()
 
 # front에서 code, date보내주기
 @api_view(['GET', 'POST'])
@@ -2616,7 +2616,7 @@ def get_index_front(request):
                 return JsonResponse({"data":result})
             
         elif chart_type == "line_volume":
-            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1})
+            id = index_collection.find({"Name" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Volume" : 1, "Close" : 1, "Date": 1,})
             print(id)
             result = list(id)
             if result == []:
@@ -2895,9 +2895,8 @@ def get_sector_stock(request):
         end_date = request.GET['end_date']
         db = client.newDB
         stock_collection = db.data_stock
-        
-        sector_list = sector_data[sector_name]
-        
+        sector_list = sector_data[sector_name].copy()
+        krx_code = krx['Code'].tolist()
         if start_date == "":
             start_date = "2015-01-01"
         
@@ -2911,12 +2910,18 @@ def get_sector_stock(request):
                 continue
             
             name = sector['name']
-            print('name: ', name )
-            id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0 })
+            id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0 , 'Change' : 0})
             sector_d = {}
+            print(name)
+            tmp = list(id).copy()
+            if len(tmp) == 0:
+                print(name)
+                print(tmp)
+                #print(list(id))
+                continue 
             sector_d['name'] = name
             sector_d['code'] = code
-            sector_d['stock_data'] = list(id)
+            sector_d['stock_data'] = tmp
             result.append(sector_d) 
             
         if result == []:
@@ -2929,23 +2934,22 @@ def get_sector_list(request):
     if request.method == 'GET':
         keys = sector_data.keys()
         result = []
-        
+        krx1 = krx[krx['Marcap']>1000000000000]
+        krx_code = krx1['Code'].tolist()
         for key in keys:
             tmp = {}
             tmp["sector_name"] = key
-            sector = sector_data[key]
-            sector_tmp = sector
-            print(key)
-            #print(sector)
-            for stock  in sector:
-                if [stock['code']] not in krx_code:
-                    print(stock['code'])
+            sector = None
+            sector = sector_data[key].copy()
+            sector_tmp = sector.copy()
+            for stock in sector:
+                if krx_code.__contains__(stock['code']) == False:
                     sector_tmp.remove(stock)
-            print(sector_tmp)
-            tmp["sector_stocks"] = sector_tmp
-            
+            if sector_tmp:
+                tmp["sector_stocks"] = sector_tmp
+            else:
+                continue
             result.append(tmp)
-            
         if result == []:
             return JsonResponse({ "data" : "Wrong"})
         else:

@@ -783,7 +783,7 @@ def get_portfolio_output(request):
             result_data['VaR1'] = 100
             result_data['VaR1'] = result_data['VaR1'] * np.arange(1,len(result_data['VaR1']) +1 ) / len(result_data['VaR1'])  * (user_holding)**0.5 * pf1_var/100 * 2.33
             result_data['VaR2'] = 100
-            result_data['VaR2'] = result_data['VaR1'] * np.arange(1,len(result_data['VaR1']) +1 ) / len(result_data['VaR1'])  * (user_holding)**0.5 * pf1_var/100 * 1.65
+            result_data['VaR2'] = result_data['VaR2'] * np.arange(1,len(result_data['VaR2']) +1 ) / len(result_data['VaR2'])  * (user_holding)**0.5 * pf1_var/100 * 1.65
             port1["data"] = result_data.to_dict('records')
             
             result[name[i]] = port1
