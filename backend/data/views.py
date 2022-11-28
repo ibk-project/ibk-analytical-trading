@@ -3094,8 +3094,8 @@ def get_similarity_distance(request):
     if request.method == 'POST':
         period1 = request.data['period1']
         period2 = request.data['period2']
-        print("period1 is "+period1)
-        print("period2 is "+period2)
+        print("period1 is "+ str(period1))
+        print("period2 is "+ str(period2))
 
         adjustedCov = 0
         distance = 0
@@ -3154,12 +3154,13 @@ def get_similarity_distance(request):
 
             
         try:
-            with open(adjustedCov, encoding='UTF-8-sig') as f:
-                json_data = json.load(f)
-                json_data = json.dumps(json_data, ensure_ascii = False)
-            return HttpResponse(json_data)
+            # with open(adjustedCov, encoding='UTF-8-sig') as f:
+            #     json_data = json.load(f)
+            #     json_data = json.dumps(json_data, ensure_ascii = False)
+            # return HttpResponse(json_data)
+            return JsonResponse({"result" : adjustedCov})
         except:
-            return JsonResponse({"None"})
+            return JsonResponse({"result" : "None"})
         
 
 
