@@ -76,7 +76,6 @@ function CandleVolume(props) {
         Date.parse(props.data[i]['Date']), // the date
         props.data[i]['Volume'] // the volume
       ]);
-      console.log(props.data[i]['Date'], props.data[i]['Volume'])
     }
     setOptions({
       chart: {

@@ -2861,7 +2861,7 @@ def get_one_index(request):
         id = index_collection.find({"Name" : name, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0})
         result = list(id)
         return JsonResponse({"Result" : result})
-    토
+
 
 @api_view(['GET'])
 def get_stocks(request):
@@ -2912,8 +2912,8 @@ def get_sector_stock(request):
             name = sector['name']
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Code" : 0 , 'Change' : 0})
             sector_d = {}
-            print(name)
-            tmp = list(id).copy()
+            tmp = list(id)
+            print(tmp)
             if len(tmp) == 0:
                 print(name)
                 print(tmp)
