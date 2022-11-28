@@ -712,7 +712,7 @@ function EdaInfo(props) {
         let endDate = marketData.currentDate.split("~")[1];
         getSector(props.edaName, startDate, endDate, true);
       }
-    }, [props.edaCode])
+    }, [props.edaName])
 
     useEffect(() => {
       if (props.edaType === "none") {
@@ -867,7 +867,7 @@ function EdaInfo(props) {
           console.log("similar date clicked when market");
         }
         else{
-          console.log("current props.edaName is ", edaName);
+          console.log("current props.edaName is ", props.edaName);
           getSector(props.edaName, currentSimilarDate_start, currentSimilarDate_end, false);
 
           // getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end, false);

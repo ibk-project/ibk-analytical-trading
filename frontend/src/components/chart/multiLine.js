@@ -5,7 +5,7 @@ import Accessibility from "highcharts/modules/accessibility";
 
 function MultiLine(props) {
   Accessibility(Highcharts)
-  console.log(props)
+  //console.log(props)
   const n = props.num
   const prop = props.props
   const initialOptions = {
@@ -29,7 +29,7 @@ function MultiLine(props) {
       plotLines: [{
         color: 'lightgray', // Red
         width: 2,
-        value: 30 // set period
+        value: parseInt(props.period) // set period
     }]
     },
     yAxis: {

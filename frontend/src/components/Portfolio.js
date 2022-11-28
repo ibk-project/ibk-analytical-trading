@@ -18,6 +18,7 @@ import TabList from '@mui/lab/TabList';
 import Tabs from '@mui/material/Tabs';
 import TabPanel from '@mui/lab/TabPanel';
 import Popover from '@mui/material/Popover';
+import { map } from 'highcharts';
 
 function Portfolio() {
   let initUserOption = {
@@ -73,7 +74,7 @@ function Portfolio() {
     down: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
     category: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}
   })
-  const [currentMarket, setMarket] = useState('')
+  const [currentMarket, setMarket] = useState('KOSPI 200')
   const [tabValue, setTab] = useState('1')
   const [portTabValue, setPortTab] = useState('1')
   const [portTabDetail, setPortDetail] = useState('15')
@@ -280,8 +281,47 @@ function Portfolio() {
         121.00,
         121.28,
         122.87]
-    }
-    ]
+    },{
+      name: '',
+      data: [99.85,
+        96.93,
+        96.79,
+        97.00,
+        101.13,
+        101.45,
+        102.86,
+        108.31,
+        109.28,
+        106.55,
+        106.47,
+        110.03,
+        108.51,
+        109.28,
+        109.70,
+        108.15,
+        107.51,
+        111.43,
+        111.61,
+        110.56,
+        110.61,
+        110.46,
+        110.53,
+        110.68,
+        110.79,
+        110.57,
+        111.59,
+        110.70,
+        110.97,
+        108.85,
+        112.68,
+        110.96,
+        111.24,
+        116.51,
+        121.45,
+        121.00,
+        121.28,
+        122.87]
+    }]
   }
   const mddData = {
     title: 'DD',
@@ -293,6 +333,47 @@ function Portfolio() {
       title: ''
     },
     data: [{
+      name: '',
+      data: //[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      [0.0,
+        -2.91,
+        -3.06,
+        -2.85,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -2.49,
+        -2.57,
+        0.0,
+        -1.37,
+        -0.67,
+        -0.29,
+        -1.70,
+        -2.29,
+        0.0,
+        0.0,
+        -0.94,
+        -0.89,
+        -1.02,
+        -0.96,
+        -0.83,
+        -0.72,
+        -0.93,
+        -0.01,
+        -0.81,
+        -0.57,
+        -2.47,
+        0.0,
+        -1.53,
+        -1.28,
+        0.0,
+        0.0,
+        -0.36,
+        -0.13,
+        0.0]
+    },{
       name: '',
       data: //[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
       [0.0,
@@ -549,6 +630,47 @@ function Portfolio() {
         -0.36,
         -0.13,
         0.0]
+    },{
+      name: '',
+      data: //[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      [0.0,
+        -2.91,
+        -3.06,
+        -2.85,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -2.49,
+        -2.57,
+        0.0,
+        -1.37,
+        -0.67,
+        -0.29,
+        -1.70,
+        -2.29,
+        0.0,
+        0.0,
+        -0.94,
+        -0.89,
+        -1.02,
+        -0.96,
+        -0.83,
+        -0.72,
+        -0.93,
+        -0.01,
+        -0.81,
+        -0.57,
+        -2.47,
+        0.0,
+        -1.53,
+        -1.28,
+        0.0,
+        0.0,
+        -0.36,
+        -0.13,
+        0.0]
     }]
   }
   const [chartData, setChartOption] = useState({
@@ -615,7 +737,7 @@ function Portfolio() {
       }
       ww.push(w)
     }
-    //setYield([r['샤프 P'].data[-1],r.port2.data[-1]])
+
     setChartOption({
       pie: {
         title: 'stocks weight',
@@ -705,8 +827,7 @@ function Portfolio() {
     //getSectors(e.target.value)
   }
   const selectSector = (e) => {
-    //const n = e.target.value
-    const n = temp.indexOf(e.target.innerText)
+    const n = e.target.value  
     let sss = sectorClicked[currentMarket]
     sss[n] = !sss[n]
     setSectorClick((prev)=>({
@@ -865,8 +986,8 @@ function Portfolio() {
                         <Box sx={{fontSize: 'middle'}} style={{height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
                           selectedSector.recent[currentMarket].map((s, value) => 
-                            <div style={{height: '2rem', display: 'flex'}}>
-                              <Checkbox 
+                            <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
+                              <Checkbox
                                 key={value}
                                 value={value}
                                 onClick={selectSector} 
@@ -996,7 +1117,7 @@ function Portfolio() {
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
                 {/* <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span> */}
-                <span style={{marginLeft: '20px'}}>예상 수익: {(22.9 - index*2.337).toFixed(2)}%</span>
+                <span style={{marginLeft: '20px'}}>{loaded ? '예상 수익:' : '' }{loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}{loaded ? '%' : ''}</span>
               </AccordionSummary>
               <AccordionDetails key={chartData.line.data}>
                 <div className="stock-risk" style={{display: 'flex'}}>
@@ -1033,78 +1154,66 @@ function Portfolio() {
             </Accordion>)
           })
         }
-        {/* { isMounted && portTabValue && 
-          <Box sx={{ width: '900px', display: 'grid', flexGrow: 1, gridTemplateColumns: '200px 700px' }}>
+        {/* isMounted && portTabValue && 
+          <Box sx={{ width: '900px', display: 'grid', flexGrow: 1, gridTemplateColumns: '150px 700px', gridTemplateRows: '50px auto' }}>
             <TabContext value={portTabValue}>
-              <Box sx={{borderBottom: 1, borderRight: 1, borderColor: 'divider', gridRow: '1/2', gridCol: '1/2'}} />
-              <Box sx={{borderBottom: 1, borderRight: 1, borderColor: 'divider', gridRow: '2/3', gridCol: '1/2'}}>
-                <Tabs orientation="vertical" onChange={(e, value) => setPortTab(value)}>
-                  <Tab label={portName[0]} value={1} style={tabStyle} />
-                  <Tab label={portName[1]} value={2} style={tabStyle} />
-                  <Tab label={portName[2]} value={3} style={tabStyle} />
-                  <Tab label={portName[3]} value={4} style={tabStyle} />
+              <Box sx={{borderBottom: 1, borderRight: 1, borderColor: 'divider'}}>
+                <Tabs value={portTabValue} orientation="vertical" onChange={(e, value) => setPortTab(value)}>
+                  <Tab label={portName[0]} value="1" style={tabStyle} />
+                  <Tab label={portName[1]} value="2" style={tabStyle} />
+                  <Tab label={portName[2]} value="3" style={tabStyle} />
+                  <Tab label={portName[3]} value="4" style={tabStyle} />
                 </Tabs>
               </Box>
-
-
+              
               {
-                currentMarket && portTabValue && 
+                <TabPanel value={portTabValue} index={portTabValue.toString()} style={{padding: 0, width: "900px"}} key={portTabValue}>    
+                  <Box sx={{width: '900px'}}>
+                    <div className="stock-risk" style={{display: 'flex'}}>
+                      <div style={{minWidth: '400px', verticalAlign: 'top'}} key={chartData}>
+                        <div className="title1" style={{marginBottom: '15px'}}>Stocks Weight</div>
+                        <Pie title={chartData.pie.title} data={chartData.pie.data[portTabValue-1]} style={{verticalAlign: 'top'}}/>
+                      </div>
+                    </div>
+                    <div className="backtest">
+                      <div className="chart" style={{width: '850px'}}>
+                        <div className="title1">Backtest</div>
+                        <span style={{width: '400px', verticalAlign: 'top'}}>
+                          <MultiLine props={chartData.line} num={portTabValue-1} period={totalPeriod} />
+                        </span>
+                      </div>
+                    </div>
+                    <div className="risk" style={{minWidth: '900px', verticalAlign: 'top'}} key={chartData}>
+                      <div className="title1">Risk</div>
+                      <span style={{display: 'flex', verticalAlign: 'top', gap: '20px'}}>
+                        <div>sharpe: {risk[portTabValue-1][0].toFixed(2)} </div>
+                        <div>trainer: {risk[portTabValue-1][1].toFixed(2)} </div>
+                        <div>zensen: {risk[portTabValue-1][2].toFixed(2)} </div> 
+                      </span>
+                      <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
+                        <MultiLine props={chartData.mdd} num={portTabValue-1} period={totalPeriod} />
+                      </span>
+                      <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
+                        <MultiLine props={chartData.var} num={portTabValue-1} period={totalPeriod} />
+                      </span>
+                    </div>
+                  </Box>
+                </TabPanel>
+              }              
+              {
+                //currentMarket === 
                 // [1,2,3,4].map((portIndex) => {
                 //   console.log(portIndex)
                 //   return( 
                   <>
-                    <TabPanel value={portTabValue} index={portTabValue} style={{...TabPanelStyle, gridRow: '1/3', gridCol: '2/3'}}>    
-                      <TabContext value={portTabDetail}>
-                        <Box sx={{borderBottom: 1, borderColor: 'divider', gridRow: '1/2', gridCol: '2/3'}}>
-                          <Tabs onChange={(e, value) => setPortDetail(value)}>
-                            <Tab label="Stocks Weight" value={portTabValue*10 + 5} style={{...tabStyle, minWidth: '25%'}} />
-                            <Tab label="Backtest" value={portTabValue*10 + 6} style={{...tabStyle, minWidth: '25%'}} />
-                            <Tab label="Risk(DD)" value={portTabValue*10 + 7} style={{...tabStyle, minWidth: '25%'}} />
-                            <Tab label="Risk(VaR)" value={portTabValue*10 + 8} style={{...tabStyle, minWidth: '25%'}} />
-                          </Tabs>
-                        </Box>
-                      
 
-                        <TabPanel value={portTabDetail} index={portTabValue*10 + 5} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>
-                          <div className="stock-risk" style={{display: 'flex'}}>
-                            <div style={{minWidth: '400px', verticalAlign: 'top'}} key={chartData}>
-                              <div className="title1" style={{marginBottom: '15px'}}>Stocks Weight</div>
-                              <Pie title={chartData.pie.title} data={chartData.pie.data[portTabValue]} style={{verticalAlign: 'top'}}/>
-                            </div>
-                          </div>
-                        </TabPanel>
-
-                        <TabPanel value={portTabDetail} index={portTabValue*10 + 6} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>    
-                          <div className="backtest">
-                            <div className="chart" style={{width: '850px'}}>
-                              <div className="title1">Backtest</div>
-                              <span style={{width: '400px', verticalAlign: 'top'}}>
-                                <MultiLine props={chartData.line} num={portTabValue} period={totalPeriod} />
-                              </span>
-                            </div>
-                          </div>
-                        </TabPanel>
-
-                        <TabPanel value={portTabDetail} index={portTabValue*10 + 7} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>    
-                          <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                            <MultiLine props={chartData.mdd} num={portTabValue} period={totalPeriod} />
-                          </span>
-                        </TabPanel>
-
-                        <TabPanel value={portTabDetail} index={portTabValue*10 + 8} style={{...TabPanelStyle, gridRow: '2/3', gridCol: '2/3'}}>    
-                          <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                            <MultiLine props={chartData.var} num={portTabValue} period={totalPeriod} />
-                          </span>
-                        </TabPanel>
-                      </TabContext>
-                    </TabPanel>
                   </>
                 //   )
                 // })
               }
             </TabContext>
-          </Box>
-        } */}
+          </Box>          
+        */}
         {
           isLoading && 
           <div style={{textAlign: "center", margin: "30px"}}>
