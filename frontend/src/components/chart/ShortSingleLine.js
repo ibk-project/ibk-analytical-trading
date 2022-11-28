@@ -10,7 +10,7 @@ function ShortSingleLine(props) {
   Accessibility(Highcharts);
   Exporting(Highcharts);
   const [adjustedCov, setAdjustedCov] = useState(0);
-  const [similarityDistance, setSimilarityDistance] = useState(0);
+  const [similarityDistance, setSimilarityDistance] = useState("calculating...");
   const [options, setOptions] = useState({
     rangeSelector: {
       selected: 1,
@@ -88,7 +88,7 @@ function ShortSingleLine(props) {
     ))
 
     // 과거시점과 현재시점의 유사도 계산, calculating the similarity of past date and now: Correlation-adjusted Distance 방법
-    if(props.currentData !== undefined) {
+    if(props.currentData !== undefined && props.getDistance == 1) {
       // let closeOnly_current = [];
       // for(let i = 0; i < props.currentData.length; i++) {
       //   closeOnly_current.push(props.data[i]['Close']);
@@ -102,6 +102,7 @@ function ShortSingleLine(props) {
       // }
       getSimilarityDistance(props.data, props.currentData);
       // setAdjustedCov(adjusted_cov);
+      props.setGetDistance(0);
     }
   }, [props.title, props.data])
 

@@ -42,6 +42,7 @@ function EdaInfo(props) {
     const [currentSelectedFeature, setCurrentSelectedFeature] = useState("KOSDAQ");
     const [similarSelectedFeature, setSimilarSelectedFeature] = useState("none");
     const [newsData, setNewsData] = useState();
+    const [getDistance, setGetDistance] = useState(0);
     // const [similarDateEDAReady, setSimilarDateEDAReady] = useState(false);
 
     const [marketData, setMarketData] = useState({
@@ -616,6 +617,7 @@ function EdaInfo(props) {
             temp_similarData.tobacco = res.data;
           }
           setSimilarDateData(temp_similarData);
+          setGetDistance(1);
         }
         
       });
@@ -665,16 +667,18 @@ function EdaInfo(props) {
         //   tempday = date;
         // }
         
-        while (newsLen<5){
+        while (newsLen<15){
           if(!res.data[tempday]){
             console.error("news date error", tempday, res.data[tempday]);
             break;
           }
-          let tempnews = res.data[tempday];
+          for(let i = 0; i<res.data[tempday].length; i++){
+            let tempnews = res.data[tempday];
             if(tempnews[0]!=="" && tempnews[1]!==""){
-            todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday]);
+            todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday, tempnews[2]]);
               newsLen += 1;
             }
+          }
           let split_dates = tempday.split("-"); // 기존 형식 yyyy-mm-dd
             let day_dates = parseInt(split_dates[2]);
             let month_dates = parseInt(split_dates[1]);
@@ -869,7 +873,7 @@ function EdaInfo(props) {
         else{
           console.log("current props.edaName is ", props.edaName);
           getSector(props.edaName, currentSimilarDate_start, currentSimilarDate_end, false);
-
+          
           // getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("은행", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("석유와가스", currentSimilarDate_start, currentSimilarDate_end, false);
@@ -1259,6 +1263,8 @@ function EdaInfo(props) {
                           (props.edaName==="무역회사와판매업체")?(similarDateData.trade):(similarDateData.tobacco) //담배
                           ))} 
                           place={"left"}
+                          getDistance={getDistance}
+                          setGetDistance={setGetDistance}
                           currentData={((props.edaType==="market")?(marketData.kospi):(
                             (props.edaName==="비철금속")?(marketData.bicheol):
                             (props.edaName==="은행")?(marketData.bank):
