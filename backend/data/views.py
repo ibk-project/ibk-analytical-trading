@@ -2743,7 +2743,7 @@ def get_sector_avg(request):
         if result == []:
             return JsonResponse({ "Result" : "None"})
         else:
-            return JsonResponse({ 'data' : t_tmp.to_dict('records')})
+            return JsonResponse({ "data" : t_tmp.to_dict('records')})
         
 @api_view(['GET','POST'])
 def get_stock(request):
@@ -3094,8 +3094,8 @@ def get_similarity_distance(request):
     if request.method == 'POST':
         period1 = request.data['period1']
         period2 = request.data['period2']
-        print("period1 is "+ str(period1))
-        print("period2 is "+ str(period2))
+        print("period1 is "+period1)
+        print("period2 is "+period2)
 
         adjustedCov = 0
         distance = 0
@@ -3154,11 +3154,10 @@ def get_similarity_distance(request):
 
             
         try:
-            # with open(adjustedCov, encoding='UTF-8-sig') as f:
-            #     json_data = json.load(f)
-            #     json_data = json.dumps(json_data, ensure_ascii = False)
-            # return HttpResponse(json_data)
-            return JsonResponse({"result" : adjustedCov})
+            #with open(adjustedCov, encoding='UTF-8-sig') as f:
+            #    json_data = json.load(f)
+            #    json_data = json.dumps(json_data, ensure_ascii = False)
+            return HttpResponse(json_data)
         except:
             return JsonResponse({"result" : "None"})
         
