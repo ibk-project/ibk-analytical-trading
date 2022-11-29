@@ -2112,20 +2112,35 @@ def calculate_sector_avg(start_date, end_date, sector_name):
 #Calculate Correlation-adjusted Distance
 @api_view(['GET'])
 def get_similarity_distance(request):
+    print("HI")
+    print("request is ", request.method)
     if request.method == 'GET':
-        
-        date1 = request.GET['period1']
-		date2 = request.GET['period2']
-		sector_name = request.GET['sectorName']
+        print("HELLO")
+        print("request.GET is ", request.GET)
+        print("request.GET date1 is ", request.GET['date1'])
+        print("request.GET date2 is ", request.GET['date2'])
+        print("request.GET name is ", request.GET['sectorName'])
+        date1 = request.GET['date1']
+        date2 = request.GET['date2']
+        sector_name = request.GET['sectorName']
+        print("bbb")
+        start_date1 = datetime.date.fromisoformat(date1)
+        end_date1 = start_date1 - timedelta(days=60)
+        #end_date1 = datetime.datetime.strptime(date1,'%Y-%m-%d')
+        print("aaa")
+        #start_date1 = str(date1 - datetime.timedelta(days=60))
+        print("dec")
 
-		end_date1 = datetime.datetime.strptime(date1,'%Y-%m-%d')
-		start_date1 = str(date1 - datetime.timedelta(days=60))
+        end_date2 = datetime.datetime.strptime(date2,'%Y-%m-%d')
+        start_date2 = str(date2 - datetime.timedelta(days=60))
         
-		end_date2 = datetime.datetime.strptime(date2,'%Y-%m-%d')
-		start_date2 = str(date2 - datetime.timedelta(days=60))
+        print("enddate1 is ", end_date1, "startdate2 is ", start_date2)
 
-		period1 = calculate_sector_avg(start_date1, end_date1, sector_name)
-		period2 = calculate_sector_avg(start_date2, end_date2, sector_name)
+        period1 = calculate_sector_avg(start_date1, end_date1, sector_name)
+        period2 = calculate_sector_avg(start_date2, end_date2, sector_name)
+        
+        print("period1 is ")
+        print(period1)
 
         # period1_date = datetime.datetime.strptime(period1,'%Y-%m-%d')
         # end_period1 = str(date - datetime.timedelta(days=60))
@@ -2133,8 +2148,8 @@ def get_similarity_distance(request):
         # end_period2 = str(date - datetime.timedelta(days=60))
         # df1 = fdr.DataReader(sectorCode,end_period1,period1_date)
         # df2 = fdr.DataReader(sectorCode,end_period2,period2_date)
-        
-		adjustedCov = 0
+
+        adjustedCov = 0
         distance = 0
         pastList = []
         currentList = []

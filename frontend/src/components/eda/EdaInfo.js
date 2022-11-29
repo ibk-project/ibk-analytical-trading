@@ -255,7 +255,8 @@ function EdaInfo(props) {
           else if(tempcode==="KS11"){
             temp_similarData.kospi = res.data.data;
             // kospi 마켓 distance 값 가져오기
-            getMarketDistance(endDate);
+            if(props.edaName === "전체 시장")
+              getMarketDistance(endDate);
           }
           else if(tempcode==="USD/KRW")
             temp_similarData.usdkrw = res.data.data;
@@ -641,13 +642,13 @@ function EdaInfo(props) {
     //   });
     // }
     const getSimilarityDistance = async(sectorName, start, end) => {
-      await axios.get('/api/data-management/model/distance', 
-      {
-        date1: start,
-        date2: end,
-        sectorName: sectorName
-      }
-      ).then(res => {
+      await axios.get('/api/data-management/model/distance', { 
+        params: {
+          "date1": start,
+          "date2": end,
+          "sectorName": sectorName
+        }
+      }).then(res => {
         console.log("distance result is ", res);
         setSimilarityDistance(res);
       });
@@ -1269,9 +1270,9 @@ function EdaInfo(props) {
                         </Grid>
                       </Box>
                       {props.edaName==="전체 시장"?
-                      <div>Similarity Distance score is {similarityDistance}</div>
-                      :
                       <div>Similarity Distance score is {marketDistance}</div>
+                      :
+                      <div>Similarity Distance score is {similarityDistance}</div>
                       }
                     </>
                     )}
