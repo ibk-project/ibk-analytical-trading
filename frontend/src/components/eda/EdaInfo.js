@@ -649,8 +649,9 @@ function EdaInfo(props) {
           "sectorName": sectorName
         }
       }).then(res => {
-        console.log("distance result is ", res);
-        setSimilarityDistance(res);
+        // console.log("distance result is ", res);
+        setSimilarityDistance(res.data.result);
+        //setSimilarityDistance(100);
       });
     }
 
