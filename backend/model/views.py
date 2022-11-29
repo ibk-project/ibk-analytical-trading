@@ -105,12 +105,12 @@ def market_model(request, point_num):
 
     feature = pd.read_csv(feature_path, index_col = 0)
     label = pd.read_csv(label_path, index_col = 0)
-    print(feature.index[-1])
+    print(fg.curr_feature_df.index[-1])
     spm = SimilarPointModel()
-    spm.train(feature[:-PREDICT_LENGTH_M], label[:-PREDICT_LENGTH_M])
-    encoded_data, decoded_data = spm.run(feature[:-PREDICT_LENGTH_M])
-    curr_vector, curr_predict = spm.run(feature.iloc[-1])
-    last_label = label[:-PREDICT_LENGTH_M]
+    spm.train(feature, label)
+    encoded_data, decoded_data = spm.run(feature)
+    curr_vector, curr_predict = spm.run(fg.curr_feature_df.iloc[-1])
+    last_label = label
 
     dist = lambda x, y: np.sqrt(np.sum(np.square(x-y)))
     dist_list = []
