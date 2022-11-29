@@ -907,7 +907,7 @@ function EdaInfo(props) {
       // 브랜트유 가져오기
       getCommodity("CL", startDate, endDate, true);
       // 구리 선물 가져오기
-      getCommodity("HG", startDate, endDate, true);
+      // getCommodity("HG", startDate, endDate, true);
       // 유사 시점 목록 가져오기
       
       
@@ -948,7 +948,7 @@ function EdaInfo(props) {
         // 브랜트유 가져오기
         getCommodity("CL", currentSimilarDate_start, currentSimilarDate_end, false);
         // 구리 선물 가져오기
-        getCommodity("HG", currentSimilarDate_start, currentSimilarDate_end, false);
+        // getCommodity("HG", currentSimilarDate_start, currentSimilarDate_end, false);
 
         getNews(currentSimilarDate_end, false);
         if(props.edaName==="전체 시장"){
@@ -1265,7 +1265,7 @@ function EdaInfo(props) {
                       </>
                     ):(
                       <>
-                      (similarPointButton==="button1"?
+                      {similarPointButton==="button1"?
                       <>
                         <Chip key={"1237"} label={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName)) + "  " + currentSimilarDateStart+"~"+currentSimilarDateEnd}  sx={{ fontSize: 20, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
                         <ShortSingleLine 
@@ -1463,7 +1463,7 @@ function EdaInfo(props) {
                           {/* {similarSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={similarDateData.copper} />} */}
                         </Box>
                       </>
-                      )
+                      }
                       <Box key={"6134444"}>
                         <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
                           <Grid item key={"grid000"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
