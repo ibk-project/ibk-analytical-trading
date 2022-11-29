@@ -15,10 +15,9 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
-import Tabs from '@mui/material/Tabs';
 import TabPanel from '@mui/lab/TabPanel';
 import Popover from '@mui/material/Popover';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 function Portfolio() {
   let initUserOption = {
@@ -31,7 +30,7 @@ function Portfolio() {
   // API 부르기
   const [pick, setPick] = useState(['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션'])
   const recommend = async () => {
-    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result.top); console.log(res.data.result.top)});
+    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result); console.log(res.data)});
   }
   const getSortedSector = async () => {
     await axios.get('/api/portfolio/sector_updown').then(res => {
@@ -60,8 +59,6 @@ function Portfolio() {
   })
   const [currentMarket, setMarket] = useState('KOSPI 200')
   const [tabValue, setTab] = useState('1')
-  const [portTabValue, setPortTab] = useState('1')
-  const [portTabDetail, setPortDetail] = useState('15')
   const [anchorEl, setAnchorEl] = useState(null)
   const expect = [0.1, 0.2, 0.3, 0.5, 1]
   const loss = [0.1, 0.2, 0.3, 0.5, 1]
@@ -109,9 +106,6 @@ function Portfolio() {
     'KOSPI 200': [...initBool],
     'KOSDAQ': [...initBool]
   }
-  const theme = createTheme({
-    shadows: ["none"]
-  });
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [sectorName, setSectorName] = useState([])
@@ -654,6 +648,7 @@ function Portfolio() {
   const isMounted = useRef(false);
 
   const getPortfolio = async() => {
+<<<<<<< HEAD
     setLoaded(false)
     setLoading(true)
     let m, ms = '', mar = ''
@@ -662,6 +657,18 @@ function Portfolio() {
     // } else {
     //   m = KOSDAQ
     // }
+=======
+    if(userClass === -1){ 
+      alert("투자 성향을 선택해주세요!")
+      return;
+    }
+    const isMarektSelected = Object.values(isSelected).some(i => i)
+    if(!isMarektSelected){
+      alert("마켓을 선택해주세요!")
+      return;
+    }
+    let m, ms = '', mar = ''
+>>>>>>> ba2bf87094a90e555223cab9b3e20f4b077f2bdd
     m = sectorName
     sectorClicked[currentMarket].forEach((s, index) => {
       if(s === true){
@@ -670,15 +677,15 @@ function Portfolio() {
       }
     })
     ms = ms.slice(1,ms.length)
+    if(ms.length === 0){
+      alert("섹터를 선택해주세요!");
+      return;
+    }
+    setLoaded(false)
+    setLoading(true)
     if(currentMarket === 'KOSPI 100') { mar = 'KOSPI100'}
     else if(currentMarket === 'KOSPI 200') { mar = 'KOSPI200'}
     else { mar = 'KOSDAQ'}
-    console.log({
-      "market": mar,
-      "sector": ms,
-      "s_ratio": stockBond/100,
-      "holding_date": totalPeriod
-    })
     await axios.get('/api/portfolio/result', {
       params: {
         "market": mar,
@@ -1043,7 +1050,7 @@ function Portfolio() {
                   }
                 </ButtonGroup> */}
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                  <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
+                  {/* <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                     {pick.slice(0,5).map((ss, value) =>
                       <Button 
                         key={value}   
@@ -1062,7 +1069,24 @@ function Portfolio() {
                         style={{backgroundColor: sectorClicked['KOSPI 200'][value] ? 'lightgray':null}}
                       >{ss}</Button>
                     )}
-                  </ButtonGroup>
+                  </ButtonGroup> */}
+                    {
+                    pick && 
+                    <Box style={{height: "200px", width: "350px", overflowY: "scroll", border: "1px solid lightgray"}}>
+                      {pick.map((s, value) => 
+                      <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
+                        <Checkbox
+                          defaultChecked={sectorClicked['KOSPI 200'][value]}
+                          key={value}
+                          value={value}
+                          onClick={selectSector} 
+                          style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px'}}
+                        />
+                        <div style={{width: '100px'}}>{s}</div>
+                      </div>
+                      )}
+                    </Box>
+                    }
                 </div>
               </Box>
             </div>}
