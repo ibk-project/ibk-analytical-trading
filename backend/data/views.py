@@ -21,7 +21,7 @@ import json
 import os
 
 from pymongo import MongoClient
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 client = MongoClient(
         host='43.201.96.58', # aws 재부팅 시마다 ip 주소 새로 변경
@@ -1641,9 +1641,10 @@ def get_sector_avg(request):
         date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
         df['Date'] = date_list
         df = df.set_index('Date')
-        for stock  in sector_data[sector_name]:
+        for stock in sector_data[sector_name]:
             print(stock)
             code = stock["code"]
+            print("original: code ", code, "startdate", start_date, "enddate", end_date)
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
             tmp = pd.DataFrame(list(id))
             tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
@@ -2082,32 +2083,30 @@ def get_date_similiary_distance(request, date):
 
 
 def calculate_sector_avg(start_date, end_date, sector_name):
-	db = client.newDB
-	stock_collection = db.data_stock
-	sector_collection = db.data_sector
-	
-	result = {}
-	
-	df = pd.DataFrame()
-	date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
-	df['Date'] = date_list
-	df = df.set_index('Date')
-	for stock  in sector_data[sector_name]:
-		print(stock)
-		code = stock["code"]
-		id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
-		tmp = pd.DataFrame(list(id))
-		tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
-		tmp = tmp.set_index('Date')
-		df = df.join(tmp)
-	df = df.dropna(how = 'all')
-	df['sum'] = df.sum(axis = 1)
-	df['sum'] = df['sum'] / len(sector_data[sector_name])
-	t_tmp = pd.DataFrame()
-	t_tmp["Date"] = df.index.values
-	t_tmp["Close"] = df['sum'].values.tolist()
-	
-	return t_tmp.to_dict('records')
+    db = client.newDB
+    stock_collection = db.data_stock
+    sector_collection = db.data_sector
+    result = {}
+
+    df = pd.DataFrame()
+    date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
+    df['Date'] = date_list
+    df = df.set_index('Date')
+    for stock  in sector_data[sector_name]:
+        code = stock["code"]
+        id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
+        tmp = pd.DataFrame(list(id))
+        tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
+        tmp = tmp.set_index('Date')
+        df = df.join(tmp)
+    df = df.dropna(how = 'all')
+    df['sum'] = df.sum(axis = 1)
+    df['sum'] = df['sum'] / len(sector_data[sector_name])
+    t_tmp = pd.DataFrame()
+    t_tmp["Date"] = df.index.values
+    t_tmp["Close"] = df['sum'].values.tolist()
+
+    return t_tmp.to_dict('records')
 
 #Calculate Correlation-adjusted Distance
 @api_view(['GET'])
@@ -2117,44 +2116,29 @@ def get_similarity_distance(request):
     if request.method == 'GET':
         print("HELLO")
         print("request.GET is ", request.GET)
-        print("request.GET date1 is ", request.GET['date1'])
-        print("request.GET date2 is ", request.GET['date2'])
-        print("request.GET name is ", request.GET['sectorName'])
         date1 = request.GET['date1']
         date2 = request.GET['date2']
         sector_name = request.GET['sectorName']
-        print("bbb")
-        start_date1 = datetime.date.fromisoformat(date1)
-        end_date1 = start_date1 - timedelta(days=60)
-        #end_date1 = datetime.datetime.strptime(date1,'%Y-%m-%d')
-        print("aaa")
-        #start_date1 = str(date1 - datetime.timedelta(days=60))
-        print("dec")
-
-        end_date2 = datetime.datetime.strptime(date2,'%Y-%m-%d')
-        start_date2 = str(date2 - datetime.timedelta(days=60))
         
-        print("enddate1 is ", end_date1, "startdate2 is ", start_date2)
+        end_date1 = datetime.strptime(date1,'%Y-%m-%d')
+        end_date2 = datetime.strptime(date2,'%Y-%m-%d')
 
-        period1 = calculate_sector_avg(start_date1, end_date1, sector_name)
-        period2 = calculate_sector_avg(start_date2, end_date2, sector_name)
+        start_date1 = (end_date1 - timedelta(days=60)).strftime('%Y-%m-%d')
+        start_date2 = (end_date2 - timedelta(days=60)).strftime('%Y-%m-%d')
+        
+        period1 = calculate_sector_avg(start_date1, date1, sector_name)
+        period2 = calculate_sector_avg(start_date2, date2, sector_name)
         
         print("period1 is ")
         print(period1)
-
-        # period1_date = datetime.datetime.strptime(period1,'%Y-%m-%d')
-        # end_period1 = str(date - datetime.timedelta(days=60))
-        # period2_date = datetime.datetime.strptime(period2,'%Y-%m-%d')
-        # end_period2 = str(date - datetime.timedelta(days=60))
-        # df1 = fdr.DataReader(sectorCode,end_period1,period1_date)
-        # df2 = fdr.DataReader(sectorCode,end_period2,period2_date)
 
         adjustedCov = 0
         distance = 0
         pastList = []
         currentList = []
 
-        if(len(period1)>60 and len(period2)>60):
+        if(len(period1)>=60 and len(period2)>=60):
+            print("UPPER")
             # 단순 Distance 산식
             for i in range(1, 60):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
@@ -2180,12 +2164,14 @@ def get_similarity_distance(request):
             adjustedCov = distance
 
         elif(len(period1)>5 and len(period2)>5): # data가 60개 이하일 때
+            print("len1 is ", len(period1), "len2 is", len(period2))
             num = len(period1)
             if(len(period1)>len(period2)): 
                 num = len(period2)
             
             for i in range(1,num):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
+                print("difference is ", difference)
                 difference = difference * difference / num
                 distance = distance + difference
                 pastList.append(period1[0-i]['Close'])
@@ -2195,8 +2181,12 @@ def get_similarity_distance(request):
             
             a = statistics.stdev(pastList)
             b = statistics.stdev(currentList)
+            print("a is ", a)
+            print("b is ", b)
             cov = np.cov([pastList, currentList])
+            print("cov is ", cov)
             corr = cov/(a*b)
+            print("corr is", corr)
 
             # adjustedCov = distance + 1 - corr
             adjustedCov = distance
@@ -2211,6 +2201,7 @@ def get_similarity_distance(request):
             #    json_data = json.load(f)
             #    json_data = json.dumps(json_data, ensure_ascii = False)
             # return HttpResponse(json_data)
+            print(adjustedCov)
             return adjustedCov
         except:
             return JsonResponse({"result" : "None"})

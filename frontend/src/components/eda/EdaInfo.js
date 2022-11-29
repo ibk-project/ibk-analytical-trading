@@ -657,7 +657,8 @@ function EdaInfo(props) {
     const getMarketDistance = async(period1) => {
       await axios.get(`/api/data-management/model/distance/${period1}`).then(res => {
         console.log("market distance on date ", period1, " is ", res);
-        setMarketDistance(res.data.Result);
+
+        setMarketDistance(res.data.Result.toFixed(3));
       });
     }
 
