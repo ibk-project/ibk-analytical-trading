@@ -101,7 +101,7 @@ function Portfolio() {
     '디스플레이장비및부품',
     '건강관리장비와용품',
     '건축자재']
-  const portName = ['최대분산P','샤프P','위험균형P', 'testP']
+  const portName = ['최대분산P','샤프P','위험균형P', 'User_P']
   const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
   let initBool = new Array(temp.length).fill(false)
   let initSectorClicked = {
@@ -692,7 +692,7 @@ function Portfolio() {
 
   const makeChartData = (r) => {
     setPNum(()=>r['샤프P'].p_num);
-    setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk, r['testP'].risk])
+    setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk, r['User_P'].risk])
     setPort({
       stocks: r.result.stocks,
       similarDate: r.result.similar_date,

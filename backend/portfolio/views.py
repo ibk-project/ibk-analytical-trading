@@ -2077,7 +2077,6 @@ for x , y in dd[['Code','Name']].values:
 def get_top_output(request):
     if request.method == 'GET':
         result = {}
-        
         s_result = pd.read_csv(k2_result, header=0, dtype=object)
         sector = s_result['Sector'].tolist()
         top_sector_stock = s_result['Code'].tolist()
@@ -2097,8 +2096,9 @@ def get_portfolio_output(request):
         market = request.GET['market']
         sector = request.GET['sector']
         ratio = request.GET['s_ratio']
-        sector = sector.replace('[','').replace(']','').split(',')
+        sector = sector.replace('[','').replace(']','').split('@')
         user_holding = request.GET['holding_date']
+        user_i = request.GET['user_i']
         user_holding = int(user_holding)
         
         s_result =''
@@ -2128,10 +2128,12 @@ def get_portfolio_output(request):
             s_date = s12_result.iloc[i,3]
             date = datetime.datetime.strptime(s_date,'%Y-%m-%d')
             e_date = str(date + datetime.timedelta(days=400))
-            stock = fdr.DataReader(code, s_date, e_date)['Close']
+            #stock = fdr.DataReader(code, s_date, e_date)['Close']
+            stock = client.newDB.data_stock.find({"Code" : code, "Date" : { '$gte' : s_date , '$lt': e_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 , 'Date' : 0})
             stock = pd.DataFrame(stock)
+            print(stock)
             s12_pct[s12_result['Code'].iloc[i]] = stock['Close'][:252].to_list()
-        
+                
         s12_port = Portfolio(s12_pct, "","")
 
         w1 = list(s12_port.MVP().x)
@@ -2140,38 +2142,39 @@ def get_portfolio_output(request):
            
         print(s12_pct)
  
-        expect = user_dict['expect'][0]
-        loss = user_dict['loss'][0]
+        expect = user_dict['expect'][user_i]
+        loss = user_dict['loss'][user_i]
         def obj_variance(weights, stock,covmat):
             vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
             ret = stock * weights
-            ret = ret.sum(axis=1)
+            ret = ret.sum(axis=1)/len(ret.columns)
             ret = ret.fillna(ret.mean())
             ret = ret.tolist()[-1] - 1
-            print(vol)
-            VaR_1 = 1 * vol**2 / 100 * (user_holding)**0.5 * 2.33
-            
+            print('ret : ', ret )
+            print('vol : ', vol)
+            VaR_1 = 1 * vol**2 / 100 * (user_holding)**0.5 * 1.63
+            print('VaR : ', VaR_1 )
             if ( ret - expect > 0 )& (VaR_1 < loss):
                 return 0
             elif( ret - expect > 0 ):
-                return (VaR_1 - loss)**2
+                return 0.01*(VaR_1 - loss)**2
             elif(VaR_1 < loss):
-                return (ret-expect)**2
-            return (ret-expect)**2 + (VaR_1 - loss) ** 2
+                return 5*(ret-expect)**2
+            return 5*(ret-expect)**2 + 0.01*(VaR_1 - loss) ** 2
         
         n_assets = len(s12_pct.columns)
         #print("n_assets : " + str(n_assets))
         weights = np.ones([n_assets]) / n_assets
         ret_daily = s12_pct.pct_change() + 1
         ret_daily = ret_daily.replace([np.inf,-np.inf], np.nan).cumprod()
-        
+        print(weights)
         bnds = tuple( (0., 1.) for i in range(n_assets))
         cons = ( {'type' : 'eq', 'fun': lambda w: np.sum(w)-1})
         cov_daily = ret_daily.cov()
         cov_annual = cov_daily * user_holding
-        res = minimize(obj_variance, weights,(ret_daily,cov_annual), method='SLSQP', bounds=bnds, constraints=cons, options = {'maxiter' : 100})
-        
-        
+        res = minimize(obj_variance, weights,(ret_daily,cov_daily), method='SLSQP', bounds=bnds, constraints=cons, options = {'maxiter' : 100})
+        print(weights)
+        print(list(res.x))
         weight_list = [w1, w2, w3, list(res.x)]
         
         pf_ = s12_pct.pct_change()
@@ -2201,7 +2204,7 @@ def get_portfolio_output(request):
         #model_w = [w1,w2] #[[0.3,0.5,0.2],[0.2,0.8],[0.4,0.6]]
         now = today[0]
         #result_data = pd.DataFrame()
-        name = ['최대분산P','샤프P', '위험균형P', 'User_option']
+        name = ['최대분산P','샤프P', '위험균형P', 'User_P']
         
         market_return[0] = 1.0
         for i in range(len(name)):
