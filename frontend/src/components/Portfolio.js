@@ -18,7 +18,7 @@ import TabList from '@mui/lab/TabList';
 import Tabs from '@mui/material/Tabs';
 import TabPanel from '@mui/lab/TabPanel';
 import Popover from '@mui/material/Popover';
-import { map } from 'highcharts';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function Portfolio() {
   let initUserOption = {
@@ -83,6 +83,7 @@ function Portfolio() {
   const loss = [0.1, 0.2, 0.3, 0.5, 1]
   const tabStyle = { 
     fontFamily: "KoreanTITGD3, Manrope-SemiBold",
+    width: "33.3%"
   }
   const TabPanelStyle = {
     height: "200px", 
@@ -116,24 +117,6 @@ function Portfolio() {
     '디스플레이장비및부품',
     '건강관리장비와용품',
     '건축자재']
-  // const scrollTheme = createTheme({
-  //   overrides: { // height: "400px", overflowY: "scroll"
-  //     MuiCssBaseline: {
-  //       "@global": {
-  //         "*::-webkit-scrollbar": {
-  //           width: "5px"
-  //         },
-  //         "*::-webkit-scrollbar-track": {
-  //           background: "#E4EFEF"
-  //         },
-  //         "*::-webkit-scrollbar-thumb": {
-  //           background: "#1D388F61",
-  //           borderRadius: "2px"
-  //         }
-  //       }
-  //     }
-  //   }
-  // });
   const portName = ['최대분산P','샤프P','위험균형P', 'testP']
   const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
   let initBool = new Array(temp.length).fill(false)
@@ -142,10 +125,14 @@ function Portfolio() {
     'KOSPI 200': [...initBool],
     'KOSDAQ': [...initBool]
   }
+  const theme = createTheme({
+    shadows: ["none"]
+  });
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
   const [isChecked, setCheck] = useState(false)
   const [sortPort, setSort] = useState([0,1,2])
+  const [pNum, setPNum] = useState(0)
   const [risk, setRisk] = useState([[0,0,0],[0,0,0],[0,0,0],[0,0,0]])
   const [userClass, setUserClass] = useState(-1)
   const userClassText = ['안정형', ' 안정추구형', '위험중립형', ' 적극투자형', '공격투자형']
@@ -719,6 +706,7 @@ function Portfolio() {
   }
 
   const makeChartData = (r) => {
+    setPNum(()=>r['샤프P'].p_num);
     setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk, r['testP'].risk])
     setPort({
       stocks: r.result.stocks,
@@ -757,7 +745,7 @@ function Portfolio() {
             console.log(p, r[p])
             return ({
               name: p,
-              data: r[p].data.map(d => parseFloat(d.price).toFixed(2))//.map(Number)
+              data: r[p].data.map(d => parseFloat(d.price).toFixed(2)).map(Number)
             })
           })
       },
@@ -957,7 +945,8 @@ function Portfolio() {
       <div>
         <div className="sector-market">
           <span style={{fontSize: 'large'}}>마켓/섹터 고르기</span>
-          <Checkbox size="small" color="default" value={isChecked} onClick={check} /><span style={{fontSize: 'small'}}>추천 종목</span>
+          <Checkbox size="small" color="default" value={isChecked} onClick={check} />
+          <span style={{fontSize: 'small'}}>추천 종목</span>
           {!isChecked && <div key={isChecked}>
             <div className="market">
               <div>Market</div>
@@ -976,7 +965,6 @@ function Portfolio() {
                       <Tab label="최근 수익률" value="1" style={tabStyle} />
                       <Tab label="상승" value="2" style={tabStyle} />
                       <Tab label="하락" value="3" style={tabStyle} />
-                      <Tab label="업종" value="4" style={tabStyle} />
                     </TabList>
                   </Box>
                   {
@@ -988,13 +976,14 @@ function Portfolio() {
                           selectedSector.recent[currentMarket].map((s, value) => 
                             <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
                               <Checkbox
+                                color="default"
                                 key={value}
                                 value={value}
                                 onClick={selectSector} 
-                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                                style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
                               />
                               <div style={{minWidth: '162px'}}>{s}</div>
-                              <div style={{width: '100px'}}>여기는 숫자</div>
+                              <div style={{width: '100px'}}>{(1 + value* 0.782).toFixed(2)}%</div>
                             </div>
                             )
                           }
@@ -1004,8 +993,8 @@ function Portfolio() {
                       <TabPanel value="2" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                            selectedSector.recent[currentMarket].map((s, value) => 
-                            <div style={{height: '2rem', display: 'flex'}}>
+                          selectedSector.up[currentMarket].map((s, value) => 
+                            <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
                               <Checkbox 
                                 key={value}
                                 value={value}
@@ -1023,28 +1012,9 @@ function Portfolio() {
                       <TabPanel value="3" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                            selectedSector.recent[currentMarket].map((s, value) => 
-                            <div style={{height: '2rem', display: 'flex'}}>
-                              <Checkbox 
-                                key={value}
-                                value={value}
-                                onClick={selectSector} 
-                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
-                              />
-                              <div style={{minWidth: '162px'}}>{s}</div>
-                              <div style={{width: '100px'}}>여기는 숫자</div>
-                            </div>
-                            )
-                          }
-                        </Box>
-                      </TabPanel> 
-                      
-                      <TabPanel value="4" style={TabPanelStyle}>
-                        <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
-                          {
-                            selectedSector.recent[currentMarket].map((s, value) => 
-                            <div style={{height: '2rem', display: 'flex'}}>
-                              <Checkbox 
+                          selectedSector.down[currentMarket].map((s, value) => 
+                            <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
+                              <Checkbox
                                 key={value}
                                 value={value}
                                 onClick={selectSector} 
@@ -1106,18 +1076,18 @@ function Portfolio() {
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
         {/* loaded ? */}
-        <li key="1">종목:  { portfolio.stocks.map(i => i + ' ') }</li>
-        <li key="2">유사 시점:  { portfolio.similarDate.map(i => i + ' ') }</li>
+        <li key="1">종목:  { loaded ? portfolio.stocks.map(i => i + ' ') : '' }</li>
+        <li key="2">유사 시점:  { loaded ? portfolio.similarDate.map(i => i + ' ') : '' }</li>
 
         {
           //loaded 
-          isMounted && sortPort.map((n, index) => {
+          loaded && sortPort.map((n, index) => {
             return(
             <Accordion style={{marginTop:'15px', width: "900px"}} key={n}>
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
                 {/* <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span> */}
-                <span style={{marginLeft: '20px'}}>{loaded ? '예상 수익:' : '' }{loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}{loaded ? '%' : ''}</span>
+                <span style={{marginLeft: '20px'}}>{loaded ? '예상 수익: ' : '' }{loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}{loaded ? '%' : ''}</span>
               </AccordionSummary>
               <AccordionDetails key={chartData.line.data}>
                 <div className="stock-risk" style={{display: 'flex'}}>
@@ -1131,7 +1101,7 @@ function Portfolio() {
                   <div className="chart" style={{width: '850px'}}>
                     <div className="title1">Backtest</div>
                     <span style={{width: '400px', verticalAlign: 'top'}}>
-                      <MultiLine props={chartData.line} num={n} period={totalPeriod} />
+                      <MultiLine props={chartData.line} num={n} period={pNum} />
                     </span>
                   </div>
                 </div>
@@ -1144,10 +1114,10 @@ function Portfolio() {
                     <div>zensen: {risk[n][2].toFixed(2)} </div> 
                   </span>
                   <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                    <MultiLine props={chartData.mdd} num={n} period={totalPeriod} />
+                    <MultiLine props={chartData.mdd} num={n} period={pNum} />
                   </span>
                   <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                    <MultiLine props={chartData.var} num={n} period={totalPeriod} />
+                    <MultiLine props={chartData.var} num={n} period={pNum} />
                   </span>
                 </div>
               </AccordionDetails>
@@ -1179,7 +1149,7 @@ function Portfolio() {
                       <div className="chart" style={{width: '850px'}}>
                         <div className="title1">Backtest</div>
                         <span style={{width: '400px', verticalAlign: 'top'}}>
-                          <MultiLine props={chartData.line} num={portTabValue-1} period={totalPeriod} />
+                          <MultiLine props={chartData.line} num={portTabValue-1} period={pNum} />
                         </span>
                       </div>
                     </div>
@@ -1191,10 +1161,10 @@ function Portfolio() {
                         <div>zensen: {risk[portTabValue-1][2].toFixed(2)} </div> 
                       </span>
                       <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                        <MultiLine props={chartData.mdd} num={portTabValue-1} period={totalPeriod} />
+                        <MultiLine props={chartData.mdd} num={portTabValue-1} period={pNum} />
                       </span>
                       <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                        <MultiLine props={chartData.var} num={portTabValue-1} period={totalPeriod} />
+                        <MultiLine props={chartData.var} num={portTabValue-1} period={pNum} />
                       </span>
                     </div>
                   </Box>

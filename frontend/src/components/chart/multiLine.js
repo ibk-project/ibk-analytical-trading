@@ -5,7 +5,7 @@ import Accessibility from "highcharts/modules/accessibility";
 
 function MultiLine(props) {
   Accessibility(Highcharts)
-  //console.log(props)
+  console.log(props)
   const n = props.num
   const prop = props.props
   const initialOptions = {

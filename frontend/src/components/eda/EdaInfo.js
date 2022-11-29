@@ -673,29 +673,29 @@ function EdaInfo(props) {
             break;
           }
           for(let i = 0; i<res.data[tempday].length; i++){
-            let tempnews = res.data[tempday];
+            let tempnews = res.data[tempday][i];
             if(tempnews[0]!=="" && tempnews[1]!==""){
             todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday, tempnews[2]]);
               newsLen += 1;
             }
           }
           let split_dates = tempday.split("-"); // 기존 형식 yyyy-mm-dd
-            let day_dates = parseInt(split_dates[2]);
-            let month_dates = parseInt(split_dates[1]);
-            if(day_dates === 1){
-              split_dates[2] = "28";
-              if(month_dates === 1){
-                split_dates[1] = "12";
-                split_dates[0] -= 1;
-              } else{
-                split_dates[1] -= 1;
-              }
-            } else {
-              split_dates[2] -= 1;
+          let day_dates = parseInt(split_dates[2]);
+          let month_dates = parseInt(split_dates[1]);
+          if(day_dates === 1){
+            split_dates[2] = "28";
+            if(month_dates === 1){
+              split_dates[1] = "12";
+              split_dates[0] -= 1;
+            } else{
+              split_dates[1] -= 1;
             }
-            split_dates[1] = ('0'+split_dates[1]).slice(-2);
-            split_dates[2] = ('0'+split_dates[2]).slice(-2);
-            tempday = split_dates.join('-');
+          } else {
+            split_dates[2] -= 1;
+          }
+          split_dates[1] = ('0'+split_dates[1]).slice(-2);
+          split_dates[2] = ('0'+split_dates[2]).slice(-2);
+          tempday = split_dates.join('-');
         }
         if(isToday === true){
           let temp_marketData = marketData;
