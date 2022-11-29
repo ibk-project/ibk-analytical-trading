@@ -30,7 +30,7 @@ function Portfolio() {
   // API 부르기
   const [pick, setPick] = useState(['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션'])
   const recommend = async () => {
-    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result.top); console.log(res.data.result)});
+    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result); console.log(res.data)});
   }
   const getSortedSector = async () => {
     await axios.get('/api/portfolio/sector_updown').then(res => {
@@ -1039,7 +1039,7 @@ function Portfolio() {
                   }
                 </ButtonGroup> */}
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                  <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
+                  {/* <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
                     {pick.slice(0,5).map((ss, value) =>
                       <Button 
                         key={value}   
@@ -1058,7 +1058,24 @@ function Portfolio() {
                         style={{backgroundColor: sectorClicked['KOSPI 200'][value] ? 'lightgray':null}}
                       >{ss}</Button>
                     )}
-                  </ButtonGroup>
+                  </ButtonGroup> */}
+                    {
+                    pick && 
+                    <Box style={{height: "200px", width: "350px", overflowY: "scroll", border: "1px solid lightgray"}}>
+                      {pick.map((s, value) => 
+                      <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
+                        <Checkbox
+                          defaultChecked={sectorClicked['KOSPI 200'][value]}
+                          key={value}
+                          value={value}
+                          onClick={selectSector} 
+                          style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px'}}
+                        />
+                        <div style={{width: '100px'}}>{s}</div>
+                      </div>
+                      )}
+                    </Box>
+                    }
                 </div>
               </Box>
             </div>}
