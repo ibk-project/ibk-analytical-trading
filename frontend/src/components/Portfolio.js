@@ -684,7 +684,8 @@ function Portfolio() {
         "market": mar,
         "sector": ms,
         "s_ratio": stockBond/100,
-        "holding_date": totalPeriod
+        "holding_date": totalPeriod,
+        "user_i": userClass
       }
     }).then(res => {console.log(res.data.result); makeChartData(res.data.result);});
   }
