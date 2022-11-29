@@ -37,6 +37,7 @@ function EdaInfo(props) {
 
     const [similarPointButton, setSimilarPointButton] = useState("button1"); // "button1", "button2" 유사시점에서 KOSPI/섹터 그래프를 보여줄지, 주요지수 그래프를 보여줄지 고르는 버튼
     const [similarityDistance, setSimilarityDistance] = useState("loading..."); // distance 값
+    const [marketDistance, setMarketDistance] = useState("loading..."); // distance 값
 
     const [currentSimilarDateEnd, setCurrentSimilarDateEnd] = useState("none");
     const [currentSimilarDateStart, setCurrentSimlilarDateStart] = useState("none");
@@ -250,8 +251,11 @@ function EdaInfo(props) {
           let temp_similarData = similarDateData;
           if(tempcode==="KQ11")
             temp_similarData.kosdaq = res.data.data;
-          else if(tempcode==="KS11")
+          else if(tempcode==="KS11"){
             temp_similarData.kospi = res.data.data;
+            // kospi 마켓 distance 값 가져오기
+            getMarketDistance(endDate);
+          }
           else if(tempcode==="USD/KRW")
             temp_similarData.usdkrw = res.data.data;
           setSimilarDateData(temp_similarData);
@@ -713,6 +717,13 @@ function EdaInfo(props) {
       });
     }
 
+    const getMarketDistance = async(period1) => {
+      await axios.get(`/api/data-management/model/distance/${period1}`).then(res => {
+        console.log("market distance on date ", period1, " is ", res);
+        setMarketDistance(res);
+      });
+    }
+
     const getSimilarDates = async() => {
       console.log("new similar dates for ", props.edaName);
       // 현재 시점으로 가정하고 유사 시점 가져옴
@@ -819,85 +830,6 @@ function EdaInfo(props) {
       let startDate = marketData.currentDate.split("~")[0];
       let endDate = marketData.currentDate.split("~")[1];
 
-      // getSector("비철금속", startDate, endDate, true);
-      // getSector("은행", startDate, endDate, true);
-      // getSector("석유와가스", startDate, endDate, true);
-      // getSector("화장품", startDate, endDate, true);
-      // getSector("부동산", startDate, endDate, true);
-      // getSector("우주항공과국방", startDate, endDate, true);
-      // getSector("양방향미디어와서비스", startDate, endDate, true);
-      // getSector("게임엔터테인먼트", startDate, endDate, true);
-      // getSector("IT서비스", startDate, endDate, true);
-      // getSector("디스플레이패널", startDate, endDate, true);
-      // getSector("항공사", startDate, endDate, true);
-      // getSector("전자장비와기기", startDate, endDate, true);
-      // getSector("에너지장비및서비스", startDate, endDate, true);
-      // getSector("조선", startDate, endDate, true);
-      // getSector("건강관리업체및서비스", startDate, endDate, true);
-      // getSector("출판", startDate, endDate, true);
-      // getSector("반도체와반도체장비", startDate, endDate, true);
-      // getSector("방송과엔터테인먼트", startDate, endDate, true);
-      // getSector("전기유틸리티", startDate, endDate, true);
-      // getSector("문구류", startDate, endDate, true);
-      // getSector("통신장비", startDate, endDate, true);
-      // getSector("도로와철도운송", startDate, endDate, true);
-      // getSector("생물공학", startDate, endDate, true);
-      // getSector("해운사", startDate, endDate, true);
-      // getSector("소프트웨어", startDate, endDate, true);
-      // getSector("건설", startDate, endDate, true);
-      // getSector("복합유틸리티", startDate, endDate, true);
-      // getSector("디스플레이장비및부품", startDate, endDate, true);
-      // getSector("전자제품", startDate, endDate, true);
-      // getSector("전문소매", startDate, endDate, true);
-      // getSector("화학", startDate, endDate, true);
-      // getSector("창업투자", startDate, endDate, true);
-      // getSector("가구", startDate, endDate, true);
-      // getSector("가정용기기와용품", startDate, endDate, true);
-      // getSector("증권", startDate, endDate, true);
-      // getSector("운송인프라", startDate, endDate, true);
-      // getSector("건강관리기술", startDate, endDate, true);
-      // getSector("호텔,레스토랑,레저", startDate, endDate, true);
-      // getSector("다각화된소비자서비스", startDate, endDate, true);
-      // getSector("섬유,의류,신발,호화품", startDate, endDate, true);
-      // getSector("전기제품", startDate, endDate, true);
-      // getSector("인터넷과카탈로그소매", startDate, endDate, true);
-      // getSector("핸드셋", startDate, endDate, true);
-      // getSector("포장재", startDate, endDate, true);
-      // getSector("건강관리장비와용품", startDate, endDate, true);
-      // getSector("기계", startDate, endDate, true);
-      // getSector("종이와목재", startDate, endDate, true);
-      // getSector("자동차", startDate, endDate, true);
-      // getSector("광고", startDate, endDate, true);
-      // getSector("생명과학도구및서비스", startDate, endDate, true);
-      // getSector("제약", startDate, endDate, true);
-      // getSector("복합기업", startDate, endDate, true);
-      // getSector("음료", startDate, endDate, true);
-      // getSector("카드", startDate, endDate, true);
-      // getSector("건축자재", startDate, endDate, true);
-      // getSector("컴퓨터와주변기기", startDate, endDate, true);
-      // getSector("레저용장비와제품", startDate, endDate, true);
-      // getSector("자동차부품", startDate, endDate, true);
-      // getSector("전기장비", startDate, endDate, true);
-      // getSector("철강", startDate, endDate, true);
-      // getSector("판매업체", startDate, endDate, true);
-      // getSector("건축제품", startDate, endDate, true);
-      // getSector("사무용전자제품", startDate, endDate, true);
-      // getSector("백화점과일반상점", startDate, endDate, true);
-      // getSector("가정용품", startDate, endDate, true);
-      // getSector("상업서비스와공급품", startDate, endDate, true);
-      // getSector("교육서비스", startDate, endDate, true);
-      // getSector("항공화물운송과물류", startDate, endDate, true);
-      // getSector("무선통신서비스", startDate, endDate, true);
-      // getSector("손해보험", startDate, endDate, true);
-      // getSector("식품과기본식료품소매", startDate, endDate, true);
-      // getSector("가스유틸리티", startDate, endDate, true);
-      // getSector("생명보험", startDate, endDate, true);
-      // getSector("다각화된통신서비스", startDate, endDate, true);
-      // getSector("기타금융", startDate, endDate, true);
-      // getSector("식품", startDate, endDate, true);
-      // getSector("무역회사와판매업체", startDate, endDate, true);
-      // getSector("담배", startDate, endDate, true);
-
       // kospi 가져오기
       getIndex("KS11", startDate, endDate, true);
       // kosdaq 가져오기
@@ -959,84 +891,6 @@ function EdaInfo(props) {
           setGetDistance("loading...");
           getSector(props.edaName, currentSimilarDate_start, currentSimilarDate_end, false);
           
-          // getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("은행", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("석유와가스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("화장품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("부동산", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("우주항공과국방", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("양방향미디어와서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("게임엔터테인먼트", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("IT서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("디스플레이패널", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("항공사", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("전자장비와기기", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("에너지장비및서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("조선", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("건강관리업체및서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("출판", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("반도체와반도체장비", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("방송과엔터테인먼트", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("전기유틸리티", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("문구류", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("통신장비", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("도로와철도운송", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("생물공학", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("해운사", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("소프트웨어", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("건설", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("복합유틸리티", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("디스플레이장비및부품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("전자제품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("전문소매", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("화학", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("창업투자", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("가구", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("가정용기기와용품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("증권", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("운송인프라", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("건강관리기술", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("호텔,레스토랑,레저", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("다각화된소비자서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("섬유,의류,신발,호화품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("전기제품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("인터넷과카탈로그소매", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("핸드셋", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("포장재", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("건강관리장비와용품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("기계", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("종이와목재", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("자동차", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("광고", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("생명과학도구및서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("제약", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("복합기업", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("음료", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("카드", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("건축자재", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("컴퓨터와주변기기", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("레저용장비와제품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("자동차부품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("전기장비", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("철강", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("판매업체", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("건축제품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("사무용전자제품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("백화점과일반상점", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("가정용품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("상업서비스와공급품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("교육서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("항공화물운송과물류", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("무선통신서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("손해보험", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("식품과기본식료품소매", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("가스유틸리티", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("생명보험", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("다각화된통신서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("기타금융", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("식품", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("무역회사와판매업체", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("담배", currentSimilarDate_start, currentSimilarDate_end, false);
         }
 
         if(similarSelectedFeature === 'none')
@@ -1478,7 +1332,11 @@ function EdaInfo(props) {
                           ))}
                         </Grid>
                       </Box>
-                      <div>Distance score is {similarityDistance}</div>
+                      {props.edaName==="전체 시장"?
+                      <div>Similarity Distance score is {similarityDistance}</div>
+                      :
+                      <div>Similarity Distance score is {marketDistance}</div>
+                      }
                     </>
                     )}
                     </Grid>

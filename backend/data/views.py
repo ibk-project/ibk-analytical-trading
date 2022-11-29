@@ -2150,7 +2150,8 @@ def get_similarity_distance(request):
             #with open(adjustedCov, encoding='UTF-8-sig') as f:
             #    json_data = json.load(f)
             #    json_data = json.dumps(json_data, ensure_ascii = False)
-            return HttpResponse(json_data)
+            # return HttpResponse(json_data)
+            return adjustedCov
         except:
             return JsonResponse({"result" : "None"})
         
