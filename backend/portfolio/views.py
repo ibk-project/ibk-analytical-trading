@@ -2201,7 +2201,7 @@ def get_portfolio_output(request):
         #model_w = [w1,w2] #[[0.3,0.5,0.2],[0.2,0.8],[0.4,0.6]]
         now = today[0]
         #result_data = pd.DataFrame()
-        name = ['최대분산P','샤프P', '위험균형P', 'testP']
+        name = ['최대분산P','샤프P', '위험균형P', 'User_option']
         
         market_return[0] = 1.0
         for i in range(len(name)):
