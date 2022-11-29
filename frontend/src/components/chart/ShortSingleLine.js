@@ -88,7 +88,7 @@ function ShortSingleLine(props) {
     ))
 
     // 과거시점과 현재시점의 유사도 계산, calculating the similarity of past date and now: Correlation-adjusted Distance 방법
-    if(props.currentData !== undefined && props.data !== undefined && props.getDistance == 1) {
+    if(props.currentData !== undefined && props.data !== undefined && props.getDistance === 1) {
       // let closeOnly_current = [];
       // for(let i = 0; i < props.currentData.length; i++) {
       //   closeOnly_current.push(props.data[i]['Close']);
@@ -111,11 +111,11 @@ function ShortSingleLine(props) {
     <Fragment>
       <HighchartsReact highcharts={Highcharts} constructorType={"stockChart"} options={options} />
       {/* <div>Adjusted Covariance is {adjustedCov}, Distance score is {similarityDistance}</div> */}
-      {(props.currentData?(
+      {/* {(props.currentData?(
         <div>Distance score is {similarityDistance}</div>
       ):(
         <></>
-      ))}
+      ))} */}
     </Fragment>
   );
 }
