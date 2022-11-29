@@ -1698,7 +1698,7 @@ def make_sector_avg(request):
                 tmp.rename(columns = {'Close' : stock_name}, inplace=True)
                 tmp = tmp.set_index('Date')
                 df = df.join(tmp)
-            if k == 0 :
+            if df.empty:
                 continue
             df = df.fillna(method='bfill')
             df = df.pct_change(fill_method='bfill')
