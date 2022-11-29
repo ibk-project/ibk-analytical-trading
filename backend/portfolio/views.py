@@ -2401,7 +2401,9 @@ def get_sector_updown(request):
             else:
                 up.append(sector_avg)
 
-        recent.append([recent_k1,recent_k2,recent_kq])
+        recent.append(recent_k1)
+        recent.append(recent_k2)
+        recent.append(recent_kq)
         print(recent)
         all_result['recent'] = recent
         all_result['up'] = [up, up, []]
