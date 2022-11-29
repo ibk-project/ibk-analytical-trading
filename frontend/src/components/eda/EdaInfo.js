@@ -36,6 +36,7 @@ function EdaInfo(props) {
     const [edaFlag, setEdaFlag] = useState(false);
 
     const [similarPointButton, setSimilarPointButton] = useState("button1"); // "button1", "button2" 유사시점에서 KOSPI/섹터 그래프를 보여줄지, 주요지수 그래프를 보여줄지 고르는 버튼
+    const [similarityDistance, setSimilarityDistance] = useState("loading..."); // distance 값
 
     const [currentSimilarDateEnd, setCurrentSimilarDateEnd] = useState("none");
     const [currentSimilarDateStart, setCurrentSimlilarDateStart] = useState("none");
@@ -273,15 +274,15 @@ function EdaInfo(props) {
           let temp_marketData = marketData;
           if(tempcode==="CL")
             temp_marketData.brent = res.data.data;
-          else if(tempcode==="HG")
-            temp_marketData.copper = res.data.data; 
+          // else if(tempcode==="HG")
+          //   temp_marketData.copper = res.data.data; 
           setMarketData(temp_marketData);
         } else {
           let temp_similarData = similarDateData;
           if(tempcode==="CL")
             temp_similarData.brent = res.data.data;
-          else if(tempcode==="HG")
-            temp_similarData.copper = res.data.data; 
+          // else if(tempcode==="HG")
+          //   temp_similarData.copper = res.data.data; 
           setSimilarDateData(temp_similarData);
         }
       });
@@ -373,11 +374,11 @@ function EdaInfo(props) {
             temp_marketData.transportation = res.data;
           } else if (sectorName === "건강관리기술") {
             temp_marketData.healthtechnology = res.data;
-          } else if (sectorName === "호텔") {
+          } else if (sectorName === "호텔,레스토랑,레저") {
             temp_marketData.hotel = res.data;
           } else if (sectorName === "다각화된소비자서비스") {
             temp_marketData.consumerservice = res.data;
-          } else if (sectorName === "섬유") {
+          } else if (sectorName === "섬유,의류,신발,호화품") {
             temp_marketData.fiber = res.data;
           } else if (sectorName === "전기제품") {
             temp_marketData.elctricproduct = res.data;
@@ -461,165 +462,254 @@ function EdaInfo(props) {
           let temp_similarData = similarDateData;
           if(sectorName === "비철금속") {
             temp_similarData.bicheol = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if(sectorName === "은행") {
             temp_similarData.bank = res.data;
+            getSimilarityDistance(temp_similarData.bank, temp_marketData.bank);
           } else if(sectorName === "석유와가스") {
             temp_similarData.oil = res.data;
+            getSimilarityDistance(temp_similarData.oil, temp_marketData.oil);
           } else if(sectorName === "화장품") {
             temp_similarData.cosmetics = res.data;
+            getSimilarityDistance(temp_similarData.cosmetics, temp_marketData.cosmetics);
           } else if(sectorName === "부동산") {
             temp_similarData.realestate = res.data;
+            getSimilarityDistance(temp_similarData.realestate, temp_marketData.realestate);
           } else if(sectorName === "우주항공과국방") {
             temp_similarData.space = res.data;
+            getSimilarityDistance(temp_similarData.space, temp_marketData.space);
           } else if(sectorName === "양방향미디어와서비스") {
             temp_similarData.interactivemedia = res.data;
+            getSimilarityDistance(temp_similarData.interactivemedia, temp_marketData.interactivemedia);
           } else if(sectorName === "게임엔터테인먼트") {
             temp_similarData.game = res.data;
+            getSimilarityDistance(temp_similarData.game, temp_marketData.game);
           } else if(sectorName === "IT서비스") {
             temp_similarData.itservice = res.data;
+            getSimilarityDistance(temp_similarData.itservice, temp_marketData.itservice);
           } else if(sectorName === "디스플레이패널") {
             temp_similarData.displaypanel = res.data;
+            getSimilarityDistance(temp_similarData.displaypanel, temp_marketData.displaypanel);
           } else if(sectorName === "항공사") {
             temp_similarData.airplane = res.data;
+            getSimilarityDistance(temp_similarData.airplane, temp_marketData.airplane);
           } else if(sectorName === "전자장비와기기") {
             temp_similarData.electricdevice = res.data;
+            getSimilarityDistance(temp_similarData.electricdevice, temp_marketData.electricdevice);
           } else if(sectorName === "에너지장비및서비스") {
             temp_similarData.energydevice = res.data;
+            getSimilarityDistance(temp_similarData.energydevice, temp_marketData.energydevice);
           } else if(sectorName === "조선") {
             temp_similarData.shipbuilding = res.data;
+            getSimilarityDistance(temp_similarData.shipbuilding, temp_marketData.shipbuilding);
           } else if(sectorName === "건강관리업체및서비스") {
             temp_similarData.healthcare = res.data;
+            getSimilarityDistance(temp_similarData.healthcare, temp_marketData.healthcare);
           } else if(sectorName === "출판") {
             temp_similarData.publish = res.data;
+            getSimilarityDistance(temp_similarData.publish, temp_marketData.publish);
           } else if(sectorName === "반도체와반도체장비") {
             temp_similarData.semiconductor = res.data;
+            getSimilarityDistance(temp_similarData.semiconductor, temp_marketData.semiconductor);
           } else if(sectorName === "방송과엔터테인먼트") {
             temp_similarData.entertainment = res.data;
+            getSimilarityDistance(temp_similarData.entertainment, temp_marketData.entertainment);
           } else if(sectorName === "전기유틸리티") {
             temp_similarData.electricutility = res.data;
+            getSimilarityDistance(temp_similarData.electricutility, temp_marketData.electricutility);
           } else if(sectorName === "문구류") {
             temp_similarData.pencil = res.data;
+            getSimilarityDistance(temp_similarData.pencil, temp_marketData.pencil);
           } else if(sectorName === "통신장비") {
             temp_similarData.communication = res.data;
+            getSimilarityDistance(temp_similarData.communication, temp_marketData.communication);
           } else if(sectorName === "도로와철도운송") {
             temp_similarData.road = res.data;
+            getSimilarityDistance(temp_similarData.road, temp_marketData.road);
           } else if(sectorName === "생물공학") {
             temp_similarData.biology = res.data;
+            getSimilarityDistance(temp_similarData.biology, temp_marketData.biology);
           } else if(sectorName === "해운사") {
             temp_similarData.shipping = res.data;
+            getSimilarityDistance(temp_similarData.shipping, temp_marketData.shipping);
           } else if(sectorName === "소프트웨어") {
             temp_similarData.software = res.data;
+            getSimilarityDistance(temp_similarData.software, temp_marketData.software);
           } else if(sectorName === "건설") {
             temp_similarData.construction = res.data;
+            getSimilarityDistance(temp_similarData.construction, temp_marketData.construction);
           } else if(sectorName === "복합유틸리티") {
             temp_similarData.complexutility = res.data;
+            getSimilarityDistance(temp_similarData.complexutility, temp_marketData.complexutility);
           } else if(sectorName === "디스플레이장비및부품") {
             temp_similarData.displaydevice = res.data;
+            getSimilarityDistance(temp_similarData.displaydevice, temp_marketData.displaydevice);
           } else if(sectorName === "전자제품") {
             temp_similarData.electronics = res.data;
+            getSimilarityDistance(temp_similarData.electronics, temp_marketData.electronics);
           } else if(sectorName === "전문소매") {
             temp_similarData.retail = res.data;
+            getSimilarityDistance(temp_similarData.retail, temp_marketData.retail);
           } else if(sectorName === "화학") {
             temp_similarData.chemistry = res.data;
+            getSimilarityDistance(temp_similarData.chemistry, temp_marketData.chemistry);
           } else if (sectorName === "창업투자") {
             temp_similarData.vc = res.data;
+            getSimilarityDistance(temp_similarData.vc, temp_marketData.vc);
           } else if (sectorName === "가구") {
             temp_similarData.furniture = res.data;
+            getSimilarityDistance(temp_similarData.furniture, temp_marketData.furniture);
           } else if (sectorName === "가정용기기와용품") {
             temp_similarData.homeutility = res.data;
+            getSimilarityDistance(temp_similarData.homeutility, temp_marketData.homeutility);
           } else if (sectorName === "증권") {
             temp_similarData.stock = res.data;
+            getSimilarityDistance(temp_similarData.stock, temp_marketData.stock);
           } else if (sectorName === "운송인프라") {
             temp_similarData.transportation = res.data;
+            getSimilarityDistance(temp_similarData.transportation, temp_marketData.transportation);
           } else if (sectorName === "건강관리기술") {
             temp_similarData.healthtechnology = res.data;
-          } else if (sectorName === "호텔") {
+            getSimilarityDistance(temp_similarData.healthtechnology, temp_marketData.healthtechnology);
+          } else if (sectorName === "호텔,레스토랑,레저") {
             temp_similarData.hotel = res.data;
+            getSimilarityDistance(temp_similarData.hotel, temp_marketData.hotel);
           } else if (sectorName === "다각화된소비자서비스") {
             temp_similarData.consumerservice = res.data;
-          } else if (sectorName === "섬유") {
+            getSimilarityDistance(temp_similarData.consumerservice, temp_marketData.consumerservice);
+          } else if (sectorName === "섬유,의류,신발,호화품") {
             temp_similarData.fiber = res.data;
+            getSimilarityDistance(temp_similarData.fiber, temp_marketData.fiber);
           } else if (sectorName === "전기제품") {
             temp_similarData.elctricproduct = res.data;
+            getSimilarityDistance(temp_similarData.elctricproduct, temp_marketData.elctricproduct);
           } else if (sectorName === "인터넷과카탈로그소매") {
             temp_similarData.internetretail = res.data;
+            getSimilarityDistance(temp_similarData.internetretail, temp_marketData.internetretail);
           } else if (sectorName === "핸드셋") {
             temp_similarData.handset = res.data;
+            getSimilarityDistance(temp_similarData.handset, temp_marketData.handset);
           } else if (sectorName === "포장재") {
             temp_similarData.packing = res.data;
+            getSimilarityDistance(temp_similarData.packing, temp_marketData.packing);
           } else if (sectorName === "건강관리장비와용품") {
             temp_similarData.healthcaredevice = res.data;
+            getSimilarityDistance(temp_similarData.healthcaredevice, temp_marketData.healthcaredevice);
           } else if (sectorName === "기계") {
             temp_similarData.machine = res.data;
+            getSimilarityDistance(temp_similarData.machine, temp_marketData.machine);
           } else if (sectorName === "종이와목재") {
             temp_similarData.paper = res.data;
+            getSimilarityDistance(temp_similarData.paper, temp_marketData.paper);
           } else if (sectorName === "자동차") {
             temp_similarData.car = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "광고") {
             temp_similarData.advertisement = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "생명과학도구및서비스") {
             temp_similarData.biologytool = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "제약") {
             temp_similarData.pharmacy = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "복합기업") {
             temp_similarData.mixed = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "음료") {
             temp_similarData.drink = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "카드") {
             temp_similarData.card = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "건축자재") {
             temp_similarData.buildingmaterial = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "컴퓨터와주변기기") {
             temp_similarData.computer = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "레저용장비와제품") {
             temp_similarData.leisure = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "자동차부품") {
             temp_similarData.carpart = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "전기장비") {
             temp_similarData.electricequipment = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "철강") {
             temp_similarData.steel = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "판매업체") {
             temp_similarData.sales = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "건축제품") {
             temp_similarData.buildingproduct = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "사무용전자제품") {
             temp_similarData.office = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "백화점과일반상점") {
             temp_similarData.departmentstore = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "가정용품") {
             temp_similarData.homethings = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "상업서비스와공급품") {
             temp_similarData.commercialservice = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "교육서비스") {
             temp_similarData.educationservice = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "항공화물운송과물류") {
             temp_similarData.aircargo = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "무선통신서비스") {
             temp_similarData.radiocommunication = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "손해보험") {
             temp_similarData.damageinsurance = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "식품과기본식료품소매") {
             temp_similarData.grooceries = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "가스유틸리티") {
             temp_similarData.gasutility = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "생명보험") {
             temp_similarData.biologyinsurance = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "다각화된통신서비스") {
             temp_similarData.mixedcommunication = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "기타금융") {
             temp_similarData.finance = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "식품") {
             temp_similarData.food = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "무역회사와판매업체") {
             temp_similarData.trade = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           } else if (sectorName === "담배") {
             temp_similarData.tobacco = res.data;
+            getSimilarityDistance(temp_similarData.bicheol, temp_marketData.bicheol);
           }
           setSimilarDateData(temp_similarData);
-          setGetDistance(1);
         }
         
+      });
+    }
+
+    const getSimilarityDistance = async(period1, period2) => {
+      await axios.post('/api/data-management/model/distance', 
+      {
+        period1: period1,
+        period2: period2,
+      }
+      ).then(res => {
+        console.log("distance result is ", res);
+        setSimilarityDistance(res);
       });
     }
 
@@ -627,13 +717,7 @@ function EdaInfo(props) {
       console.log("new similar dates for ", props.edaName);
       // 현재 시점으로 가정하고 유사 시점 가져옴
       let modeltype = (props.edaType==="sector"?"sector/"+props.edaCode:"market")
-      // await axios.get('https://node02.spccluster.skku.edu:10638/market/model/'+props.edaCode)
-      // .then(res => {
-      //   console.log("axios res similarpoint is", res);
-      //   let temp_marketData = marketData;
-      //   temp_marketData.similarDates = res.points;
-      //   setMarketData(temp_marketData);
-      // });
+
       await axios.get(`/api/data-management/model/${modeltype}`).then(res => {
         console.log("model similar points res is ", res.data);
         let temp_marketData = marketData;
@@ -772,9 +856,9 @@ function EdaInfo(props) {
       // getSector("증권", startDate, endDate, true);
       // getSector("운송인프라", startDate, endDate, true);
       // getSector("건강관리기술", startDate, endDate, true);
-      // getSector("호텔", startDate, endDate, true);
+      // getSector("호텔,레스토랑,레저", startDate, endDate, true);
       // getSector("다각화된소비자서비스", startDate, endDate, true);
-      // getSector("섬유", startDate, endDate, true);
+      // getSector("섬유,의류,신발,호화품", startDate, endDate, true);
       // getSector("전기제품", startDate, endDate, true);
       // getSector("인터넷과카탈로그소매", startDate, endDate, true);
       // getSector("핸드셋", startDate, endDate, true);
@@ -872,6 +956,7 @@ function EdaInfo(props) {
         }
         else{
           console.log("current props.edaName is ", props.edaName);
+          setGetDistance("loading...");
           getSector(props.edaName, currentSimilarDate_start, currentSimilarDate_end, false);
           
           // getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end, false);
@@ -911,9 +996,9 @@ function EdaInfo(props) {
           // getSector("증권", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("운송인프라", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("건강관리기술", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("호텔", currentSimilarDate_start, currentSimilarDate_end, false);
+          // getSector("호텔,레스토랑,레저", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("다각화된소비자서비스", currentSimilarDate_start, currentSimilarDate_end, false);
-          // getSector("섬유", currentSimilarDate_start, currentSimilarDate_end, false);
+          // getSector("섬유,의류,신발,호화품", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("전기제품", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("인터넷과카탈로그소매", currentSimilarDate_start, currentSimilarDate_end, false);
           // getSector("핸드셋", currentSimilarDate_start, currentSimilarDate_end, false);
@@ -960,8 +1045,10 @@ function EdaInfo(props) {
     }, [currentSimilarDateEnd])
 
     
-    const featureSelection1 = ["KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
-    const featureSelection2 = ["KOSPI", "KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
+    // const featureSelection1 = ["KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
+    const featureSelection1 = ["KOSDAQ", "BRENT", "USD/KRW"];
+    // const featureSelection2 = ["KOSPI", "KOSDAQ", "BRENT", "USD/KRW", "COPPER"];
+    const featureSelection2 = ["KOSPI", "KOSDAQ", "BRENT", "USD/KRW"];
 
     const buttonSX = {
       "&:hover": {
@@ -1039,9 +1126,9 @@ function EdaInfo(props) {
                       (props.edaName==="증권")?(marketData.stock):
                       (props.edaName==="운송인프라")?(marketData.transportation):
                       (props.edaName==="건강관리기술")?(marketData.healthtechnology):
-                      (props.edaName==="호텔")?(marketData.hotel):
+                      (props.edaName==="호텔,레스토랑,레저")?(marketData.hotel):
                       (props.edaName==="다각화된소비자서비스")?(marketData.consumerservice):
-                      (props.edaName==="섬유")?(marketData.fiber):
+                      (props.edaName==="섬유,의류,신발,호화품")?(marketData.fiber):
                       (props.edaName==="전기제품")?(marketData.elctricproduct):
                       (props.edaName==="인터넷과카탈로그소매")?(marketData.internetretail):
                       (props.edaName==="핸드셋")?(marketData.handset):
@@ -1110,7 +1197,7 @@ function EdaInfo(props) {
                         {currentSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={marketData.kosdaq} />}
                         {currentSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={marketData.brent} />}
                         {currentSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={marketData.usdkrw} />}
-                        {currentSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={marketData.copper} />}
+                        {/* {currentSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={marketData.copper} />} */}
                       </Box>
                       
                       <Box key={"1239"}>
@@ -1177,6 +1264,7 @@ function EdaInfo(props) {
                       </Typography>
                       </>
                     ):(
+                      <>
                       (similarPointButton==="button1"?
                       <>
                         <Chip key={"1237"} label={(props.edaName==="전체 시장"?("KOSPI"):(props.edaName)) + "  " + currentSimilarDateStart+"~"+currentSimilarDateEnd}  sx={{ fontSize: 20, width: 500, mt: 2, mb: 1, bgcolor: mainColor, color:'white' }}/>
@@ -1221,9 +1309,9 @@ function EdaInfo(props) {
                           (props.edaName==="증권")?(similarDateData.stock):
                           (props.edaName==="운송인프라")?(similarDateData.transportation):
                           (props.edaName==="건강관리기술")?(similarDateData.healthtechnology):
-                          (props.edaName==="호텔")?(similarDateData.hotel):
+                          (props.edaName==="호텔,레스토랑,레저")?(similarDateData.hotel):
                           (props.edaName==="다각화된소비자서비스")?(similarDateData.consumerservice):
-                          (props.edaName==="섬유")?(similarDateData.fiber):
+                          (props.edaName==="섬유,의류,신발,호화품")?(similarDateData.fiber):
                           (props.edaName==="전기제품")?(similarDateData.elctricproduct):
                           (props.edaName==="인터넷과카탈로그소매")?(similarDateData.internetretail):
                           (props.edaName==="핸드셋")?(similarDateData.handset):
@@ -1303,9 +1391,9 @@ function EdaInfo(props) {
                             (props.edaName==="증권")?(marketData.stock):
                             (props.edaName==="운송인프라")?(marketData.transportation):
                             (props.edaName==="건강관리기술")?(marketData.healthtechnology):
-                            (props.edaName==="호텔")?(marketData.hotel):
+                            (props.edaName==="호텔,레스토랑,레저")?(marketData.hotel):
                             (props.edaName==="다각화된소비자서비스")?(marketData.consumerservice):
-                            (props.edaName==="섬유")?(marketData.fiber):
+                            (props.edaName==="섬유,의류,신발,호화품")?(marketData.fiber):
                             (props.edaName==="전기제품")?(marketData.elctricproduct):
                             (props.edaName==="인터넷과카탈로그소매")?(marketData.internetretail):
                             (props.edaName==="핸드셋")?(marketData.handset):
@@ -1372,25 +1460,26 @@ function EdaInfo(props) {
                           {similarSelectedFeature==="KOSDAQ" && <ShortSingleLine title={"KOSDAQ"} data={similarDateData.kosdaq} />}
                           {similarSelectedFeature==="BRENT" && <ShortSingleLine title={"BRENT"} data={similarDateData.brent} />}
                           {similarSelectedFeature==="USD/KRW" && <ShortSingleLine title={"USD/KRW"} data={similarDateData.usdkrw} />}
-                          {similarSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={similarDateData.copper} />}
-                        </Box>
-  
-                        <Box key={"6134444"}>
-                          <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
-                            <Grid item key={"grid000"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
-                              시점 주요 뉴스 키워드
-                            </NewsButton></Grid>
-                            {similarDateData.newsKeywords.map((value) => (
-                              <>
-                                <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]+"\n"+value[2]} arrow ><NewsButton>
-                                  {value[0]}
-                                </NewsButton></Tooltip></Grid>
-                              </>
-                            ))}
-                          </Grid>
+                          {/* {similarSelectedFeature==="COPPER" && <ShortSingleLine title={"COPPER"} data={similarDateData.copper} />} */}
                         </Box>
                       </>
                       )
+                      <Box key={"6134444"}>
+                        <Grid container key={"86565464"} align="center" justifyContent="center" alignItems="center" sx={{ maxWidth: 500, textAlign: 'center', mx:'auto'}}>
+                          <Grid item key={"grid000"} sm={4} sx={{ px:1, pt:1 }}><NewsButton key={"6123424"} style={{backgroundColor:'black', color:'white'}}>
+                            시점 주요 뉴스 키워드
+                          </NewsButton></Grid>
+                          {similarDateData.newsKeywords.map((value) => (
+                            <>
+                              <Grid item key={value[0]} sx={{ px:1, pt:1 }}><Tooltip key={"1010250"+value[0]} title={value[1]+"\n"+value[2]} arrow ><NewsButton>
+                                {value[0]}
+                              </NewsButton></Tooltip></Grid>
+                            </>
+                          ))}
+                        </Grid>
+                      </Box>
+                      <div>Distance score is {similarityDistance}</div>
+                    </>
                     )}
                     </Grid>
                   </Grid>
