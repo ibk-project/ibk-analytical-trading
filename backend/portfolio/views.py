@@ -2142,8 +2142,8 @@ def get_portfolio_output(request):
            
         print(s12_pct)
  
-        expect = user_dict['expect'][user_i]
-        loss = user_dict['loss'][user_i]
+        expect = user_dict['expect'][int(user_i)]
+        loss = user_dict['loss'][int(user_i)]
         def obj_variance(weights, stock,covmat):
             vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
             ret = stock * weights
