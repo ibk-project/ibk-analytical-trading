@@ -648,16 +648,6 @@ function Portfolio() {
   const isMounted = useRef(false);
 
   const getPortfolio = async() => {
-<<<<<<< HEAD
-    setLoaded(false)
-    setLoading(true)
-    let m, ms = '', mar = ''
-    // if(currentMarket.includes('KOSPI')) {
-    //   m = KOSPI
-    // } else {
-    //   m = KOSDAQ
-    // }
-=======
     if(userClass === -1){ 
       alert("투자 성향을 선택해주세요!")
       return;
@@ -668,7 +658,6 @@ function Portfolio() {
       return;
     }
     let m, ms = '', mar = ''
->>>>>>> ba2bf87094a90e555223cab9b3e20f4b077f2bdd
     m = sectorName
     sectorClicked[currentMarket].forEach((s, index) => {
       if(s === true){
