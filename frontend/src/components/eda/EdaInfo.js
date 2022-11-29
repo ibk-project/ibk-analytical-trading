@@ -36,6 +36,7 @@ function EdaInfo(props) {
     const [edaFlag, setEdaFlag] = useState(false);
 
     const [similarPointButton, setSimilarPointButton] = useState("button1"); // "button1", "button2" 유사시점에서 KOSPI/섹터 그래프를 보여줄지, 주요지수 그래프를 보여줄지 고르는 버튼
+    const [similarityDistance, setSimilarityDistance] = useState("loading..."); // distance 값
 
     const [currentSimilarDateEnd, setCurrentSimilarDateEnd] = useState("none");
     const [currentSimilarDateStart, setCurrentSimlilarDateStart] = useState("none");
@@ -955,6 +956,7 @@ function EdaInfo(props) {
         }
         else{
           console.log("current props.edaName is ", props.edaName);
+          setGetDistance("loading...");
           getSector(props.edaName, currentSimilarDate_start, currentSimilarDate_end, false);
           
           // getSector("비철금속", currentSimilarDate_start, currentSimilarDate_end, false);
@@ -1476,6 +1478,7 @@ function EdaInfo(props) {
                           ))}
                         </Grid>
                       </Box>
+                      <div>Distance score is {similarityDistance}</div>
                     </>
                     )}
                     </Grid>
