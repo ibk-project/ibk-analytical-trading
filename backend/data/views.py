@@ -1641,8 +1641,8 @@ def get_sector_avg(request):
         date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
         df['Date'] = date_list
         df = df.set_index('Date')
-        for stock in sector_data[sector_name]:
-            #print(stock)
+        for stock  in sector_data[sector_name]:
+            print(stock)
             code = stock["code"]
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
             tmp = pd.DataFrame(list(id))
@@ -1660,7 +1660,7 @@ def get_sector_avg(request):
             return JsonResponse({ "Result" : "None"})
         else:
             return JsonResponse({ 'data' : t_tmp.to_dict('records')})
-
+        
 @api_view(['GET','POST'])
 def make_sector_avg(request):
     if request.method == 'GET':

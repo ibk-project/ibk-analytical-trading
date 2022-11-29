@@ -46,7 +46,7 @@ function EdaInfo(props) {
     // const [similarDateEDAReady, setSimilarDateEDAReady] = useState(false);
 
     const [marketData, setMarketData] = useState({
-      currentDate: '2022-06-08~2022-07-08',
+      currentDate: '2022-10-24~2022-11-25',
       // similarDates: ['2021-05-21~2021-06-19','2021-05-28~2021-06-26','2020-10-08~2020-11-06','2019-03-02~2019-03-31','2019-01-21~2019-02-19','2019-01-13~2019-02-11','2017-06-08~2017-07-07'],
       similarDates: ['2021-06-19','2021-06-26','2020-11-06','2019-03-31','2019-02-19','2019-02-11','2017-07-07'],
       newsKeywords: [
@@ -673,29 +673,29 @@ function EdaInfo(props) {
             break;
           }
           for(let i = 0; i<res.data[tempday].length; i++){
-            let tempnews = res.data[tempday];
+            let tempnews = res.data[tempday][i];
             if(tempnews[0]!=="" && tempnews[1]!==""){
             todaynews.push([(tempnews[0]+" "+tempnews[1]), tempday, tempnews[2]]);
               newsLen += 1;
             }
           }
           let split_dates = tempday.split("-"); // 기존 형식 yyyy-mm-dd
-            let day_dates = parseInt(split_dates[2]);
-            let month_dates = parseInt(split_dates[1]);
-            if(day_dates === 1){
-              split_dates[2] = "28";
-              if(month_dates === 1){
-                split_dates[1] = "12";
-                split_dates[0] -= 1;
-              } else{
-                split_dates[1] -= 1;
-              }
-            } else {
-              split_dates[2] -= 1;
+          let day_dates = parseInt(split_dates[2]);
+          let month_dates = parseInt(split_dates[1]);
+          if(day_dates === 1){
+            split_dates[2] = "28";
+            if(month_dates === 1){
+              split_dates[1] = "12";
+              split_dates[0] -= 1;
+            } else{
+              split_dates[1] -= 1;
             }
-            split_dates[1] = ('0'+split_dates[1]).slice(-2);
-            split_dates[2] = ('0'+split_dates[2]).slice(-2);
-            tempday = split_dates.join('-');
+          } else {
+            split_dates[2] -= 1;
+          }
+          split_dates[1] = ('0'+split_dates[1]).slice(-2);
+          split_dates[2] = ('0'+split_dates[2]).slice(-2);
+          tempday = split_dates.join('-');
         }
         if(isToday === true){
           let temp_marketData = marketData;

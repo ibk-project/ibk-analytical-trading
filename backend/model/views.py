@@ -98,7 +98,7 @@ def market_model(request, point_num):
     if os.path.isfile(result_path + str(point_num) + ".json"):
         with open(result_path + str(point_num) + ".json") as f:
             json_data = json.load(f)
-        return json_data
+        return JsonResponse({"result" : json_data}, safe=False)
 
     if os.path.isfile(feature_path)==False or os.path.isfile(label_path)==False :
         market_feature_collect()
