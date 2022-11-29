@@ -2082,13 +2082,22 @@ def get_date_similiary_distance(request, date):
 
 
 #Calculate Correlation-adjusted Distance
-@api_view(['POST'])
+@api_view(['GET'])
 def get_similarity_distance(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         
-        period1 = request.data['period1']
-        period2 = request.data['period2']
-
+        period1 = request.GET['period1']
+        period2 = request.GET['period2']
+        code = request.GET['code']
+        
+        period1_date = datetime.datetime.strptime(period1,'%Y-%m-%d')
+        end_period1 = str(date - datetime.timedelta(days=60))
+        period2_date = datetime.datetime.strptime(period2,'%Y-%m-%d')
+        end_period2 = str(date - datetime.timedelta(days=60))
+        
+        df1 = fdr.DataReader(code,end_period1,period1_date)
+        df2 = fdr.DataReader(code,end_period2,period2_date)
+        
         adjustedCov = 0
         distance = 0
         pastList = []
