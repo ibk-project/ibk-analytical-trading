@@ -2404,7 +2404,7 @@ def get_sector_updown(request):
         recent_k1 = sorted(recent_k1, key=lambda avg: avg['data'],reverse=True)
         recent_k2 = sorted(recent_k2, key=lambda avg: avg['data'],reverse=True)
         up = sorted(up, key=lambda avg: avg['data'],reverse=True)
-        down = sorted(down, key=lambda avg: avg['data'],reverse=True)
+        down = sorted(down, key=lambda avg: avg['data'],reverse=False)
                
         recent.append(recent_k1)
         recent.append(recent_k2)
