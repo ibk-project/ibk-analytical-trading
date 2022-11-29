@@ -27,37 +27,22 @@ function Portfolio() {
     option3: ''
   }
   const [userOption, setUserOption] = useState(initUserOption)
+  let temp = []
   // API 부르기
   const [pick, setPick] = useState(['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션'])
   const recommend = async () => {
     await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result.top); console.log(res.data.result.top)});
   }
   const getSortedSector = async () => {
-    await axios.get('/api/portfolio/top_pick').then(res => {
+    await axios.get('/api/portfolio/sector_updown').then(res => {
       const data = res.data.result
       setSector({
         recent: {'KOSPI 100': data.recent[0], 'KOSPI 200': data.recent[1], 'KOSDAQ': data.recent[2]}, 
         up: {'KOSPI 100': data.up[0], 'KOSPI 200': data.up[1], 'KOSDAQ': data.up[2]}, 
-        down: {'KOSPI 100': data.down[0], 'KOSPI 200': data.down[1], 'KOSDAQ': data.down[2]}, 
-        category: {'KOSPI 100': data.category[0], 'KOSPI 200': data.category[1], 'KOSDAQ': data.category[2]}
+        down: {'KOSPI 100': data.down[0], 'KOSPI 200': data.down[1], 'KOSDAQ': data.down[2]}
       })
     });
   }
-  const temp = ["비철금속"
-  ,"은행"
-  ,"석유와가스"
-  ,"화장품"
-  ,"부동산"
-  ,"우주항공과국방"
-  ,"양방향미디어와서비스"
-  ,"게임엔터테인먼트"
-  ,"IT서비스"
-  ,"디스플레이패널"
-  ,"항공사"
-  ,"전자장비와기기"
-  ,"에너지장비및서비스"
-  ,"조선"
-  ,"건강관리업체및서비스"]
   const [showChart, setShowChart] = useState(false)
   const [portfolio, setPort] = useState({
     stocks: ['솔루스첨단소재', '아모그린텍', '트루윈'],
@@ -69,10 +54,9 @@ function Portfolio() {
   const [isLoading, setLoading] = useState(false)
   const [loaded, setLoaded] = useState(false);
   const [selectedSector, setSector] = useState({
-    recent: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
-    up: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
-    down: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
-    category: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}
+    recent: {'KOSPI 100': [], 'KOSPI 200': [], 'KOSDAQ': []}, 
+    up: {'KOSPI 100': [], 'KOSPI 200': [], 'KOSDAQ': []}, 
+    down: {'KOSPI 100': [], 'KOSPI 200': [], 'KOSDAQ': []}
   })
   const [currentMarket, setMarket] = useState('KOSPI 200')
   const [tabValue, setTab] = useState('1')
@@ -130,6 +114,7 @@ function Portfolio() {
   });
   const [isSelected, setSelect] = useState(initIsSelected)
   const [sectorClicked, setSectorClick] = useState(initSectorClicked)
+  const [sectorName, setSectorName] = useState([])
   const [isChecked, setCheck] = useState(false)
   const [sortPort, setSort] = useState([0,1,2])
   const [pNum, setPNum] = useState(0)
@@ -671,17 +656,16 @@ function Portfolio() {
   const getPortfolio = async() => {
     setLoaded(false)
     setLoading(true)
-
     let m, ms = '', mar = ''
-    if(currentMarket.includes('KOSPI')) {
-      m = KOSPI
-    } else {
-      m = KOSDAQ
-    }
-    
+    // if(currentMarket.includes('KOSPI')) {
+    //   m = KOSPI
+    // } else {
+    //   m = KOSDAQ
+    // }
+    m = sectorName
     sectorClicked[currentMarket].forEach((s, index) => {
       if(s === true){
-        ms += ','
+        ms += '@'
         ms += m[index]
       }
     })
@@ -742,7 +726,6 @@ function Portfolio() {
         },
         data: 
           portName.map( p => {
-            console.log(p, r[p])
             return ({
               name: p,
               data: r[p].data.map(d => parseFloat(d.price).toFixed(2)).map(Number)
@@ -779,10 +762,10 @@ function Portfolio() {
           portName.map( p => {
             return ({
               name: p+' VaR 99%',
-              data: r[p].data.map(d => parseFloat(d.VaR1).toFixed(2)).map(Number)
+              data: r[p].data.map(d => parseFloat(d.VaR1).toFixed(4)).map(Number)
             },{
               name: p+' VaR 95%',
-              data: r[p].data.map(d => parseFloat(d.VaR2).toFixed(2)).map(Number)
+              data: r[p].data.map(d => parseFloat(d.VaR2).toFixed(4)).map(Number)
             })
           })
       }
@@ -794,16 +777,16 @@ function Portfolio() {
     setMarket(...mk)
     if (market.includes('KOSPI')) {
       //sectors.push(KOSPI)
-      sectors.push([...temp])
+      sectors.push([...sectorName])
     } else {
       //sectors.push(KOSDAQ)
-      sectors.push([...temp])
+      sectors.push([...sectorName])
     }
     setSector({
-      recent: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
-      up: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
-      down: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}, 
-      category: {'KOSPI 100': [...temp], 'KOSPI 200': [...temp], 'KOSDAQ': [...temp]}
+      recent: {'KOSPI 100': [...sectorName], 'KOSPI 200': [...sectorName], 'KOSDAQ': [...sectorName]}, 
+      up: {'KOSPI 100': [...sectorName], 'KOSPI 200': [...sectorName], 'KOSDAQ': [...sectorName]}, 
+      down: {'KOSPI 100': [...sectorName], 'KOSPI 200': [...sectorName], 'KOSDAQ': [...sectorName]}, 
+      category: {'KOSPI 100': [...sectorName], 'KOSPI 200': [...sectorName], 'KOSDAQ': [...sectorName]}
     })
   }
   const selectMarket = (e) => {
@@ -862,9 +845,18 @@ function Portfolio() {
   },[chartData])
   useEffect(()=>{
     recommend()
-    //getSortedSector()
+    getSortedSector()
   },[])
-
+  useEffect(()=>{
+    setSectorClick({
+      'KOSPI 100': new Array(sectorName.length).fill(false),
+      'KOSPI 200': new Array(sectorName.length).fill(false),
+      'KOSDAQ': new Array(sectorName.length).fill(false)
+    })
+  },[selectedSector, chartData])
+  useEffect(()=>{
+    setSectorName(selectedSector.recent['KOSPI 100'].map(i => i.sector))
+  },[selectedSector])
   return(
     <div className="container">
       <div className="option">
@@ -973,17 +965,19 @@ function Portfolio() {
                       <TabPanel value="1" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                          selectedSector.recent[currentMarket].map((s, value) => 
+                          currentMarket && selectedSector.recent[currentMarket].map((s, value) => 
                             <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
                               <Checkbox
+                                defaultChecked={sectorClicked[currentMarket][value]}
                                 color="default"
                                 key={value}
                                 value={value}
                                 onClick={selectSector} 
-                                style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                                style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px'}}
                               />
-                              <div style={{minWidth: '162px'}}>{s}</div>
-                              <div style={{width: '100px'}}>{(1 + value* 0.782).toFixed(2)}%</div>
+                              <div style={{minWidth: '162px'}}>{s.sector}</div>
+                              {(s.data >= 0) && <div style={{width: '100px', color: 'blue'}}>{'+'}{s.data.toFixed(2)}%</div>}
+                              {(s.data < 0) && <div style={{width: '100px', color: 'red'}}>{s.data.toFixed(2)}%</div>}
                             </div>
                             )
                           }
@@ -993,16 +987,18 @@ function Portfolio() {
                       <TabPanel value="2" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                          selectedSector.up[currentMarket].map((s, value) => 
+                          currentMarket && selectedSector.up[currentMarket].map((s, value) => 
                             <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
                               <Checkbox 
+                                defaultChecked={sectorClicked[currentMarket][value]}
                                 key={value}
                                 value={value}
                                 onClick={selectSector} 
-                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                                style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px'}}
                               />
-                              <div style={{minWidth: '162px'}}>{s}</div>
-                              <div style={{width: '100px'}}>여기는 숫자</div>
+                              <div style={{minWidth: '162px'}}>{s.sector}</div>
+                              {(s.data >= 0) && <div style={{width: '100px', color: 'blue'}}>{'+'}{s.data.toFixed(2)}%</div>}
+                              {(s.data < 0) && <div style={{width: '100px', color: 'red'}}>{s.data.toFixed(2)}%</div>}
                             </div>
                             )
                           }
@@ -1012,16 +1008,18 @@ function Portfolio() {
                       <TabPanel value="3" style={TabPanelStyle}>
                         <Box sx={{fontSize: 'middle'}} style={{display: 'flex', flexWrap: "wrap", gap: "4%", height: '1.5em', width: '312px'}} key={sectorClicked}>
                           {
-                          selectedSector.down[currentMarket].map((s, value) => 
+                          currentMarket && selectedSector.down[currentMarket].map((s, value) => 
                             <div style={{height: '2rem', display: 'flex', alignItems: 'center'}}>
                               <Checkbox
-                                key={value}
-                                value={value}
+                                defaultChecked={sectorClicked[currentMarket][sectorName.length - value - 1]}
+                                key={sectorName.length - value - 1}
+                                value={sectorName.length - value - 1}
                                 onClick={selectSector} 
-                                style={{color: "black", padding: 0, width: '50px', backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}
+                                style={{color: "black", padding: 0, width: '24px', margin: '0 20px 0 20px'}}
                               />
-                              <div style={{minWidth: '162px'}}>{s}</div>
-                              <div style={{width: '100px'}}>여기는 숫자</div>
+                              <div style={{minWidth: '162px'}}>{s.sector}</div>
+                              {(s.data >= 0) && <div style={{width: '100px', color: 'blue'}}>{'+'}{s.data.toFixed(2)}%</div>}
+                              {(s.data < 0) && <div style={{width: '100px', color: 'red'}}>{s.data.toFixed(2)}%</div>}
                             </div>
                             )
                           }
@@ -1076,8 +1074,8 @@ function Portfolio() {
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
         {/* loaded ? */}
-        <li key="1">종목:  { loaded ? portfolio.stocks.map(i => i + ' ') : '' }</li>
-        <li key="2">유사 시점:  { loaded ? portfolio.similarDate.map(i => i + ' ') : '' }</li>
+        <li key="1" style={{minWidth: 'max-content'}}>종목:  { loaded ? portfolio.stocks.map(i => i + ' ') : '' }</li>
+        <li key="2" style={{minWidth: 'max-content'}}>유사 시점:  { loaded ? portfolio.similarDate.map(i => i + ' ') : '' }</li>
 
         {
           //loaded 
