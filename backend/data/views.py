@@ -2081,24 +2081,60 @@ def get_date_similiary_distance(request, date):
             return JsonResponse({"Data" : "None"})
 
 
+def calculate_sector_avg(start_date, end_date, sector_name):
+	db = client.newDB
+	stock_collection = db.data_stock
+	sector_collection = db.data_sector
+	
+	result = {}
+	
+	df = pd.DataFrame()
+	date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
+	df['Date'] = date_list
+	df = df.set_index('Date')
+	for stock  in sector_data[sector_name]:
+		print(stock)
+		code = stock["code"]
+		id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
+		tmp = pd.DataFrame(list(id))
+		tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
+		tmp = tmp.set_index('Date')
+		df = df.join(tmp)
+	df = df.dropna(how = 'all')
+	df['sum'] = df.sum(axis = 1)
+	df['sum'] = df['sum'] / len(sector_data[sector_name])
+	t_tmp = pd.DataFrame()
+	t_tmp["Date"] = df.index.values
+	t_tmp["Close"] = df['sum'].values.tolist()
+	
+	return t_tmp.to_dict('records')
+
 #Calculate Correlation-adjusted Distance
 @api_view(['GET'])
 def get_similarity_distance(request):
     if request.method == 'GET':
         
-        period1 = request.GET['period1']
-        period2 = request.GET['period2']
-        code = request.GET['code']
+        date1 = request.GET['period1']
+		date2 = request.GET['period2']
+		sector_name = request.GET['sectorName']
+
+		end_date1 = datetime.datetime.strptime(date1,'%Y-%m-%d')
+		start_date1 = str(date1 - datetime.timedelta(days=60))
         
-        period1_date = datetime.datetime.strptime(period1,'%Y-%m-%d')
-        end_period1 = str(date - datetime.timedelta(days=60))
-        period2_date = datetime.datetime.strptime(period2,'%Y-%m-%d')
-        end_period2 = str(date - datetime.timedelta(days=60))
+		end_date2 = datetime.datetime.strptime(date2,'%Y-%m-%d')
+		start_date2 = str(date2 - datetime.timedelta(days=60))
+
+		period1 = calculate_sector_avg(start_date1, end_date1, sector_name)
+		period2 = calculate_sector_avg(start_date2, end_date2, sector_name)
+
+        # period1_date = datetime.datetime.strptime(period1,'%Y-%m-%d')
+        # end_period1 = str(date - datetime.timedelta(days=60))
+        # period2_date = datetime.datetime.strptime(period2,'%Y-%m-%d')
+        # end_period2 = str(date - datetime.timedelta(days=60))
+        # df1 = fdr.DataReader(sectorCode,end_period1,period1_date)
+        # df2 = fdr.DataReader(sectorCode,end_period2,period2_date)
         
-        df1 = fdr.DataReader(code,end_period1,period1_date)
-        df2 = fdr.DataReader(code,end_period2,period2_date)
-        
-        adjustedCov = 0
+		adjustedCov = 0
         distance = 0
         pastList = []
         currentList = []
