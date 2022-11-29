@@ -2391,20 +2391,19 @@ def get_sector_updown(request):
             df['avg'] = df['avg']/100 +1
             df['avg'] = df['avg'].cumprod()
             avg = (df['avg'].iloc[-1] -1) * 100
-            print(avg)
-            sector_avg['sector']=sector_name
+            sector_avg['sector'] = sector_name
             sector_avg['data'] = avg
-            
+            print(sector_avg)
             recent_k2.append(sector_avg)
             recent_k1.append(sector_avg)
-            recent.append(sector_avg)
             if(avg < 0):
                 down.append(sector_avg)
             else:
                 up.append(sector_avg)
 
         recent.append([recent_k1,recent_k2,recent_kq])
+        print(recent)
         all_result['recent'] = recent
-        all_result['up'] = up
-        all_result['down'] = down
+        all_result['up'] = [up, up, []]
+        all_result['down'] = [down, down, []]
         return JsonResponse({'result' : all_result})
