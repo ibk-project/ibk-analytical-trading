@@ -88,22 +88,13 @@ function ShortSingleLine(props) {
     ))
 
     // 과거시점과 현재시점의 유사도 계산, calculating the similarity of past date and now: Correlation-adjusted Distance 방법
-    if(props.currentData !== undefined && props.data !== undefined && props.getDistance === 1) {
-      // let closeOnly_current = [];
-      // for(let i = 0; i < props.currentData.length; i++) {
-      //   closeOnly_current.push(props.data[i]['Close']);
-      // }
-      console.log("data in graph is ", props.data);
-      // let adjusted_cov = 0;
-      console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
+    // if(props.currentData !== undefined && props.data !== undefined && props.getDistance === 1) {
+    //   console.log("data in graph is ", props.data);
+    //   console.log("data length is ", props.data.length, " and current data length is ", props.currentData.length);
 
-      // if(props.data.length>60 && props.currentData.length>60){ // 현재와 과거 모두 최근 60일 이상 데이터가 있을 경우
-      //   getSimilarityDistance(props.data, props.currentData);
-      // }
-      getSimilarityDistance(props.data, props.currentData);
-      // setAdjustedCov(adjusted_cov);
-      props.setGetDistance(0);
-    }
+    //   getSimilarityDistance(props.data, props.currentData);
+    //   props.setGetDistance(0);
+    // }
   }, [props.title, props.data])
 
   
