@@ -36,6 +36,7 @@ class FeatureGenerator():
         self.LABEL_NAMES = ['KS11', 'KQ11', 'IXIC', 'TWII']
         self.raw_data_df = pd.DataFrame()
         self.feature_df = pd.DataFrame()
+        self.curr_feature_df = pd.DataFrame()
         self.result_df = pd.DataFrame()
         self.label_df = pd.DataFrame()
         self.range = self.start.strftime('%Y-%m-%d') + '_' + self.end.strftime('%Y-%m-%d')
@@ -107,10 +108,30 @@ class FeatureGenerator():
         self.raw_data_df.to_csv(self.range + '.csv')
     
     def make_feature(self):
-        for point in range(TRAIN_LENGTH, self.raw_data_df.shape[0]-PREDICT_LENGTH):
+        for point in range(TRAIN_LENGTH, self.raw_data_df.shape[0]):
             period = self.raw_data_df.index[point]
             last = self.raw_data_df.iloc[point-TRAIN_LENGTH:point]
             next = self.raw_data_df.iloc[point:point + PREDICT_LENGTH]
+
+            if point >= self.raw_data_df.shape[0] - PREDICT_LENGTH:
+                for name in self.INDEX_NAMES + self.COMMODITY_NAMES:
+                    self.curr_feature_df.loc[period, name + 'MA' + '1'] = last[name + 'Close'][-1 : ].mean()
+                    i, p = 2, 1
+                    while p + i <= TRAIN_LENGTH:
+                        p += i
+                        self.curr_feature_df.loc[period, name + 'MA' + str(i)] = last[name + 'Close'][-p : -(p-i)].mean()
+                        i += 1
+                    volatility = (last[name + 'High'] - last[name + 'Low']) / ((last[name + 'High'] + last[name + 'Low']) / 2)
+                    self.curr_feature_df.loc[period, name + 'Volatility'] = (volatility[-TRAIN_LENGTH // 4:].mean() * 2 + volatility.mean()) / 3 * 100
+                    volume = last[name + 'Volume'].map(lambda x: math.log2(1 if x < 1 else x))
+                    self.curr_feature_df.loc[period, name + 'Volume'] = (volume[-TRAIN_LENGTH // 4:].mean() * 2 + volume.mean()) / 3 * 100
+                self.curr_feature_df.loc[period, 'US10YT-3MT'] = last['FRED:T10Y3MT10Y3M'].mean()
+                self.curr_feature_df.loc[period, 'US10YT-2YT'] = last['FRED:T10Y2YT10Y2Y'].mean()
+                self.curr_feature_df.loc[period, 'CPIAUCSL'] = last['CPIAUCSL'].mean()
+                self.curr_feature_df.loc[period, 'DollarMA'] = last['DTWEXBGS'].mean() 
+                self.curr_feature_df.loc[period, 'USVIX'] = last['USVIXClose'][-1] - last['USVIXClose'][:].mean()    
+                continue
+
             # train
             for name in self.INDEX_NAMES + self.COMMODITY_NAMES:
                 self.feature_df.loc[period, name + 'MA' + '1'] = last[name + 'Close'][-1 : ].mean()
@@ -127,7 +148,6 @@ class FeatureGenerator():
             self.feature_df.loc[period, 'US10YT-2YT'] = last['FRED:T10Y2YT10Y2Y'].mean()
             self.feature_df.loc[period, 'CPIAUCSL'] = last['CPIAUCSL'].mean()
             self.feature_df.loc[period, 'DollarMA'] = last['DTWEXBGS'].mean() 
-            # self.feature_df.loc[period, 'KoreaVIX'] = last['KoreaVIXClose'][-1] - last['KoreaVIXClose'][:].mean()
             self.feature_df.loc[period, 'USVIX'] = last['USVIXClose'][-1] - last['USVIXClose'][:].mean()
 
             # label
@@ -160,6 +180,7 @@ class FeatureGenerator():
     def scale_feature(self):
         rb = RobustScaler()
         self.feature_df = pd.DataFrame(rb.fit_transform(self.feature_df), index=self.feature_df.index)
+        self.curr_feature_df = pd.DataFrame(rb.transform(self.curr_feature_df), index=self.curr_feature_df.index)
         '''
         a = [
             # quarterMA fullMA Volatility Volume

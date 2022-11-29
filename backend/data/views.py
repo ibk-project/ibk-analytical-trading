@@ -2033,13 +2033,10 @@ def get_market_model(request):
         model_data = os.path.join(os.getcwd(),'/backend/model/market/result/', '2015-01-01_2022-11-25_100.json')
         print(model_data)
 
-        with open(model_data) as f:
-            json_data = json.load(f)
-        return JsonResponse({"Result" : json_data})
         try:
             with open(model_data) as f:
                 json_data = json.load(f)
-            return JsonResponse({"Result" : json_data})
+            return JsonResponse({"Result" : {"points" : json_data["points"]}})
         except:
             return JsonResponse({"Data" : "None"})
 
@@ -2067,6 +2064,19 @@ def get_news_feature(request):
                 json_data = json.load(f)
                 json_data = json.dumps(json_data, ensure_ascii = False)
             return HttpResponse(json_data)
+        except:
+            return JsonResponse({"Data" : "None"})
+
+#News title data
+@api_view(['GET'])
+def get_date_similiary_distance(request, date):
+    if request.method == 'GET':
+        model_data = os.path.join(os.getcwd(),'/backend/model/market/result/', '2015-01-01_2022-11-25_100.json')
+
+        try:
+            with open(model_data) as f:
+                json_data = json.load(f)
+            return JsonResponse({"Result" : json_data["distances"][date]})
         except:
             return JsonResponse({"Data" : "None"})
 

@@ -83,29 +83,28 @@ PATH_STOCK = 'top200_5years_stock.csv'
 @api_view(['GET'])
 def market_feature_collect(request):
 
-    if os.path.isfile(feature_path) and os.path.isfile(label_path):
-        print("feature, label file already exists")
-    else:
-        feature, label = fg.run()
-        feature.to_csv(feature_path)
-        label.to_csv(label_path)
+    # if os.path.isfile(feature_path) and os.path.isfile(label_path):
+    #     print("feature, label file already exists")
+    # else:
+    #     feature, label = fg.run()
+    #     feature.to_csv(feature_path)
+    #     label.to_csv(label_path)
+
+    feature, label = fg.run()
+    feature.to_csv(feature_path)
+    label.to_csv(label_path)
 
     return JsonResponse({"result" : "Market data collection finished."}, safe=False)
 
 @api_view(['GET'])
 def market_model(request, point_num):
 
-    if os.path.isfile(result_path + str(point_num) + ".json"):
-        with open(result_path + str(point_num) + ".json") as f:
-            json_data = json.load(f)
-        return JsonResponse({"result" : json_data}, safe=False)
+    # if os.path.isfile(result_path + str(point_num) + ".json"):
+    #     with open(result_path + str(point_num) + ".json") as f:
+    #         json_data = json.load(f)
+    #     return JsonResponse({"result" : json_data}, safe=False)
 
-    if os.path.isfile(feature_path)==False or os.path.isfile(label_path)==False :
-        market_feature_collect()
-
-    feature = pd.read_csv(feature_path, index_col = 0)
-    label = pd.read_csv(label_path, index_col = 0)
-    print(fg.curr_feature_df.index[-1])
+    feature, label = fg.run()
     spm = SimilarPointModel()
     spm.train(feature, label)
     encoded_data, decoded_data = spm.run(feature)
@@ -122,10 +121,13 @@ def market_model(request, point_num):
     used = set()
     predict = [0 for _ in range(16)]
     similar_points = []
-    for _, similar_point in dist_list:
+    distances = {}
+    print(dist_list)
+    for dist, similar_point in dist_list:
         if similar_point in used: continue
         used.update(range(similar_point - 2, similar_point + 3))
         similar_points.append(last_label.index[similar_point])
+        distances[last_label.index[similar_point]] = float(dist)
         for k in range(16): predict[k] += last_label.iloc[similar_point][k]
         count += 1
         if count >= point_num: break
@@ -143,6 +145,7 @@ def market_model(request, point_num):
     # 유사시점 출력
     result = {}
     result['points'] = similar_points
+    result['distances'] = distances
     with open(result_path + str(point_num) + ".json", 'w') as outfile:
         json.dump(result, outfile)    
 
