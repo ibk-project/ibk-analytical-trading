@@ -2076,7 +2076,6 @@ def get_news_feature(request):
 def get_similarity_distance(request):
     if request.method == 'POST':
         
-        print(request.data)
         period1 = request.data['period1']
         period2 = request.data['period2']
 
@@ -2084,14 +2083,8 @@ def get_similarity_distance(request):
         distance = 0
         pastList = []
         currentList = []
-        print(period1)
-        print("hihi")
-        print(len(period1))
-        print("hey")
-        print(len(period2))
 
         if(len(period1)>60 and len(period2)>60):
-            print("many")
             # 단순 Distance 산식
             for i in range(1, 60):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
@@ -2117,12 +2110,10 @@ def get_similarity_distance(request):
             adjustedCov = distance
 
         elif(len(period1)>5 and len(period2)>5): # data가 60개 이하일 때
-            print("inside here")
             num = len(period1)
             if(len(period1)>len(period2)): 
                 num = len(period2)
             
-            print("upto here")
             for i in range(1,num):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
                 difference = difference * difference / num
@@ -2130,7 +2121,6 @@ def get_similarity_distance(request):
                 pastList.append(period1[0-i]['Close'])
                 currentList.append(period2[0-i]['Close'])
 
-            print("now here")
             distance = math.sqrt(distance/num)
             
             a = statistics.stdev(pastList)
