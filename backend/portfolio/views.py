@@ -2077,9 +2077,17 @@ for x , y in dd[['Code','Name']].values:
 def get_top_output(request):
     if request.method == 'GET':
         result = {}
+        
+        s_result = pd.read_csv(k2_result, header=0, dtype=object)
+        sector = s_result['Sector'].tolist()
+        top_sector_stock = s_result['Code'].tolist()
+        tmp = []
+        for i in range(len(top_sector_stock)):
+            tmp.append(d_set[top_sector_stock[i]])
+        print(tmp)
         top_output = ['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션']
         result['top'] = top_output
-        return JsonResponse({'result' : result})
+        return JsonResponse({'result' : tmp})
 
 @api_view(['GET'])
 def get_portfolio_output(request):
