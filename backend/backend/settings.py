@@ -100,11 +100,7 @@ DATABASES = {
         'HOST' : 'mongo',
         'PORT' : 27017,
         'CLIENT': {
-<<<<<<< HEAD
-            'host': '3.38.41.9',
-=======
             'host': '43.201.96.58',
->>>>>>> e275a6713e1d4e8b94f6f112ba0bb76397caf26a
             'port': 27017,
             'username': 'se',
             'password': '1234',

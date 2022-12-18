@@ -85,7 +85,7 @@ class DataCollector_BySecter():
         sector_dataframe = sector_dataframe.set_index('Date')
         sector_dataframe.index = pd.to_datetime(sector_dataframe.index)
         
-        sector_dataframe.to_csv(os.getcwd() + "/routes/sector/data/" + str(self.SECTOR_CODE) + '_data.csv')
-        sector_stock_names.to_csv(os.getcwd() + "/routes/sector/data/" + str(self.SECTOR_CODE) +'_stock_names.csv')
+        sector_dataframe.to_csv(os.getcwd() + "/model/sector/data/" + str(self.SECTOR_CODE) + '_data.csv')
+        sector_stock_names.to_csv(os.getcwd() + "/model/sector/data/" + str(self.SECTOR_CODE) +'_stock_names.csv')
         
         return sector_dataframe

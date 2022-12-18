@@ -135,7 +135,7 @@ class DataClustering_BySecter():
         Web = req.get(url)
         sectorname = BeautifulSoup(Web.text, 'lxml').find('title').contents[0].split(" :")[0]
 
-        return_df.to_csv(os.getcwd() + "/routes/sector/result/" + str(self.SECTOR_CODE) + "_result.csv")
+        return_df.to_csv(os.getcwd() + "/model/sector/result/" + str(self.SECTOR_CODE) + "_result.csv")
         return {
             "Sector" : sectorname,
             "Today_Date" : return_df.iloc[0]['Today Date'],
