@@ -15,11 +15,6 @@ function MultiLine(props) {
     title: {
       text: prop.title
     },
-    // subtitle: {
-    //   text: 'Source: ' +
-    //     '<a href="https://en.wikipedia.org/wiki/List_of_cities_by_average_temperature" ' +
-    //     'target="_blank">Wikipedia.com</a>'
-    // },
     credits: { enabled: false },
     xAxis: {
       title: {

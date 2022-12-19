@@ -20,28 +20,7 @@ import Popover from '@mui/material/Popover';
 
 
 function Portfolio() {
-  let initUserOption = {
-	  option1: '',
-    option2: '',
-    option3: ''
-  }
-  const [userOption, setUserOption] = useState(initUserOption)
-  let temp = []
-  // API 부르기
   const [pick, setPick] = useState(['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션'])
-  const recommend = async () => {
-    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result); console.log(res.data)});
-  }
-  const getSortedSector = async () => {
-    await axios.get('/api/portfolio/sector_updown').then(res => {
-      const data = res.data.result
-      setSector({
-        recent: {'KOSPI 100': data.recent[0], 'KOSPI 200': data.recent[1], 'KOSDAQ': data.recent[2]}, 
-        up: {'KOSPI 100': data.up[0], 'KOSPI 200': data.up[1], 'KOSDAQ': data.up[2]}, 
-        down: {'KOSPI 100': data.down[0], 'KOSPI 200': data.down[1], 'KOSDAQ': data.down[2]}
-      })
-    });
-  }
   const [showChart, setShowChart] = useState(false)
   const [portfolio, setPort] = useState({
     stocks: ['솔루스첨단소재', '아모그린텍', '트루윈'],
@@ -77,30 +56,9 @@ function Portfolio() {
     'KOSPI 200': false,
     'KOSDAQ': false
   }
-  const KOSPI = [
-  '반도체와반도체장비',
-  '제약',
-  '화학',
-  '양방향미디어와서비스',
-  '자동차',
-  '복합기업',
-  '은행',
-  '자동차부품',
-  '석유와가스']
-  const KOSDAQ = [
-    '제약',
-    '게임엔터테인먼트',
-    '생물공학',
-    '화학',
-    '방송과엔터테인먼트',
-    '반도체와반도체장비',
-    '생명과학도구및서비스',
-    '디스플레이장비및부품',
-    '건강관리장비와용품',
-    '건축자재']
   const portName = ['최대분산P','샤프P','위험균형P', 'User_P']
   const markets = ['KOSPI 100','KOSPI 200','KOSDAQ']
-  let initBool = new Array(temp.length).fill(false)
+  let initBool = new Array(20).fill(false)
   let initSectorClicked = {
     'KOSPI 100': [...initBool],
     'KOSPI 200': [...initBool],
@@ -116,7 +74,7 @@ function Portfolio() {
   const [userClass, setUserClass] = useState(-1)
   const userClassText = ['안정형', ' 안정추구형', '위험중립형', ' 적극투자형', '공격투자형']
   const pieData = {
-    data: [[{name: '솔루스첨단소재', y: 0.3}, {name: '아모그린텍', y: 0.3}, {name: '트루윈', y: 0.4}]]//,[{name: 'sm', y: 0.5}, {name: 'yg', y: 0.5}]]
+    data: [[{name: '솔루스첨단소재', y: 0.3}, {name: '아모그린텍', y: 0.3}, {name: '트루윈', y: 0.4}]]
   }
   const lineData = {
     title: 'Backtest Result',
@@ -300,7 +258,7 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: //[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -341,7 +299,7 @@ function Portfolio() {
         0.0]
     },{
       name: '',
-      data: //[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -382,7 +340,7 @@ function Portfolio() {
         0.0]
     },{
       name: '',
-      data: //[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -423,7 +381,7 @@ function Portfolio() {
         0.0]
     },{
       name: '',
-      data: //[2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -475,7 +433,7 @@ function Portfolio() {
     },
     data: [{
       name: '',
-      data: //[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -516,7 +474,7 @@ function Portfolio() {
         0.0]
     },{
       name: '',
-      data: //[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -557,27 +515,8 @@ function Portfolio() {
         0.0]
     },{
       name: '',
-      data: //[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-      [0.0,
-        -2.91,
-        -3.06,
-        -2.85,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        -2.49,
-        -2.57,
-        0.0,
-        -1.37,
-        -0.67,
-        -0.29,
-        -1.70,
-        -2.29,
-        0.0,
-        0.0,
-        -0.94,
+      data:
+      [0.0, -2.91, -3.06, -2.85, 0.0, 0.0, 0.0, 0.0, 0.0, -2.49, -2.57, 0.0, -1.37, -0.67, -0.29, -1.70, -2.29, 0.0, 0.0, -0.94,
         -0.89,
         -1.02,
         -0.96,
@@ -598,7 +537,7 @@ function Portfolio() {
         0.0]
     },{
       name: '',
-      data: //[3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      data:
       [0.0,
         -2.91,
         -3.06,
@@ -646,14 +585,32 @@ function Portfolio() {
     var: varData
   })
   const isMounted = useRef(false);
+  
+  // 추천 종목 가져오기 
+  const recommend = async () => {
+    await axios.get('/api/portfolio/top_pick').then(res => {setPick(res.data.result);});
+  }
 
-  const getPortfolio = async() => {
+  // 정렬된 섹터 가져오기 
+  const getSortedSector = async () => {
+    await axios.get('/api/portfolio/sector_updown').then(res => {
+      const data = res.data.result
+      setSector({
+        recent: {'KOSPI 100': data.recent[0], 'KOSPI 200': data.recent[1], 'KOSDAQ': data.recent[2]}, 
+        up: {'KOSPI 100': data.up[0], 'KOSPI 200': data.up[1], 'KOSDAQ': data.up[2]}, 
+        down: {'KOSPI 100': data.down[0], 'KOSPI 200': data.down[1], 'KOSDAQ': data.down[2]}
+      })
+    });
+  }
+
+  // 포트폴리오, 백테스트 결과 가져오기
+  const getPortfolio = async() => { 
     if(userClass === -1){ 
       alert("투자 성향을 선택해주세요!")
       return;
     }
     const isMarektSelected = Object.values(isSelected).some(i => i)
-    if(!isMarektSelected){
+    if(!isMarektSelected && !isChecked){
       alert("마켓을 선택해주세요!")
       return;
     }
@@ -683,9 +640,10 @@ function Portfolio() {
         "holding_date": totalPeriod,
         "user_i": userClass
       }
-    }).then(res => {console.log(res.data.result); makeChartData(res.data.result);});
+    }).then(res => {makeChartData(res.data.result);});
   }
-
+  
+  // chart data 
   const makeChartData = (r) => {
     setPNum(()=>r['샤프P'].p_num);
     setRisk([r['샤프P'].risk, r['위험균형P'].risk, r['최대분산P'].risk, r['User_P'].risk])
@@ -706,7 +664,7 @@ function Portfolio() {
       }
       ww.push(w)
     }
-
+    
     setChartOption({
       pie: {
         title: 'stocks weight',
@@ -742,7 +700,7 @@ function Portfolio() {
           portName.map( p => {
             return ({
               name: p+' DD',
-              data: r[p].dd.map(i => parseFloat(i).toFixed(2)).map(Number) // dd 안되면 여기 보기!!
+              data: r[p].dd.map(i => parseFloat(i).toFixed(2)).map(Number)
             })
           })
       },
@@ -769,14 +727,13 @@ function Portfolio() {
     })
   }
   let sectors = []
+  
   const getSectors = (market) => {
     const mk = [market]
     setMarket(...mk)
     if (market.includes('KOSPI')) {
-      //sectors.push(KOSPI)
       sectors.push([...sectorName])
     } else {
-      //sectors.push(KOSDAQ)
       sectors.push([...sectorName])
     }
     setSector({
@@ -786,6 +743,8 @@ function Portfolio() {
       category: {'KOSPI 100': [...sectorName], 'KOSPI 200': [...sectorName], 'KOSDAQ': [...sectorName]}
     })
   }
+
+  // 마켓 선택 시
   const selectMarket = (e) => {
     setMarket(e.target.value)
     setSelect({
@@ -794,6 +753,8 @@ function Portfolio() {
     })
     //getSectors(e.target.value)
   }
+
+  // 섹터 선택 시
   const selectSector = (e) => {
     const n = e.target.value  
     let sss = sectorClicked[currentMarket]
@@ -803,47 +764,58 @@ function Portfolio() {
       [currentMarket]: sss
     }))
   }
+
+  // 추천 종목 버튼 클릭
   const check = () => {
     setCheck(!isChecked)
   }
+
+  // save 버튼 클릭
   const onClick = () => {
-    initUserOption = userOption
-    //getPortfolio()
     setShowChart(!showChart)
   }
+
+  // slider 함수
   const valueLabelFormat = (value) => {
     return `주식: ${value}% 채권: ${100-value}%`;
   }
   const valueLabelFormatPeriod = (value) => {
     return `${value}일`;
   }
+
+  // popover 함수
   const mouseEnter = (e) => {
     setAnchorEl(e.currentTarget)
   }
   const mouseLeave = () => {
     setAnchorEl(null)
   }
+
+  // useEffect
   useEffect(() => {
     setTimeout(() => {
       isMounted.current = true;
     });
   }, [])
+
   useEffect(()=>{
     if(!isMounted.current) return;
     getPortfolio()
   },[showChart])
+  
   useEffect(()=>{
     if(!isMounted.current) return;
     setLoaded(true);
     setLoading(false);
     let sort = chartData.line.data.map((d, i) => [(d.data[d.data.length-1]-100).toFixed(2),i]).sort().reverse().map(d => d[1])
-    //console.log(chartData)
     setSort(()=>[...sort])
   },[chartData])
+
   useEffect(()=>{
     recommend()
     getSortedSector()
   },[])
+  
   useEffect(()=>{
     setSectorClick({
       'KOSPI 100': new Array(sectorName.length).fill(false),
@@ -851,9 +823,11 @@ function Portfolio() {
       'KOSDAQ': new Array(sectorName.length).fill(false)
     })
   },[selectedSector, chartData])
+  
   useEffect(()=>{
     setSectorName(selectedSector.recent['KOSPI 100'].map(i => i.sector))
   },[selectedSector])
+  
   return(
     <div className="container">
       <div className="option">
@@ -1030,35 +1004,7 @@ function Portfolio() {
           {isChecked && 
             <div>
               <Box sx={{display:'flex', flexDirection: 'column', fontSize: 'middle'}} key={sectorClicked}>
-                {/* <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
-                  {pick.slice(0,5).map((ss, value) =>
-                    <Button key={value} value={value} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value] ? 'lightgray':null}}>{ss}</Button>)
-                  }
-                  {pick.slice(5,10).map((ss, value) =>
-                    <Button key={value+6} value={value+6} onClick={selectSector} style={{backgroundColor: sectorClicked[currentMarket][value+6] ? 'lightgray':null}}>{ss}</Button>)
-                  }
-                </ButtonGroup> */}
                 <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                  {/* <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
-                    {pick.slice(0,5).map((ss, value) =>
-                      <Button 
-                        key={value}   
-                        value={value} 
-                        onClick={selectSector} 
-                        style={{backgroundColor: sectorClicked['KOSPI 200'][value] ? 'lightgray':null}}
-                      >{ss}</Button>
-                    )}
-                  </ButtonGroup>
-                  <ButtonGroup style={{height: '1.5rem', width: '1200px', marginBottom: '10px'}} color='inherit'>
-                    {pick.slice(5,pick.length).map((ss, value) =>
-                      <Button 
-                        key={value} 
-                        value={value}
-                        onClick={selectSector} 
-                        style={{backgroundColor: sectorClicked['KOSPI 200'][value] ? 'lightgray':null}}
-                      >{ss}</Button>
-                    )}
-                  </ButtonGroup> */}
                     {
                     pick && 
                     <Box style={{height: "200px", width: "350px", overflowY: "scroll", border: "1px solid lightgray"}}>
@@ -1087,18 +1033,15 @@ function Portfolio() {
 
       <div className="portfolio">
         <div className="title">Portfolio Information</div>
-        {/* loaded ? */}
         <li key="1" style={{minWidth: 'max-content'}}>종목:  { loaded ? portfolio.stocks.map(i => i + ' ') : '' }</li>
         <li key="2" style={{minWidth: 'max-content'}}>유사 시점:  { loaded ? portfolio.similarDate.map(i => i + ' ') : '' }</li>
 
         {
-          //loaded 
           loaded && sortPort.map((n, index) => {
             return(
             <Accordion style={{marginTop:'15px', width: "900px"}} key={n}>
               <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
                 <span>{portName[n]}</span>
-                {/* <span style={{marginLeft: '20px'}}>예상 수익: {loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}%</span> */}
                 <span style={{marginLeft: '20px'}}>{loaded ? '예상 수익: ' : '' }{loaded ? (chartData.line.data[n].data[chartData.line.data[n].data.length-1]-100).toFixed(2) : ''}{loaded ? '%' : ''}</span>
               </AccordionSummary>
               <AccordionDetails key={chartData.line.data}>
@@ -1136,66 +1079,6 @@ function Portfolio() {
             </Accordion>)
           })
         }
-        {/* isMounted && portTabValue && 
-          <Box sx={{ width: '900px', display: 'grid', flexGrow: 1, gridTemplateColumns: '150px 700px', gridTemplateRows: '50px auto' }}>
-            <TabContext value={portTabValue}>
-              <Box sx={{borderBottom: 1, borderRight: 1, borderColor: 'divider'}}>
-                <Tabs value={portTabValue} orientation="vertical" onChange={(e, value) => setPortTab(value)}>
-                  <Tab label={portName[0]} value="1" style={tabStyle} />
-                  <Tab label={portName[1]} value="2" style={tabStyle} />
-                  <Tab label={portName[2]} value="3" style={tabStyle} />
-                  <Tab label={portName[3]} value="4" style={tabStyle} />
-                </Tabs>
-              </Box>
-              
-              {
-                <TabPanel value={portTabValue} index={portTabValue.toString()} style={{padding: 0, width: "900px"}} key={portTabValue}>    
-                  <Box sx={{width: '900px'}}>
-                    <div className="stock-risk" style={{display: 'flex'}}>
-                      <div style={{minWidth: '400px', verticalAlign: 'top'}} key={chartData}>
-                        <div className="title1" style={{marginBottom: '15px'}}>Stocks Weight</div>
-                        <Pie title={chartData.pie.title} data={chartData.pie.data[portTabValue-1]} style={{verticalAlign: 'top'}}/>
-                      </div>
-                    </div>
-                    <div className="backtest">
-                      <div className="chart" style={{width: '850px'}}>
-                        <div className="title1">Backtest</div>
-                        <span style={{width: '400px', verticalAlign: 'top'}}>
-                          <MultiLine props={chartData.line} num={portTabValue-1} period={pNum} />
-                        </span>
-                      </div>
-                    </div>
-                    <div className="risk" style={{minWidth: '900px', verticalAlign: 'top'}} key={chartData}>
-                      <div className="title1">Risk</div>
-                      <span style={{display: 'flex', verticalAlign: 'top', gap: '20px'}}>
-                        <div>sharpe: {risk[portTabValue-1][0].toFixed(2)} </div>
-                        <div>trainer: {risk[portTabValue-1][1].toFixed(2)} </div>
-                        <div>zensen: {risk[portTabValue-1][2].toFixed(2)} </div> 
-                      </span>
-                      <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                        <MultiLine props={chartData.mdd} num={portTabValue-1} period={pNum} />
-                      </span>
-                      <span style={{width: '430px', display:'inline-block', verticalAlign: 'top'}}>
-                        <MultiLine props={chartData.var} num={portTabValue-1} period={pNum} />
-                      </span>
-                    </div>
-                  </Box>
-                </TabPanel>
-              }              
-              {
-                //currentMarket === 
-                // [1,2,3,4].map((portIndex) => {
-                //   console.log(portIndex)
-                //   return( 
-                  <>
-
-                  </>
-                //   )
-                // })
-              }
-            </TabContext>
-          </Box>          
-        */}
         {
           isLoading && 
           <div style={{textAlign: "center", margin: "30px"}}>
@@ -1208,7 +1091,3 @@ function Portfolio() {
 }
 
 export default Portfolio;
-
-// sector 수익률 30일 표시 + 정렬
-// 포트폴리오 탭화
-// 형식: 체크 박스 / 섹터 / 수익률, 상승, 하락 (색)

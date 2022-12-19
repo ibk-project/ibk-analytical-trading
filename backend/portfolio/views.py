@@ -1529,10 +1529,12 @@ class Backtest:
         Backtest.user_input_s = user_input_s
         Backtest.stock_bond = stock_bond
         Backtest.risk = risk
-
+		
+  	# 날짜 연산 함수 
     def addDate(self, date, r):    
         return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
-    # __call__ 에서 안쓰면 cummax, drawdown 삭제
+      
+    # dd 계산에 사용
     def cummax(self, nums):
         cum = []
         n_max = 0
@@ -1541,6 +1543,8 @@ class Backtest:
                 n_max = x
             cum.append(n_max)
         return cum
+      
+      # 백테스팅 중 일간 데이터 기록
     class PrintInfo(bt.Algo):
 
         def __init__(self, fmt_string="{name} {now}"):
@@ -1551,11 +1555,11 @@ class Backtest:
             return (datetime.datetime.strptime(date, '%Y-%m-%d') + timedelta(days=r)).strftime('%Y-%m-%d')
 
         def __call__(self, target):
-            #print("1 ",Backtest.result_data.index.size)
             Backtest.result_data.loc[self.addDate(Backtest.now,1),target.__dict__['name']] = target.__dict__['_price']
             Backtest.now = str(target.__dict__['now'])[0:10]
             return True
 
+		# 리밸런싱 
     class WeighSpecified(bt.Algo):
 
         def __init__(self, weight):
@@ -1585,10 +1589,7 @@ class Backtest:
         def __call__(self, target):
             if Backtest.finish_early:
                 return True
-            #print("target")
             self.drawdown()
-            # added copy to make sure these are not overwritten
-            #print("2 ", Backtest.result_data.index.size)
             if Backtest.DD_return[-1] < Backtest.risk:
                 if Backtest.stock_bond[0] - 0.05 <= 0:
                     finish_early = True
@@ -1665,10 +1666,12 @@ class Backtest:
             'quarter': bt.algos.RunQuarterly(),
             'year': bt.algos.RunYearly()
         }
+        
         # 해당 종목의 데이터만 추출
         d = pd.DataFrame()
         Backtest.period_num = df.loc[self.today[0]:self.addDate(self.today[0],self.period), self.stocks[0]].index.size
         self.period = self.period + 30
+        
         # 주가
         for i in range(len(self.today)):
             neww = df.loc[self.today[i]:self.addDate(self.today[i],self.period), self.stocks[i]]
@@ -1690,12 +1693,12 @@ class Backtest:
             if np.isnan(b[len(b)-1]): 
                 b[len(b)-1] = b[len(b)-2]
             d['bond'+self.stocks[i]] = b
+            
         # 가중치 설정
         w = Backtest.user_input_s
         if len(Backtest.user_input_sb) != 0:
             Backtest.stock_bond = Backtest.user_input_sb
 
-        # 주식60 채권40
         col_bond = ['bond'+ x for x in self.stocks]
         col64 = self.stocks + col_bond
 
@@ -1703,15 +1706,17 @@ class Backtest:
 
         Backtest.new_w[:Backtest.nn] = (np.array(w)*Backtest.stock_bond[0]).tolist()
         Backtest.new_w[Backtest.nn:] = (np.array(w)*Backtest.stock_bond[1]).tolist()
-        #print(Backtest.result_data.index.size)
+        
         weight2 = Backtest.new_w.copy()
+        
         portfolio_2 = bt.AlgoStack(
-                            rebal_period['month'],
-                            bt.algos.SelectThese(col64),
-                            #bt.algos.WeighSpecified(**weight2),
-                            self.WeighSpecified(weight2),
-                            bt.algos.Rebalance()
-                        )
+					rebal_period['month'],
+					bt.algos.SelectThese(col64),
+					#bt.algos.WeighSpecified(**weight2),
+					self.WeighSpecified(weight2),
+					bt.algos.Rebalance()
+				)
+        
         p2 = bt.Strategy('portfolio 2', [bt.algos.Or([log, portfolio_2])])
 
         d.index = list(map(lambda x: datetime.datetime.strptime(self.addDate('2015-01-01', x), '%Y-%m-%d'), d.index))
@@ -1723,6 +1728,7 @@ class Backtest:
         Backtest.result_data.drop(Backtest.result_data.index[-1],inplace=True)
         stock = Backtest.result_data.fillna(method = 'bfill')
         indexs = Backtest.result_data.index
+        
         for i in range(len(Backtest.result_data.index)):
             if i == 0:
                 continue
@@ -1822,11 +1828,11 @@ class Portfolio:
             vol_rank = pd.DataFrame(columns = ["Daily_std", "Weekly_std"], index = stock_name)
             vol_rank["Daily_std"] = std_daily
             vol_rank["Weekly_std"] = std_weekly
-            #print(vol_rank)
+            
             vol_rank["std_rank"] = vol_rank['Weekly_std'].rank(ascending = True) +vol_rank['Daily_std'].rank(ascending = True)
             
             vol_rank["std_rank"] = vol_rank["std_rank"].rank(ascending= True, method ='dense').astype(int)
-            #print(vol_rank["std_rank"].to_list())
+            
             vol_rank = vol_rank.drop(['Weekly_std', 'Daily_std'], axis = 1)
             return vol_rank
         
@@ -1998,19 +2004,14 @@ class Portfolio:
     def MRC(self):
         def obj_variance(weights, covmat):
             vol = np.sqrt(np.dot(weights.T, np.dot(covmat, weights)))
-            #print(vol)
             mrc = np.dot(covmat, weights)/vol
-            #print(mrc)
             rc = mrc * weights
-            
-            #print(rc)
             rc = rc / np.sum(rc)
             res = np.sum((rc - rc/len(rc))**2)
-            #print(res) 
+            
             return res 
         
         n_assets = len(self.stock_all.columns)
-        #print("n_assets : " + str(n_assets))
         
         weights = np.ones([n_assets]) / n_assets
         date_stride = 252
@@ -2083,7 +2084,6 @@ def get_top_output(request):
         tmp = []
         for i in range(len(top_sector_stock)):
             tmp.append(d_set[top_sector_stock[i]])
-        print(tmp)
         top_output = ['삼성전자', '유한양행', '금호석유', 'Naver', '기아', '효성', 'BNK금융지주', '한온시스템', 'SK이노베이션']
         result['top'] = top_output
         return JsonResponse({'result' : tmp})
@@ -2128,7 +2128,6 @@ def get_portfolio_output(request):
             s_date = s12_result.iloc[i,3]
             date = datetime.datetime.strptime(s_date,'%Y-%m-%d')
             e_date = str(date + datetime.timedelta(days=400))
-            #stock = fdr.DataReader(code, s_date, e_date)['Close']
             stock = client.newDB.data_stock.find({"Code" : code, "Date" : { '$gte' : s_date , '$lt': e_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 , 'Date' : 0})
             stock = pd.DataFrame(stock)
             print(stock)
