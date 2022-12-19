@@ -22,7 +22,6 @@ function EDA() {
   // ];
   const sectorData = [
     {'code': '300', 'name': '양방향미디어와서비스'},
-    {'code': '263', 'name': '게임엔터테인먼트'},
     {'code': '267', 'name': 'IT서비스'},
     {'code': '327', 'name': '디스플레이패널'},
     {'code': '305', 'name': '항공사'},
@@ -93,6 +92,7 @@ function EDA() {
     {'code': '302', 'name': '식품과기본식료품소매'},
     {'code': '313', 'name': '석유와가스'},
     {'code': '312', 'name': '가스유틸리티'},
+    {'code': '263', 'name': '게임엔터테인먼트'},
     {'code': '330', 'name': '생명보험'},
     {'code': '336', 'name': '다각화된통신서비스'},
     {'code': '319', 'name': '기타금융'},
@@ -111,7 +111,7 @@ function EDA() {
   const onEdaClick = (e) => {
     let code = e.target.href.split("/")[4];
     setEdaName(e.target.innerHTML)
-    console.log("new sector Clicked, name is ", e.target.innerHTML);
+    console.log("eda name changed to ",e.target.innerHTML);
     setEdaCode(code)
     if (marketData.find(o => o.code === code)) {
         setEdaType("market");

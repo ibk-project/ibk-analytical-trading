@@ -21,7 +21,7 @@ import json
 import os
 
 from pymongo import MongoClient
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 client = MongoClient(
         host='43.201.96.58', # aws 재부팅 시마다 ip 주소 새로 변경
@@ -1624,13 +1624,13 @@ def get_sector_avg(request):
         start_date = request.GET['start_date']
         end_date = request.GET['end_date']
         sector_name = request.GET['sector_name']
-        print(sector_name)
+        #print(sector_name)
         db = client.newDB
         stock_collection = db.data_stock
         sector_collection = db.data_sector
         
         if start_date == "":
-            start_date = "2012-01-01"
+            start_date = "2014-01-01"
         
         if end_date == "":
             end_date = str(datetime.today())
@@ -1641,9 +1641,10 @@ def get_sector_avg(request):
         date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
         df['Date'] = date_list
         df = df.set_index('Date')
-        for stock  in sector_data[sector_name]:
+        for stock in sector_data[sector_name]:
             print(stock)
             code = stock["code"]
+            print("original: code ", code, "startdate", start_date, "enddate", end_date)
             id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
             tmp = pd.DataFrame(list(id))
             tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
@@ -1660,7 +1661,7 @@ def get_sector_avg(request):
             return JsonResponse({ "Result" : "None"})
         else:
             return JsonResponse({ 'data' : t_tmp.to_dict('records')})
-
+        
 @api_view(['GET','POST'])
 def make_sector_avg(request):
     if request.method == 'GET':
@@ -2030,11 +2031,13 @@ def get_comm_data(name, code):
 @api_view(['GET'])
 def get_market_model(request):
     if request.method == 'GET':
-        model_data = os.path.join(os.path.dirname(__file__),'files/', '2015-01-01_2022-08-12_100.json')
+        model_data = os.path.join(os.getcwd(),'/backend/model/market/result/', '2015-01-01_2022-11-25_100.json')
+        print(model_data)
+
         try:
             with open(model_data) as f:
                 json_data = json.load(f)
-            return JsonResponse({"Result" : json_data})
+            return JsonResponse({"Result" : {"points" : json_data["points"]}})
         except:
             return JsonResponse({"Data" : "None"})
 
@@ -2043,7 +2046,7 @@ def get_market_model(request):
 def get_sector_model(request, sector_code):
     if request.method == 'GET':
 
-        sector_data = os.path.join(os.path.dirname(__file__), 'files/', str(sector_code) + '_result.csv')
+        sector_data = os.path.join(os.getcwd(), '/backend/model/sector/result/', str(sector_code) + '_result.csv')
 
         try:
             model_data = pd.read_csv(sector_data, header=0, index_col=0)
@@ -2065,22 +2068,77 @@ def get_news_feature(request):
         except:
             return JsonResponse({"Data" : "None"})
 
+#News title data
+@api_view(['GET'])
+def get_date_similiary_distance(request, date):
+    if request.method == 'GET':
+        model_data = os.path.join(os.getcwd(),'/backend/model/market/result/', '2015-01-01_2022-11-25_100.json')
+
+        try:
+            with open(model_data) as f:
+                json_data = json.load(f)
+            return JsonResponse({"Result" : json_data["distances"][date]})
+        except:
+            return JsonResponse({"Data" : "None"})
+
+
+def calculate_sector_avg(start_date, end_date, sector_name):
+    db = client.newDB
+    stock_collection = db.data_stock
+    sector_collection = db.data_sector
+    result = {}
+
+    df = pd.DataFrame()
+    date_list = pd.date_range(start = start_date, end = end_date, freq='D').astype(str)
+    df['Date'] = date_list
+    df = df.set_index('Date')
+    for stock  in sector_data[sector_name]:
+        code = stock["code"]
+        id = stock_collection.find({"Code" : code, "Date" : { '$gte' : start_date , '$lt': end_date}}, {"_id" : 0, "Name" : 0, "High" : 0 , "Volume" : 0, "Change" : 0 , "Low" : 0 , "Open" : 0 , "Code" : 0 })
+        tmp = pd.DataFrame(list(id))
+        tmp.rename(columns = {'Close' : stock["name"] + 'Close'}, inplace=True)
+        tmp = tmp.set_index('Date')
+        df = df.join(tmp)
+    df = df.dropna(how = 'all')
+    df['sum'] = df.sum(axis = 1)
+    df['sum'] = df['sum'] / len(sector_data[sector_name])
+    t_tmp = pd.DataFrame()
+    t_tmp["Date"] = df.index.values
+    t_tmp["Close"] = df['sum'].values.tolist()
+
+    return t_tmp.to_dict('records')
 
 #Calculate Correlation-adjusted Distance
-@api_view(['POST'])
+@api_view(['GET'])
 def get_similarity_distance(request):
-    if request.method == 'POST':
-        period1 = request.data['period1']
-        period2 = request.data['period2']
-        print("period1 is "+period1)
-        print("period2 is "+period2)
+    print("HI")
+    print("request is ", request.method)
+    if request.method == 'GET':
+        print("HELLO")
+        print("request.GET is ", request.GET)
+        date1 = request.GET['date1']
+        date2 = request.GET['date2']
+        sector_name = request.GET['sectorName']
+        
+        end_date1 = datetime.strptime(date1,'%Y-%m-%d')
+        end_date2 = datetime.strptime(date2,'%Y-%m-%d')
+
+        start_date1 = (end_date1 - timedelta(days=60)).strftime('%Y-%m-%d')
+        start_date2 = (end_date2 - timedelta(days=60)).strftime('%Y-%m-%d')
+        
+        period1 = calculate_sector_avg(start_date1, date1, sector_name)
+        period2 = calculate_sector_avg(start_date2, date2, sector_name)
+        
+        print("period1 is ")
+        print(period1)
 
         adjustedCov = 0
         distance = 0
         pastList = []
         currentList = []
 
-        if(len(period1)>60 and len(period2)>60):
+        if(len(period1)>=60 and len(period2)>=60):
+            print("UPPER")
             # 단순 Distance 산식
             for i in range(1, 60):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
@@ -2105,23 +2163,30 @@ def get_similarity_distance(request):
             # adjustedCov = distance + 1 - corr
             adjustedCov = distance
 
-        elif(len(period1)>10 and len(period2)>10): # data가 60개 이하일 때
+        elif(len(period1)>5 and len(period2)>5): # data가 60개 이하일 때
+            print("len1 is ", len(period1), "len2 is", len(period2))
             num = len(period1)
             if(len(period1)>len(period2)): 
                 num = len(period2)
             
             for i in range(1,num):
                 difference = period1[0-i]['Close'] - period2[0-i]['Close']
+                print("difference is ", difference)
                 difference = difference * difference / num
                 distance = distance + difference
                 pastList.append(period1[0-i]['Close'])
                 currentList.append(period2[0-i]['Close'])
+
             distance = math.sqrt(distance/num)
             
             a = statistics.stdev(pastList)
             b = statistics.stdev(currentList)
+            print("a is ", a)
+            print("b is ", b)
             cov = np.cov([pastList, currentList])
+            print("cov is ", cov)
             corr = cov/(a*b)
+            print("corr is", corr)
 
             # adjustedCov = distance + 1 - corr
             adjustedCov = distance
@@ -2132,12 +2197,14 @@ def get_similarity_distance(request):
 
             
         try:
-            with open(adjustedCov, encoding='UTF-8-sig') as f:
-                json_data = json.load(f)
-                json_data = json.dumps(json_data, ensure_ascii = False)
-            return HttpResponse(json_data)
+            #with open(adjustedCov, encoding='UTF-8-sig') as f:
+            #    json_data = json.load(f)
+            #    json_data = json.dumps(json_data, ensure_ascii = False)
+            # return HttpResponse(json_data)
+            print(adjustedCov)
+            return JsonResponse({"result" : adjustedCov})
         except:
-            return JsonResponse({"None"})
+            return JsonResponse({"result" : "None"})
         
 
 

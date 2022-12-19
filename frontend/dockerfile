@@ -1,9 +1,11 @@
 FROM node:alpine
 
 WORKDIR /frontend
-COPY . .
-
+COPY ./package*.json ./
+COPY ./yarn.lock ./
 EXPOSE 3000
 
 RUN npm install -g react-scripts
 RUN yarn install
+
+COPY . .

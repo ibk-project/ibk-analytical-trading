@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'index.apps.IndexConfig',
     'data.apps.DataConfig',
-    'portfolio.apps.PortfolioConfig'
+    'portfolio.apps.PortfolioConfig',
+    'model.apps.ModelConfig'
     # 'corsheaders'
 ]
 
