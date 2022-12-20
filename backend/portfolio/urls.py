@@ -6,5 +6,4 @@ urlpatterns = [
     path('top_pick', views.get_top_output),
     path('today',views.get_sector_output),
     path('sector_updown',views.get_sector_updown)
-    #path('risk',views.get_sector_output),
 ]

@@ -18,7 +18,13 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('data-management/', include('data.urls')),
+    
+    # stock, index 등 모든 주가 관련된 수집 및 처리를 진행
+    path('data-management/', include('data.urls')), 
+    
+    #portfolio 제작 및 bactesting에 대한 처리 진행
     path('portfolio/', include('portfolio.urls')),
+    
+    
     path('model/', include('model.urls')),
 ]
