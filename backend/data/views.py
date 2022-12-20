@@ -1500,7 +1500,7 @@ sector_data = {'반도체와반도체장비': [{'code': '365590', 'name': '하�
 krx = fdr.StockListing('KRX')
 krx = krx[krx['Marcap']>1000000000000]
 
-# front에서 code, date보내주기
+# front에서 code, date보내주기, 차트 type별로 front에 제공
 @api_view(['GET', 'POST'])
 def get_index_front(request):
     if request.method == 'GET':
@@ -1554,7 +1554,7 @@ def get_index_front(request):
         js = {"data" : "1212"}
         return JsonResponse(js, safe=False)
     
-
+#원자재 front로 제공
 @api_view(['GET', 'POST'])
 def get_commodity_front(request):
     if request.method == 'GET':
@@ -1585,6 +1585,7 @@ def get_commodity_front(request):
         js = {"data" : "1212"}
         return JsonResponse(js, safe=False)    
 
+#원자재값 수집
 @api_view(['GET','POST'])
 def get_commodity(request):
     if request.method == 'GET':
@@ -1618,6 +1619,8 @@ def get_commodity(request):
         
         return JsonResponse({"success" : "true"})
 
+
+#섹터 평균값 front 제공
 @api_view(['GET','POST'])
 def get_sector_avg(request):
     if request.method == 'GET':
@@ -1661,7 +1664,8 @@ def get_sector_avg(request):
             return JsonResponse({ "Result" : "None"})
         else:
             return JsonResponse({ 'data' : t_tmp.to_dict('records')})
-        
+
+#섹터별 수집한 주가들의 평균 수익률       
 @api_view(['GET','POST'])
 def make_sector_avg(request):
     if request.method == 'GET':
@@ -1724,7 +1728,7 @@ def make_sector_avg(request):
             return JsonResponse({ 'data' : 'done'})
 
 
-        
+#KRX에 있는 주식들 전체 수집  
 @api_view(['GET','POST'])
 def get_stock(request):
     if request.method == 'GET':
@@ -1764,7 +1768,8 @@ def get_stock(request):
             file.close
             
         return JsonResponse({"success" : "true", "empty_stock" : empty_stock})
-    
+
+#Market에서 사용될 index 이름 제공 
 @api_view(['GET'])
 def get_index_name(request):
     if request.method == 'GET':
@@ -1775,7 +1780,7 @@ def get_index_name(request):
         
         return JsonResponse({"Index_Code" : INDEXS_CODE , "Index_Name" : INDEXS_NAME})
     
-    
+#index 전체 수집 진행
 @api_view(['GET','POST'])
 def get_index(request):
     if request.method == 'GET':
@@ -1820,7 +1825,8 @@ def get_index(request):
             file.close
         
         return JsonResponse({"success" : "true"})
-    
+
+# index 하나의 값만 front에 제공
 @api_view(['GET'])
 def get_one_index(request):
     if request.method == 'GET':
@@ -1842,7 +1848,7 @@ def get_one_index(request):
         result = list(id)
         return JsonResponse({"Result" : result})
 
-
+#front에 원하는 stock 값 제공
 @api_view(['GET'])
 def get_stocks(request):
     if request.method == 'GET':
@@ -1866,7 +1872,8 @@ def get_stocks(request):
             return JsonResponse({ "Result" : "None"})
         else:
             return JsonResponse({"data" : result})
-        
+
+#해당 sector에 있는 stock들 이름 가격 제공
 @api_view(['GET'])
 def get_sector_stock(request):
     if request.method == 'GET':
@@ -1909,6 +1916,8 @@ def get_sector_stock(request):
         else:
             return JsonResponse({"data" : result})
 
+
+#섹터에 있는 stock들 front에 제공
 @api_view(['GET'])
 def get_sector_list(request):
     if request.method == 'GET':
@@ -1935,7 +1944,7 @@ def get_sector_list(request):
         else:
             return JsonResponse({"data" : result})
 
-
+# 하나의 원자재 값 front에 제공
 @api_view(['POST'])
 def get_one_commodity(request):
     if request.method == 'POST':
@@ -1960,6 +1969,7 @@ def get_one_commodity(request):
         else:
             return JsonResponse({"Result" : result})
 
+#index 값 전체 수집
 def get_index_data(name):
     data = fdr.DataReader(name)
     if data.empty:
@@ -1976,6 +1986,7 @@ def get_index_data(name):
     
     return data
 
+#name에 해당하는 주식 수직 및 dictionary로 변환
 def get_ex_data(name):
     data = fdr.DataReader(name)
     if data.empty:
@@ -1993,6 +2004,7 @@ def get_ex_data(name):
     
     return data
 
+#name에 해당하는 주가 date 부터 수집 후 dictionary로 제공
 def get_stock_data(symbol, name, date):
     data = fdr.DataReader(symbol, date)
     if data.empty:
@@ -2011,6 +2023,7 @@ def get_stock_data(symbol, name, date):
     
     return data
 
+#code에 해당하는 원자재 수집 후 dictionary로 제공
 def get_comm_data(name, code):
     data = fdr.DataReader(code)
     data.index = data.index.strftime('%Y-%m-%d')
@@ -2081,7 +2094,7 @@ def get_date_similiary_distance(request, date):
         except:
             return JsonResponse({"Data" : "None"})
 
-
+#현재 미사용
 def calculate_sector_avg(start_date, end_date, sector_name):
     db = client.newDB
     stock_collection = db.data_stock

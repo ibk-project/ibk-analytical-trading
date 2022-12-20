@@ -2088,6 +2088,8 @@ def get_top_output(request):
         result['top'] = top_output
         return JsonResponse({'result' : tmp})
 
+
+#포트폴리오 front에 결과값 제공
 @api_view(['GET'])
 def get_portfolio_output(request):
     if request.method == 'GET':
@@ -2268,8 +2270,8 @@ def get_portfolio_output(request):
             
         #print (result)
         return JsonResponse({'result' : result})
-    
-    
+
+#섹터와 유사시점 데이터를 혼합한 후, 섹터별 좋은 시점의 하나의 종목을 따로 저장 
 @api_view(['GET'])
 def get_sector_output(request):
     if request.method == 'GET':
@@ -2364,6 +2366,7 @@ def get_sector_output(request):
         
         return JsonResponse({"Success" : "True"})
  
+#sector별 결과값 front에 제공할 때 sorting하여 제공
 @api_view(['GET'])
 def get_sector_updown(request):
     if request.method == 'GET':
