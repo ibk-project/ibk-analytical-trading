@@ -12,17 +12,14 @@ deploy: AWS
 
 localhost:80에서 접속 가능
 
+## 포스터
+![IBK투자증권 포스터 - 2023 S-TOP 전시작품](https://github.com/user-attachments/assets/7fbb5a14-92cd-4e45-9ca5-867d88a722bb)
+
+## 설명 영상 (YouTube)
+[![IBK 투자증권 작품 소개 영상 - 2023 S-TOP](https://img.youtube.com/vi/sTvbtynRy44/0.jpg)](https://www.youtube.com/watch?v=sTvbtynRy44)
+
 ## 실행 화면
 ### Home
-<<<<<<< HEAD
-![Home Screenshot](screenshots\Home.JPG)
-### Market
-![Market Screenshot](screenshots\Market.JPG)
-### EDA
-![EDA Screenshot](screenshots\EDA.JPG)
-### Portfolio
-![Portfolio Screenshot](screenshots\Portfolio.JPG)
-=======
 ![Home Screenshot](./screenshots/Home.JPG)
 ### Market
 ![Market Screenshot](./screenshots/Market.JPG)
@@ -30,4 +27,3 @@ localhost:80에서 접속 가능
 ![EDA Screenshot](./screenshots/EDA.JPG)
 ### Portfolio
 ![Portfolio Screenshot](./screenshots/Portfolio.JPG)
->>>>>>> 7281eef29499fb0a13d8bbf4e09512f0f03ba1a7
